@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 interface ExperienceEntry {
   company: string;
@@ -6,6 +7,7 @@ interface ExperienceEntry {
   startDate: string;
   endDate: string;
   imageUrl: string;
+  hasDarkImage?: boolean;
 }
 
 const experienceEntries: ExperienceEntry[] = [
@@ -22,6 +24,7 @@ const experienceEntries: ExperienceEntry[] = [
     description:
       "Worked on the Basketball Research team. Created end-to-end data pipelines and client-facing web applications.",
     endDate: "Oct 2023",
+    hasDarkImage: true,
     imageUrl: "/sis.svg",
     startDate: "Oct 2021",
   },
@@ -54,11 +57,23 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
       <div className="flex-none">
         <Image
           alt={entry.company}
-          className="size-10 sm:size-12"
+          className={cn(
+            "size-10 sm:size-12",
+            entry.hasDarkImage && "dark:hidden",
+          )}
           height={48}
           src={entry.imageUrl}
           width={48}
         />
+        {entry.hasDarkImage && (
+          <Image
+            alt={entry.company}
+            className="hidden size-10 sm:size-12 dark:block"
+            height={48}
+            src={`${entry.imageUrl.replace(".svg", "-dark.svg")}`}
+            width={48}
+          />
+        )}
       </div>
       <div className="flex flex-1 flex-col items-start gap-y-1">
         <h3 className="text-sm leading-none font-normal sm:text-base">

@@ -5,6 +5,7 @@ import {
   TwitterLogoIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 interface ContactLink {
   href: string;
@@ -42,11 +43,16 @@ export function ContactLinks() {
       <ul className="flex items-center gap-x-4">
         {contactLinks.map((link) => (
           <li key={link.href} title={link.title}>
-            <Link href={link.href} rel="noopener noreferrer" target="_blank">
-              <div className="border-border text-muted-foreground hover:border-foreground/20 hover:bg-accent hover:text-foreground w-fit rounded-full border p-2 transition-all duration-300 hover:shadow-lg sm:p-3">
+            <Button
+              asChild
+              className="size-10 rounded-full"
+              size="icon-lg"
+              variant="outline"
+            >
+              <Link href={link.href} rel="noopener noreferrer" target="_blank">
                 {link.icon}
-              </div>
-            </Link>
+              </Link>
+            </Button>
           </li>
         ))}
       </ul>

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Sora } from "next/font/google";
 import "./globals.css";
+import { Footer } from "@/components/footer";
+import { ThemeProvider } from "@/components/theme/provider";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -23,9 +25,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className={`${sora.variable} ${geistMono.variable}`} lang="en">
-      <body className="min-h-screen overscroll-y-contain leading-relaxed antialiased">
-        <main>{children}</main>
+    <html
+      className={`${sora.variable} ${geistMono.variable}`}
+      lang="en"
+      suppressHydrationWarning
+    >
+      <body className="mx-auto max-w-2xl overscroll-y-contain leading-relaxed antialiased">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          disableTransitionOnChange
+          enableSystem
+        >
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );
