@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { Experience } from "@/components/experience";
 
 export default function Home() {
   return (
-    <div className="mx-auto max-w-2xl space-y-4 px-6 py-10 md:py-20">
+    <div className="mx-auto max-w-2xl space-y-6 px-6 py-10 md:py-20">
+      {/* header */}
       <h1 className="text-xl leading-14 font-medium md:text-2xl">
         Matt Bolaños
       </h1>
@@ -19,7 +21,7 @@ export default function Home() {
         as a full stack developer and data analyst in their front office.
       </p>
       <p>
-        In my free time I enjoy trail running, gluten-free baking and{" "}
+        I spend my downtime trail running, gluten-free baking and{" "}
         <Link
           className="transition-opacity duration-150 ease-in-out hover:opacity-60"
           href="https://letterboxd.com/mattbolanos"
@@ -30,6 +32,9 @@ export default function Home() {
         </Link>
         .
       </p>
+      {/* experience */}
+      <h2 className="font-medium md:text-lg">Experience</h2>
+      <Experience />
     </div>
   );
 }
