@@ -11,12 +11,12 @@ export function ThemeToggle() {
   return (
     <Button
       aria-label="toggle theme"
-      className="size-10 rounded-full"
+      className="size-10 rounded-full hover:scale-105 hover:shadow-lg"
       onMouseDown={() => setTheme(isDark ? "light" : "dark")}
       size="icon-lg"
-      variant="outline"
+      variant="ghost"
     >
-      <SunHorizonIcon className="size-5" />
+      <SunHorizonIcon className="size-5 sm:size-6" />
     </Button>
   );
 }

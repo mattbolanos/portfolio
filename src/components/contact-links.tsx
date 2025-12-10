@@ -39,7 +39,7 @@ const contactLinks: ContactLink[] = [
 export function ContactLinks() {
   return (
     <div className="flex flex-col gap-y-3">
-      <h2 className="font-medium md:text-lg">Contact me</h2>
+      <h2 className="font-medium md:text-lg">Connect</h2>
       <ul className="flex items-center gap-x-4">
         {contactLinks.map((link) => (
           <li key={link.href} title={link.title}>
