@@ -28,7 +28,7 @@ const experienceEntries: ExperienceEntry[] = [
   {
     company: "Northwestern University Men's Basketball",
     description:
-      "Created reports and dashboards for coaching staff and performance team. Developed strategic models for team performance insights and wrote ETL scripts for lineup and shot location data analysis",
+      "Created reports and dashboards for coaching staff and performance team. Developed strategic models and ETL scripts for lineup and shot location analysis.",
     endDate: "Mar 2021",
     imageUrl: "/northwestern.svg",
     startDate: "Aug 2020",
@@ -37,11 +37,14 @@ const experienceEntries: ExperienceEntry[] = [
 
 export function Experience() {
   return (
-    <ul className="flex flex-col gap-y-8">
-      {experienceEntries.map((entry) => (
-        <ExperienceItem entry={entry} key={entry.company} />
-      ))}
-    </ul>
+    <div className="flex flex-col gap-y-3">
+      <h2 className="font-medium md:text-lg">Experience</h2>
+      <ul className="flex flex-col gap-y-8">
+        {experienceEntries.map((entry) => (
+          <ExperienceItem entry={entry} key={entry.company} />
+        ))}
+      </ul>
+    </div>
   );
 }
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
 
 export default function Home() {
@@ -33,8 +34,10 @@ export default function Home() {
         .
       </p>
       {/* experience */}
-      <h2 className="font-medium md:text-lg">Experience</h2>
       <Experience />
+
+      {/* contact links */}
+      <ContactLinks />
     </div>
   );
 }
