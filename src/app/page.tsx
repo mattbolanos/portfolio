@@ -11,7 +11,7 @@ async function RecentTrackWrapper() {
       new URLSearchParams({
         api_key: process.env.LASTFM_API_KEY as string,
         format: "json",
-        limit: "1",
+        limit: "3",
         method: "user.getrecenttracks",
         user: "mattbolanos",
       }),
@@ -24,11 +24,19 @@ async function RecentTrackWrapper() {
 
   const { success, data } = RecentTracksSchema.safeParse(res);
 
-  if (!success || !data.recenttracks.track[0]) {
+  if (!success) {
     return null;
   }
 
-  return <TrackCard latestTrack={data.recenttracks.track[0]} />;
+  const tracksWithUts = data.recenttracks.track.filter(
+    (track) => track.date?.uts,
+  );
+
+  if (tracksWithUts.length === 0) {
+    return null;
+  }
+
+  return <TrackCard latestTrack={tracksWithUts[0]} />;
 }
 
 export default function Home() {
