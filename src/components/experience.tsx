@@ -48,14 +48,16 @@ export function Experience() {
           <ExperienceItem entry={entry} key={entry.company} />
         ))}
       </ul>
-      <Link
-        className="text-link"
-        href="/matt-bolanos-resume.pdf"
-        prefetch
-        target="_blank"
-      >
-        Full CV
-      </Link>
+      <p>
+        <Link
+          className="text-link"
+          href="/matt-bolanos-resume.pdf"
+          prefetch
+          target="_blank"
+        >
+          Full CV
+        </Link>
+      </p>
     </div>
   );
 }
