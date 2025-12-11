@@ -26,14 +26,14 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      className={`${sora.variable} ${geistMono.variable}`}
+      className={`${sora.variable} ${geistMono.variable} antialiased`}
       lang="en"
       suppressHydrationWarning
     >
       <head>
         <meta content="mattbolanos" name="apple-mobile-web-app-title" />
       </head>
-      <body className="mx-auto max-w-2xl overscroll-y-contain leading-relaxed antialiased">
+      <body className="m-auto max-w-2xl overscroll-y-contain leading-relaxed">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
