@@ -24,7 +24,7 @@ async function RecentTrackWrapper() {
 
   const { success, data } = RecentTracksSchema.safeParse(res);
 
-  if (!success) {
+  if (!success || !data.recenttracks.track[0]) {
     return null;
   }
 
