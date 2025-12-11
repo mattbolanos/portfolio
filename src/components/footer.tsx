@@ -3,7 +3,7 @@ import { ThemeToggle } from "./theme/toggle";
 
 export function Footer() {
   return (
-    <footer className="px-6 py-10 text-xs sm:text-sm">
+    <footer className="pb-16 px-6 pt-6 text-xs sm:text-sm">
       <div className="flex items-center justify-between">
         <p>
           <Link
