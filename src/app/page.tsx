@@ -17,7 +17,7 @@ async function RecentTrackWrapper() {
       }),
     {
       next: {
-        revalidate: 60,
+        revalidate: 30,
       },
     },
   ).then((res) => res.json());

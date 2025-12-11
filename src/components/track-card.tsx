@@ -8,11 +8,15 @@ interface TrackCardProps {
 }
 
 export function TrackCard({ latestTrack }: TrackCardProps) {
-  const bestImage =
-    latestTrack.image.find((image) => image.size === "large")?.["#text"] ??
-    latestTrack.image.find((image) => image.size === "extralarge")?.["#text"] ??
-    latestTrack.image[0]["#text"] ??
-    "";
+  const bestImage = latestTrack.image.reduce<string>((best, image) => {
+    if (image.size === "large") return image["#text"] || best;
+    if (image.size === "extralarge" && !best) return image["#text"] || best;
+    return best || image["#text"] || "";
+  }, "");
+
+  const trackDate = latestTrack.date?.uts
+    ? new Date(Number(latestTrack.date.uts) * 1000)
+    : null;
 
   return (
     <div className="bg-muted space-y-1.5 rounded-[9px] p-1">
@@ -35,16 +39,18 @@ export function TrackCard({ latestTrack }: TrackCardProps) {
       </Card>
       <p className="text-muted-foreground pl-1 text-xs">
         Last played on{" "}
-        {latestTrack.date?.["#text"] && (
-          <time dateTime={latestTrack.date["#text"]}>
-            {new Date(latestTrack.date["#text"]).toLocaleDateString("en-US", {
+        {trackDate && (
+          <time dateTime={trackDate.toISOString()}>
+            {trackDate.toLocaleDateString("en-US", {
               day: "numeric",
               month: "short",
+              timeZone: "America/New_York",
             })}
             ,{" "}
-            {new Date(latestTrack.date["#text"]).toLocaleTimeString("en-US", {
+            {trackDate.toLocaleTimeString("en-US", {
               hour: "2-digit",
               minute: "2-digit",
+              timeZone: "America/New_York",
             })}
           </time>
         )}
