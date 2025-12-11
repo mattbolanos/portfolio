@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 interface ExperienceEntry {
@@ -47,6 +48,14 @@ export function Experience() {
           <ExperienceItem entry={entry} key={entry.company} />
         ))}
       </ul>
+      <Link
+        className="text-link"
+        href="/matt-bolanos-resume.pdf"
+        prefetch
+        target="_blank"
+      >
+        Full CV
+      </Link>
     </div>
   );
 }
