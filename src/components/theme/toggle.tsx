@@ -1,8 +1,10 @@
 "use client";
 
-import { SunHorizonIcon } from "@phosphor-icons/react";
+import { SunriseIcon, SunsetIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function ThemeToggle() {
   const { setTheme, resolvedTheme } = useTheme();
@@ -11,12 +13,20 @@ export function ThemeToggle() {
   return (
     <Button
       aria-label="toggle theme"
-      className="size-10 rounded-full hover:scale-105 hover:shadow-lg"
+      className="dark:hover:border-input hover:border-border size-10 rounded-full hover:scale-105 hover:shadow-lg"
       onMouseDown={() => setTheme(isDark ? "light" : "dark")}
       size="icon-lg"
       variant="ghost"
     >
-      <SunHorizonIcon className="size-5 sm:size-6" />
+      <HugeiconsIcon
+        className={cn(
+          "size-6",
+          isDark
+            ? "group-hover/button:text-blue-400"
+            : "group-hover/button:text-amber-600",
+        )}
+        icon={isDark ? SunriseIcon : SunsetIcon}
+      />
     </Button>
   );
 }

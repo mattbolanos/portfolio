@@ -19,7 +19,7 @@ export function TrackCard({ latestTrack }: TrackCardProps) {
     : null;
 
   return (
-    <div className="bg-muted space-y-1.5 rounded-[9px] p-1">
+    <div className="bg-muted space-y-1.5 rounded-[9px] p-1.5">
       <Card className="rounded-[9px] p-1">
         <div className="flex min-w-0 items-center gap-2">
           <Image

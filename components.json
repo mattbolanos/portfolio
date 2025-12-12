@@ -7,14 +7,16 @@
     "ui": "@/components/ui",
     "utils": "@/lib/utils"
   },
-  "iconLibrary": "lucide",
+  "iconLibrary": "hugeicons",
+  "menuAccent": "subtle",
+  "menuColor": "default",
   "registries": {},
   "rsc": true,
-  "style": "new-york",
+  "style": "base-maia",
   "tailwind": {
     "baseColor": "stone",
     "config": "",
-    "css": "src/app/globals.css",
+    "css": "app/globals.css",
     "cssVariables": true,
     "prefix": ""
   },
