@@ -133,3 +133,7 @@ a {
 .text-link:hover {
   @apply transition-opacity duration-150 ease-in-out hover:opacity-60;
 }
+
+html {
+  overscroll-behavior-y: none;
+}
