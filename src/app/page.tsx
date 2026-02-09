@@ -41,7 +41,7 @@ async function RecentTrackWrapper() {
 
 export default function Home() {
   return (
-    <div className="space-y-6 px-6 py-10 md:py-16">
+    <div className="space-y-6">
       <h1 className="text-xl leading-14 font-medium md:text-2xl">
         Matt Bolaños
       </h1>
