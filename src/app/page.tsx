@@ -3,40 +3,16 @@ import { Suspense } from "react";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
 import { TrackCard, TrackCardSkeleton } from "@/components/track-card";
-import { RecentTracksSchema } from "@/lib/schemas/last-fm";
+import { getLatestTrack } from "@/lib/last-fm";
 
 async function RecentTrackWrapper() {
-  const res = await fetch(
-    `https://ws.audioscrobbler.com/2.0/?` +
-      new URLSearchParams({
-        api_key: process.env.LASTFM_API_KEY as string,
-        format: "json",
-        limit: "3",
-        method: "user.getrecenttracks",
-        user: "mattbolanos",
-      }),
-    {
-      next: {
-        revalidate: 30,
-      },
-    },
-  ).then((res) => res.json());
+  const latestTrack = await getLatestTrack();
 
-  const { success, data } = RecentTracksSchema.safeParse(res);
-
-  if (!success) {
+  if (!latestTrack) {
     return null;
   }
 
-  const tracksWithUts = data.recenttracks.track.filter(
-    (track) => track.date?.uts,
-  );
-
-  if (tracksWithUts.length === 0) {
-    return null;
-  }
-
-  return <TrackCard latestTrack={tracksWithUts[0]} />;
+  return <TrackCard latestTrack={latestTrack} />;
 }
 
 export default function Home() {
