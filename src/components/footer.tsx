@@ -4,7 +4,7 @@ import { ThemeToggle } from "./theme/toggle";
 export function Footer() {
   return (
     <footer className="px-6 pt-6 pb-4 text-xs sm:pb-6 md:text-sm">
-      <div className="flex items-center justify-between">
+      <div className="flex grow items-center justify-between">
         <p>
           <Link
             className="text-link"
