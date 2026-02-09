@@ -46,7 +46,8 @@ export default function Home() {
         Matt Bolaños
       </h1>
       <p>
-        I'm a developer based in New York City. I work at the{" "}
+        I'm a developer based in New York City. I work as a full stack developer
+        and data analyst for the Basketball Analytics and Innovation team at the{" "}
         <Link
           className="text-link"
           href="https://www.nba.com/warriors"
@@ -54,8 +55,8 @@ export default function Home() {
           target="_blank"
         >
           Golden State Warriors
-        </Link>{" "}
-        as a full stack developer and data analyst in their front office.
+        </Link>
+        .
       </p>
       <p>
         I spend my downtime trail running, gluten-free baking and{" "}
