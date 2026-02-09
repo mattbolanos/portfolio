@@ -4,7 +4,7 @@ import type { RecentTrack } from "@/lib/schemas/last-fm";
 import { Skeleton } from "./ui/skeleton";
 
 interface TrackCardProps {
-  latestTrack: RecentTrack["recenttracks"]["track"][0];
+  latestTrack: RecentTrack;
 }
 
 export function TrackCard({ latestTrack }: TrackCardProps) {

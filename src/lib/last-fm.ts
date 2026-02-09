@@ -1,6 +1,6 @@
-import { RecentTracksSchema } from "./schemas/last-fm";
+import { type RecentTrack, RecentTracksSchema } from "./schemas/last-fm";
 
-export const getLatestTrack = async () => {
+export const getLatestTrack = async (): Promise<RecentTrack | null> => {
   const res = await fetch(
     `https://ws.audioscrobbler.com/2.0/?` +
       new URLSearchParams({

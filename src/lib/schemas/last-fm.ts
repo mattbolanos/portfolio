@@ -44,4 +44,6 @@ export const RecentTracksSchema = z.object({
   }),
 });
 
-export type RecentTrack = z.infer<typeof RecentTracksSchema>;
+export type RecentTrack = z.infer<
+  typeof RecentTracksSchema
+>["recenttracks"]["track"][number];
