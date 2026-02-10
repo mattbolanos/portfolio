@@ -134,3 +134,26 @@ a {
 .text-link:hover {
   @apply transition-opacity duration-150 ease-in-out hover:opacity-60;
 }
+
+.heatmap-scroll {
+  scrollbar-color: color-mix(
+      in oklch,
+      var(--strava) 25%,
+      var(--muted-foreground)
+    )
+    transparent;
+  scrollbar-width: thin;
+}
+
+.heatmap-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.heatmap-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.heatmap-scroll::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--strava) 25%, var(--muted-foreground));
+  border-radius: 9999px;
+}
