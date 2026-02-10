@@ -18,18 +18,14 @@ async function RecentTrackWrapper() {
 }
 
 async function ActivitiesPreviewWrapper() {
-  const oneYearAgo = new Date();
-  oneYearAgo.setDate(oneYearAgo.getDate() - 366);
-
   const activities = await getActivities({
-    after: oneYearAgo,
     maxPages: 6,
     perPage: 100,
   });
 
   if (!activities) {
     return (
-      <div className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground">
+      <div className="border-border bg-card text-muted-foreground rounded-xl border p-4 text-sm">
         Unable to load Strava activities.
       </div>
     );
@@ -80,7 +76,7 @@ export default function Home() {
       {/* strava preview */}
       <Suspense
         fallback={
-          <div className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground">
+          <div className="border-border bg-card text-muted-foreground rounded-xl border p-4 text-sm">
             Loading Strava activities...
           </div>
         }

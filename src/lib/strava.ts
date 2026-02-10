@@ -4,8 +4,6 @@ const METERS_PER_MILE = 1609.344;
 const RUN_SPORT_TYPES = new Set(["Run", "TrailRun", "VirtualRun"]);
 
 type GetActivitiesOptions = {
-  after?: Date;
-  before?: Date;
   maxPages?: number;
   perPage?: number;
 };
@@ -68,11 +66,10 @@ const getAccessToken = async (): Promise<string | null> => {
 };
 
 export const getActivities = async ({
-  after,
-  before,
   maxPages = 8,
   perPage = 100,
 }: GetActivitiesOptions = {}): Promise<GetActivitiesResult | null> => {
+  "use cache";
   const accessToken = await getAccessToken();
 
   if (!accessToken) {
@@ -89,21 +86,17 @@ export const getActivities = async ({
     };
   }
 
+  const oneYearAgo = new Date();
+  oneYearAgo.setDate(oneYearAgo.getDate() - 366);
+
   const activities: StravaActivity[] = [];
 
   for (let page = 1; page <= maxPages; page += 1) {
     const searchParams = new URLSearchParams({
+      after: toEpochSeconds(oneYearAgo),
       page: page.toString(),
       per_page: perPage.toString(),
     });
-
-    if (after) {
-      searchParams.set("after", toEpochSeconds(after));
-    }
-
-    if (before) {
-      searchParams.set("before", toEpochSeconds(before));
-    }
 
     const res = await fetch(
       `https://www.strava.com/api/v3/athlete/activities?${searchParams.toString()}`,

@@ -1,6 +1,7 @@
 "use client";
 
 import type { GetActivitiesResult } from "@/lib/strava";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 type HeatmapDay = GetActivitiesResult["heatmap"][number];
 
@@ -109,81 +110,85 @@ export const Heatmap = ({ heatmap }: HeatmapProps) => {
   const totalRuns = heatmap.reduce((sum, day) => sum + day.runCount, 0);
 
   return (
-    <section className="border-border bg-card rounded-xl border p-4">
-      <div className="overflow-x-auto">
-        <div className="inline-flex min-w-max gap-2">
-          <div className="text-muted-foreground mt-6 grid grid-rows-7 gap-[3px] text-xs">
-            <span className="h-[11px]" />
-            <span className="h-[11px] leading-[11px]">Mon</span>
-            <span className="h-[11px]" />
-            <span className="h-[11px] leading-[11px]">Wed</span>
-            <span className="h-[11px]" />
-            <span className="h-[11px] leading-[11px]">Fri</span>
-            <span className="h-[11px]" />
-          </div>
-
-          <div className="relative">
-            <div className="text-muted-foreground relative mb-2 h-4 text-xs">
-              {monthLabels.map((month) => (
-                <span
-                  className="absolute top-0 whitespace-nowrap"
-                  key={`${month.label}-${month.weekIndex}`}
-                  style={{ left: month.weekIndex * (TILE_SIZE + TILE_GAP) }}
-                >
-                  {month.label}
-                </span>
-              ))}
+    <div className="bg-muted space-y-1.5 rounded-xl p-1.5">
+      <section className="border-border bg-card rounded-xl border p-4">
+        <div className="overflow-x-auto">
+          <div className="inline-flex min-w-max gap-2">
+            <div className="text-muted-foreground mt-6 grid grid-rows-7 gap-[3px] text-xs">
+              <span className="h-[11px]" />
+              <span className="h-[11px] leading-[11px]">Mon</span>
+              <span className="h-[11px]" />
+              <span className="h-[11px] leading-[11px]">Wed</span>
+              <span className="h-[11px]" />
+              <span className="h-[11px] leading-[11px]">Fri</span>
+              <span className="h-[11px]" />
             </div>
 
-            <div className="grid grid-flow-col grid-rows-7 gap-[3px]">
-              {weeks.flatMap((week) =>
-                week.values.map((day) => {
-                  const level = getLevel(day.miles, maxMiles);
-                  const milesText = day.miles.toFixed(2);
-                  const runLabel = day.runCount === 1 ? "run" : "runs";
-                  const title =
-                    day.runCount === 0
-                      ? `No running activity on ${DATE_FORMATTER.format(day.date)}`
-                      : `${milesText} mi across ${day.runCount} ${runLabel} on ${DATE_FORMATTER.format(day.date)}`;
+            <div className="relative">
+              <div className="text-muted-foreground relative mb-2 h-4 text-xs">
+                {monthLabels.map((month) => (
+                  <span
+                    className="absolute top-0 whitespace-nowrap"
+                    key={`${month.label}-${month.weekIndex}`}
+                    style={{ left: month.weekIndex * (TILE_SIZE + TILE_GAP) }}
+                  >
+                    {month.label}
+                  </span>
+                ))}
+              </div>
 
-                  return (
-                    <div
-                      className="rounded-[2px]"
-                      key={toDateKey(day.date)}
-                      style={{
-                        backgroundColor: getTileColor(level),
-                        height: TILE_SIZE,
-                        width: TILE_SIZE,
-                      }}
-                      title={title}
-                    />
-                  );
-                }),
-              )}
+              <div className="grid grid-flow-col grid-rows-7 gap-[3px]">
+                {weeks.flatMap((week) =>
+                  week.values.map((day) => {
+                    const level = getLevel(day.miles, maxMiles);
+                    const milesText = day.miles.toFixed(2);
+                    const title =
+                      day.runCount === 0
+                        ? `No running activity on ${DATE_FORMATTER.format(day.date)}`
+                        : `${milesText} mi on ${DATE_FORMATTER.format(day.date)}`;
+
+                    return (
+                      <Tooltip key={toDateKey(day.date)}>
+                        <TooltipTrigger>
+                          <div
+                            className="rounded-[3px]"
+                            style={{
+                              backgroundColor: getTileColor(level),
+                              height: TILE_SIZE,
+                              width: TILE_SIZE,
+                            }}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>{title}</TooltipContent>
+                      </Tooltip>
+                    );
+                  }),
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="text-muted-foreground mt-4 flex flex-wrap items-center justify-between gap-2 text-xs">
-        <p>{`${totalMiles.toFixed(1)} miles across ${totalRuns} runs in the last year`}</p>
+        <div className="text-muted-foreground mt-4 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <p>{`${totalMiles.toFixed(1)} miles across ${totalRuns} runs in the last year`}</p>
 
-        <div className="flex items-center gap-1.5">
-          <span>Less</span>
-          {COLOR_MIX_BY_LEVEL.map((mix, level) => (
-            <div
-              className="rounded-[2px]"
-              key={`legend-${mix}`}
-              style={{
-                backgroundColor: getTileColor(level),
-                height: TILE_SIZE,
-                width: TILE_SIZE,
-              }}
-            />
-          ))}
-          <span>More</span>
+          <div className="flex items-center gap-1.5">
+            <span>Less</span>
+            {COLOR_MIX_BY_LEVEL.map((mix, level) => (
+              <div
+                className="rounded-[3px]"
+                key={`legend-${mix}`}
+                style={{
+                  backgroundColor: getTileColor(level),
+                  height: TILE_SIZE,
+                  width: TILE_SIZE,
+                }}
+              />
+            ))}
+            <span>More</span>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 };
