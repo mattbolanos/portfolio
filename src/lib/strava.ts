@@ -58,7 +58,7 @@ const getAccessToken = async (): Promise<string | null> => {
   });
 
   if (!res.ok) {
-    throw new Error(`Failed to refresh Strava token (${res.status})`);
+    return null;
   }
 
   const payload = await res.json();
@@ -107,7 +107,7 @@ export const getActivities = async ({
     );
 
     if (!res.ok) {
-      throw new Error(`Failed to fetch Strava activities (${res.status})`);
+      return null;
     }
 
     const payload = await res.json();

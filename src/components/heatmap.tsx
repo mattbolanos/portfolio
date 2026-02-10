@@ -11,7 +11,7 @@ interface HeatmapProps {
 
 const TILE_SIZE = 11;
 const TILE_GAP = 3;
-const WEEKS_TO_SHOW = 53;
+const WEEKS_TO_SHOW = 40;
 const MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", { month: "short" });
 const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
   day: "numeric",
@@ -148,7 +148,7 @@ export const Heatmap = ({ heatmap }: HeatmapProps) => {
                         : `${milesText} mi on ${DATE_FORMATTER.format(day.date)}`;
 
                     return (
-                      <Tooltip key={toDateKey(day.date)}>
+                      <Tooltip disableHoverablePopup key={toDateKey(day.date)}>
                         <TooltipTrigger>
                           <div
                             className="rounded-[3px]"
