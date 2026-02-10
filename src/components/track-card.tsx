@@ -19,8 +19,8 @@ export function TrackCard({ latestTrack }: TrackCardProps) {
     : null;
 
   return (
-    <div className="bg-muted space-y-1.5 rounded-[9px] p-1.5">
-      <Card className="rounded-[9px] p-1">
+    <div className="bg-muted space-y-1.5 rounded-xl p-1.5">
+      <Card className="rounded-xl p-1">
         <div className="flex min-w-0 items-center gap-2">
           <Image
             alt={latestTrack.name}
@@ -63,8 +63,8 @@ export function TrackCard({ latestTrack }: TrackCardProps) {
 // In track-card.tsx
 export function TrackCardSkeleton() {
   return (
-    <div className="bg-muted space-y-1.5 rounded-[9px] p-1">
-      <Card className="rounded-[9px] p-1">
+    <div className="bg-muted space-y-1.5 rounded-xl p-1">
+      <Card className="rounded-xl p-1">
         <div className="flex min-w-0 items-center gap-2">
           <Skeleton className="h-12 w-12 rounded-[8px]" />
           <div className="min-w-0 space-y-1">

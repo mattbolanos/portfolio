@@ -2,8 +2,10 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
+import { Heatmap } from "@/components/heatmap";
 import { TrackCard, TrackCardSkeleton } from "@/components/track-card";
 import { getLatestTrack } from "@/lib/last-fm";
+import { getActivities } from "@/lib/strava";
 
 async function RecentTrackWrapper() {
   const latestTrack = await getLatestTrack();
@@ -13,6 +15,27 @@ async function RecentTrackWrapper() {
   }
 
   return <TrackCard latestTrack={latestTrack} />;
+}
+
+async function ActivitiesPreviewWrapper() {
+  const oneYearAgo = new Date();
+  oneYearAgo.setDate(oneYearAgo.getDate() - 366);
+
+  const activities = await getActivities({
+    after: oneYearAgo,
+    maxPages: 6,
+    perPage: 100,
+  });
+
+  if (!activities) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground">
+        Unable to load Strava activities.
+      </div>
+    );
+  }
+
+  return <Heatmap heatmap={activities.heatmap} />;
 }
 
 export default function Home() {
@@ -52,6 +75,17 @@ export default function Home() {
       {/* recent track */}
       <Suspense fallback={<TrackCardSkeleton />}>
         <RecentTrackWrapper />
+      </Suspense>
+
+      {/* strava preview */}
+      <Suspense
+        fallback={
+          <div className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground">
+            Loading Strava activities...
+          </div>
+        }
+      >
+        <ActivitiesPreviewWrapper />
       </Suspense>
 
       {/* contact links */}
