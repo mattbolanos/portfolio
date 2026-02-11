@@ -3,9 +3,21 @@ import { Suspense } from "react";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
 import { Heatmap } from "@/components/heatmap";
+import { RecentRuns } from "@/components/recent-runs";
 import { TrackCard, TrackCardSkeleton } from "@/components/track-card";
-import { getLatestTrack } from "@/lib/last-fm";
-import { getActivities } from "@/lib/strava";
+import { getLatestTrack } from "@/lib/api/last-fm";
+import { type GetActivitiesResult, getActivities } from "@/lib/api/strava";
+
+type RecentRun = GetActivitiesResult["runActivities"][number];
+
+const selectLatestRuns = (runs: RecentRun[], limit = 2): RecentRun[] =>
+  [...runs]
+    .sort(
+      (runA, runB) =>
+        new Date(runB.start_date_local).getTime() -
+        new Date(runA.start_date_local).getTime(),
+    )
+    .slice(0, limit);
 
 async function RecentTrackWrapper() {
   const latestTrack = await getLatestTrack();
@@ -31,7 +43,14 @@ async function ActivitiesPreviewWrapper() {
     );
   }
 
-  return <Heatmap heatmap={activities.heatmap} />;
+  const latestRuns = selectLatestRuns(activities.runActivities);
+
+  return (
+    <div className="bg-muted space-y-1.5 rounded-xl p-1.5">
+      <Heatmap heatmap={activities.heatmap} />
+      <RecentRuns runs={latestRuns} />
+    </div>
+  );
 }
 
 export default function Home() {
@@ -68,11 +87,6 @@ export default function Home() {
       {/* experience */}
       <Experience />
 
-      {/* recent track */}
-      <Suspense fallback={<TrackCardSkeleton />}>
-        <RecentTrackWrapper />
-      </Suspense>
-
       {/* strava preview */}
       <Suspense
         fallback={
@@ -82,6 +96,11 @@ export default function Home() {
         }
       >
         <ActivitiesPreviewWrapper />
+      </Suspense>
+
+      {/* recent track */}
+      <Suspense fallback={<TrackCardSkeleton />}>
+        <RecentTrackWrapper />
       </Suspense>
 
       {/* contact links */}

@@ -41,11 +41,12 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-strava: var(--strava);
 }
 
 :root {
   --radius: .8rem;
-  --background: oklch(0.972 0 0);
+  --background: oklch(98.26% 0.0016 66.229);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
@@ -82,7 +83,7 @@
 .dark {
   --background: oklch(0.21 0.008 85);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.31 0.008 286.375);
+  --card: oklch(0.265 0.014 75);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.21 0.006 285.885);
   --popover-foreground: oklch(0.985 0 0);
@@ -111,6 +112,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.41 0.159 10.272);
+  --strava: oklch(0.6618 0.2214 36.88);
 }
 
 @layer base {
@@ -156,4 +158,8 @@ a {
 .heatmap-scroll::-webkit-scrollbar-thumb {
   background: color-mix(in oklch, var(--strava) 25%, var(--muted-foreground));
   border-radius: 9999px;
+}
+
+h2 {
+  @apply font-medium md:text-lg;
 }

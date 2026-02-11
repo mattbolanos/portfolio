@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
-import type { RecentTrack } from "@/lib/schemas/last-fm";
+import type { RecentTrack } from "@/lib/api/schemas/last-fm";
 import { Skeleton } from "./ui/skeleton";
 
 interface TrackCardProps {

@@ -42,7 +42,7 @@ const experienceEntries: ExperienceEntry[] = [
 export function Experience() {
   return (
     <div className="flex flex-col gap-y-3">
-      <h2 className="font-medium md:text-lg">Experience</h2>
+      <h2>Experience</h2>
       <ul className="flex flex-col gap-y-8">
         {experienceEntries.map((entry) => (
           <ExperienceItem entry={entry} key={entry.company} />
