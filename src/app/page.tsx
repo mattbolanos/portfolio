@@ -10,7 +10,7 @@ import { type GetActivitiesResult, getActivities } from "@/lib/api/strava";
 
 type RecentRun = GetActivitiesResult["runActivities"][number];
 
-const selectLatestRuns = (runs: RecentRun[], limit = 2): RecentRun[] =>
+const selectLatestRuns = (runs: RecentRun[], limit = 3): RecentRun[] =>
   [...runs]
     .sort(
       (runA, runB) =>

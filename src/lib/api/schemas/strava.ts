@@ -1,9 +1,17 @@
 import { z } from "zod";
 
+const StravaMapSchema = z.object({
+  id: z.string(),
+  resource_state: z.number(),
+  summary_polyline: z.string().nullable().optional(),
+});
+
 export const StravaActivitySchema = z.object({
   distance: z.number(),
   elapsed_time: z.number(),
   id: z.number(),
+  kudos_count: z.number(),
+  map: StravaMapSchema.nullable().optional(),
   moving_time: z.number(),
   name: z.string(),
   sport_type: z.string(),

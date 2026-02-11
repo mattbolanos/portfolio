@@ -1,7 +1,6 @@
 import { StravaActivitiesSchema, type StravaActivity } from "./schemas/strava";
 
 const METERS_PER_MILE = 1609.344;
-const RUN_SPORT_TYPES = new Set(["Run", "TrailRun", "VirtualRun"]);
 
 type GetActivitiesOptions = {
   maxPages?: number;
@@ -17,7 +16,6 @@ type HeatmapDay = {
 };
 
 export type GetActivitiesResult = {
-  activities: StravaActivity[];
   heatmap: HeatmapDay[];
   runActivities: StravaActivity[];
   totals: {
@@ -74,7 +72,6 @@ export const getActivities = async ({
 
   if (!accessToken) {
     return {
-      activities: [],
       heatmap: [],
       runActivities: [],
       totals: {
@@ -89,7 +86,7 @@ export const getActivities = async ({
   const oneYearAgo = new Date();
   oneYearAgo.setDate(oneYearAgo.getDate() - 366);
 
-  const activities: StravaActivity[] = [];
+  const runActivities: StravaActivity[] = [];
 
   for (let page = 1; page <= maxPages; page += 1) {
     const searchParams = new URLSearchParams({
@@ -117,16 +114,14 @@ export const getActivities = async ({
       return null;
     }
 
-    activities.push(...parsed.data);
+    const runs = parsed.data.filter((activity) => activity.type === "Run");
 
-    if (parsed.data.length < perPage) {
+    runActivities.push(...runs);
+
+    if (runs.length < perPage) {
       break;
     }
   }
-
-  const runActivities = activities.filter((activity) =>
-    RUN_SPORT_TYPES.has(activity.sport_type),
-  );
 
   const byDay = new Map<
     string,
@@ -165,11 +160,10 @@ export const getActivities = async ({
   );
 
   return {
-    activities,
     heatmap,
     runActivities,
     totals: {
-      activityCount: activities.length,
+      activityCount: runActivities.length,
       runCount: runActivities.length,
       runDistanceMeters,
       runMiles: roundTo(runDistanceMeters / METERS_PER_MILE, 2),
