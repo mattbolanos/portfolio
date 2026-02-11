@@ -137,26 +137,31 @@ a {
   @apply transition-opacity duration-150 ease-in-out hover:opacity-60;
 }
 
-.heatmap-scroll {
-  scrollbar-color: color-mix(
-      in oklch,
-      var(--strava) 25%,
-      var(--muted-foreground)
-    )
-    transparent;
+html {
+  --scrollbar-thumb: color-mix(
+    in oklch,
+    var(--strava) 25%,
+    var(--muted-foreground)
+  );
+  --scrollbar-track: transparent;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
   scrollbar-width: thin;
 }
 
-.heatmap-scroll::-webkit-scrollbar {
+html::-webkit-scrollbar,
+html *::-webkit-scrollbar {
+  width: 8px;
   height: 8px;
 }
 
-.heatmap-scroll::-webkit-scrollbar-track {
-  background: transparent;
+html::-webkit-scrollbar-track,
+html *::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
 }
 
-.heatmap-scroll::-webkit-scrollbar-thumb {
-  background: color-mix(in oklch, var(--strava) 25%, var(--muted-foreground));
+html::-webkit-scrollbar-thumb,
+html *::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
   border-radius: 9999px;
 }
 

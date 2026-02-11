@@ -165,7 +165,7 @@ const RoutePreview = ({ runName, summaryPolyline }: RoutePreviewProps) => {
         role="img"
         viewBox={`0 0 ${ROUTE_PREVIEW_WIDTH} ${ROUTE_PREVIEW_HEIGHT}`}
       >
-        <title>{runName} route</title>
+        <title>{`${runName} route`}</title>
         <path
           className="text-strava/20"
           d={routePath}

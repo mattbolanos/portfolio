@@ -43,7 +43,7 @@ const HeatmapWindow = ({ view }: HeatmapWindowProps) => {
           ))}
         </div>
 
-        <div className="heatmap-scroll overflow-x-auto overflow-y-hidden">
+        <div className="overflow-x-auto overflow-y-hidden">
           <div className="inline-block min-w-max pb-1">
             <div className="text-muted-foreground relative mb-2 h-4 text-xs">
               {monthLabels.map((month) => (
