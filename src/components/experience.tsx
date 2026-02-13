@@ -41,14 +41,14 @@ const experienceEntries: ExperienceEntry[] = [
 
 export function Experience() {
   return (
-    <div className="flex flex-col gap-y-3">
+    <div className="space-y-3">
       <h2>Experience</h2>
-      <ul className="flex flex-col gap-y-8">
+      <ul className="divide-border/50 flex flex-col divide-y">
         {experienceEntries.map((entry) => (
           <ExperienceItem entry={entry} key={entry.company} />
         ))}
       </ul>
-      <p>
+      <p className="mt-1.5">
         <Link
           className="text-link"
           href="/matt-bolanos-resume.pdf"
@@ -64,8 +64,8 @@ export function Experience() {
 
 function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
   return (
-    <li className="flex gap-x-3">
-      <div className="flex-none">
+    <li className="flex gap-x-3 py-4 first:pt-0 last:pb-0">
+      <div className="flex-none pt-0.5">
         <Image
           alt={entry.company}
           className={cn(
@@ -90,8 +90,8 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
         <h3 className="text-sm leading-none font-normal sm:text-base">
           {entry.company}
         </h3>
-        <p className="text-muted-foreground text-xs sm:text-sm">
-          {entry.startDate} - {entry.endDate}
+        <p className="text-muted-foreground text-[10px] tracking-widest uppercase sm:text-xs">
+          {entry.startDate} — {entry.endDate}
         </p>
         <p className="text-sm">{entry.description}</p>
       </div>

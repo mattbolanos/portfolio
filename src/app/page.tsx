@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { ActivitiesWrapperSkeleton } from "@/components/activities-wrapper-skeleton";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
 import { Heatmap } from "@/components/heatmap";
 import { RecentRuns } from "@/components/recent-runs";
 import { TrackCard, TrackCardSkeleton } from "@/components/track-card";
-import { getLatestTrack } from "@/lib/api/last-fm";
+import { getRecentTracks } from "@/lib/api/last-fm";
 import { type GetActivitiesResult, getActivities } from "@/lib/api/strava";
 
 type RecentRun = GetActivitiesResult["runActivities"][number];
@@ -20,13 +21,13 @@ const selectLatestRuns = (runs: RecentRun[], limit = 3): RecentRun[] =>
     .slice(0, limit);
 
 async function RecentTrackWrapper() {
-  const latestTrack = await getLatestTrack();
+  const tracks = await getRecentTracks(3);
 
-  if (!latestTrack) {
+  if (!tracks || tracks.length === 0) {
     return null;
   }
 
-  return <TrackCard latestTrack={latestTrack} />;
+  return <TrackCard tracks={tracks} />;
 }
 
 async function ActivitiesPreviewWrapper() {
@@ -55,55 +56,58 @@ async function ActivitiesPreviewWrapper() {
 
 export default function Home() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-xl leading-14 font-medium md:text-2xl">
-        Matt Bolaños
-      </h1>
-      <p>
-        I'm a developer based in New York City. I work as a full stack developer
-        and data analyst for the Basketball Analytics and Innovation team at the{" "}
-        <Link
-          className="text-link"
-          href="https://www.nba.com/warriors"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Golden State Warriors
-        </Link>
-        .
-      </p>
-      <p>
-        I spend my downtime trail running, gluten-free baking and{" "}
-        <Link
-          className="text-link"
-          href="https://letterboxd.com/mattbolanos"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          watching movies
-        </Link>
-        .
-      </p>
-      {/* experience */}
+    <div className="space-y-10">
+      <div className="space-y-4">
+        <div>
+          <h1 className="text-xl leading-snug font-semibold tracking-tight md:text-3xl">
+            Matt Bolaños
+          </h1>
+          <div className="bg-primary/40 mt-3 h-px w-10" />
+        </div>
+        <p>
+          I&apos;m a developer based in New York City. I work as a full stack
+          developer and data analyst for the Basketball Analytics and Innovation
+          team at the{" "}
+          <Link
+            className="text-link"
+            href="https://www.nba.com/warriors"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Golden State Warriors
+          </Link>
+          .
+        </p>
+        <p>
+          I spend my downtime trail running, gluten-free baking and{" "}
+          <Link
+            className="text-link"
+            href="https://letterboxd.com/mattbolanos"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            watching movies
+          </Link>
+          .
+        </p>
+      </div>
+
       <Experience />
 
-      {/* strava preview */}
-      <Suspense
-        fallback={
-          <div className="border-border bg-card text-muted-foreground rounded-xl border p-4 text-sm">
-            Loading Strava activities...
-          </div>
-        }
-      >
-        <ActivitiesPreviewWrapper />
-      </Suspense>
+      <div className="space-y-3">
+        <h2>Recent Runs</h2>
+        <Suspense fallback={<ActivitiesWrapperSkeleton />}>
+          <ActivitiesPreviewWrapper />
+        </Suspense>
+      </div>
 
-      {/* recent track */}
-      <Suspense fallback={<TrackCardSkeleton />}>
-        <RecentTrackWrapper />
-      </Suspense>
+      <div className="space-y-3">
+        <h2>Recent Tracks</h2>
+        <Suspense fallback={<TrackCardSkeleton />}>
+          <RecentTrackWrapper />
+        </Suspense>
+      </div>
 
-      {/* contact links */}
       <ContactLinks />
     </div>
   );

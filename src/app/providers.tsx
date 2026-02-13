@@ -9,7 +9,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
       enableSystem
     >
-      <TooltipProvider>{children}</TooltipProvider>
+      <TooltipProvider closeDelay={150}>{children}</TooltipProvider>
     </ThemeProvider>
   );
 }
