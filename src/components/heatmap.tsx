@@ -10,7 +10,6 @@ import {
   getLevel,
   getTileColor,
   type HeatmapDay,
-  type HeatmapView,
   TILE_GAP,
   TILE_SIZE,
   toDateKey,
@@ -22,18 +21,30 @@ interface HeatmapProps {
   heatmap: HeatmapDay[];
 }
 
-interface HeatmapWindowProps {
-  view: HeatmapView;
-}
-
-const HeatmapWindow = ({ view }: HeatmapWindowProps) => {
+export const Heatmap = ({ heatmap }: HeatmapProps) => {
+  const view = React.useMemo(() => buildHeatmapView(heatmap), [heatmap]);
   const monthLabels = React.useMemo(
     () => buildMonthLabels(view.weeks),
     [view.weeks],
   );
+  const [isScrolling, setIsScrolling] = React.useState(false);
+  const scrollTimeoutRef = React.useRef<number | null>(null);
+
+  const handleHeatmapScroll = React.useCallback(() => {
+    setIsScrolling(true);
+
+    if (scrollTimeoutRef.current !== null) {
+      window.clearTimeout(scrollTimeoutRef.current);
+    }
+
+    scrollTimeoutRef.current = window.setTimeout(() => {
+      setIsScrolling(false);
+      scrollTimeoutRef.current = null;
+    }, 100);
+  }, []);
 
   return (
-    <div>
+    <Card className="rounded-xl p-4">
       <div className="flex justify-between gap-2">
         <div className="text-muted-foreground mt-6 hidden shrink-0 grid-rows-7 gap-1 text-xs sm:grid">
           {DAY_LABELS.map((dayLabel) => (
@@ -43,7 +54,10 @@ const HeatmapWindow = ({ view }: HeatmapWindowProps) => {
           ))}
         </div>
 
-        <div className="overflow-x-auto overflow-y-hidden">
+        <div
+          className="overflow-x-auto overflow-y-hidden"
+          onScroll={handleHeatmapScroll}
+        >
           <div className="inline-block min-w-max pb-1">
             <div className="text-muted-foreground relative mb-2 h-4 text-xs">
               {monthLabels.map((month) => (
@@ -75,7 +89,9 @@ const HeatmapWindow = ({ view }: HeatmapWindowProps) => {
                         />
                       ) : (
                         <Tooltip disableHoverablePopup>
-                          <TooltipTrigger className="hidden sm:block">
+                          <TooltipTrigger
+                            className={`hidden sm:block ${isScrolling ? "pointer-events-none" : ""}`}
+                          >
                             <div
                               className="rounded-[3px] transition-opacity duration-150 hover:opacity-85"
                               style={{
@@ -131,16 +147,6 @@ const HeatmapWindow = ({ view }: HeatmapWindowProps) => {
           </div>
         </div>
       </div>
-    </div>
-  );
-};
-
-export const Heatmap = ({ heatmap }: HeatmapProps) => {
-  const view = React.useMemo(() => buildHeatmapView(heatmap), [heatmap]);
-
-  return (
-    <Card className="rounded-xl p-4">
-      <HeatmapWindow view={view} />
     </Card>
   );
 };
