@@ -57,12 +57,12 @@ async function ActivitiesPreviewWrapper() {
 export default function Home() {
   return (
     <div className="space-y-10">
-      <div className="space-y-4">
-        <div>
+      <div className="space-y-3">
+        <div className="w-fit space-y-1.5">
           <h1 className="text-xl leading-snug font-semibold tracking-tight md:text-3xl">
             Matt Bolaños
           </h1>
-          <div className="bg-primary/40 mt-3 h-px w-10" />
+          <div className="bg-primary h-px w-full" />
         </div>
         <p>
           I&apos;m a developer based in New York City. I work as a full stack
@@ -95,16 +95,16 @@ export default function Home() {
       <Experience />
 
       <div className="space-y-3">
-        <h2>Recent Runs</h2>
-        <Suspense fallback={<ActivitiesWrapperSkeleton />}>
-          <ActivitiesPreviewWrapper />
+        <h2>Recent Tracks</h2>
+        <Suspense fallback={<TrackCardSkeleton />}>
+          <RecentTrackWrapper />
         </Suspense>
       </div>
 
       <div className="space-y-3">
-        <h2>Recent Tracks</h2>
-        <Suspense fallback={<TrackCardSkeleton />}>
-          <RecentTrackWrapper />
+        <h2>Recent Runs</h2>
+        <Suspense fallback={<ActivitiesWrapperSkeleton />}>
+          <ActivitiesPreviewWrapper />
         </Suspense>
       </div>
 

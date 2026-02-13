@@ -32,7 +32,7 @@ const experienceEntries: ExperienceEntry[] = [
   {
     company: "Northwestern University Men's Basketball",
     description:
-      "Created reports and dashboards for coaching staff and performance team. Developed strategic models and ETL scripts for lineup and shot location analysis.",
+      "Created reports and dashboards for coaching staff and performance team. Developed models and ETL scripts for lineup and shot location analysis.",
     endDate: "Mar 2021",
     imageUrl: "/northwestern.svg",
     startDate: "Aug 2020",

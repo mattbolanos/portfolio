@@ -33,12 +33,11 @@ const ROUTE_PREVIEW_SIZE = 52;
 const ROUTE_PREVIEW_PADDING = 5;
 
 const ROUTE_ANIM = {
-  dotDuration: 1.3, // dot traces full route in this time
-  dotOffset: 0.1, // dot starts slightly after path begins
-  drawDuration: 1.3, // seconds for path to fully draw
-  drawOffset: 0.2, // delay after card-in before route draws
-  endPulseAt: 1.3, // end marker appears after dot finishes
-  glowDuration: 1.5, // glow trail draws slightly slower
+  dotFadeOut: 0.5, // seconds for dot to fade after reaching end
+  drawDuration: 2.5, // seconds for route to fully draw
+  drawOffset: 0.3, // delay after card-in before animation starts
+  /* CSS cubic-bezier(0.22, 1, 0.36, 1) as SVG keySplines */
+  spline: "0.22 1 0.36 1",
 };
 
 const toMiles = (meters: number): number => meters / METERS_PER_MILE;
@@ -201,27 +200,17 @@ const RoutePreview = ({
   const uid = runName.replace(/\s+/g, "-");
   const drawDelay =
     replayNonce > 0 ? 0 : animationDelay + ROUTE_ANIM.drawOffset;
-  const dotDelay = drawDelay + ROUTE_ANIM.dotOffset;
-  const gradientId = `rg-${replayNonce}-${uid}`;
-  const glowId = `rglow-${replayNonce}-${uid}`;
-  const dotGlowId = `dglow-${replayNonce}-${uid}`;
+  const gradientId = `rg-${uid}`;
+  const glowId = `rglow-${uid}`;
+  const dotGlowId = `dglow-${uid}`;
   const terrainId = `terrain-${uid}`;
-
-  // Extract start and end coordinates from the route path
-  const firstPoint = routePath.match(/^M([\d.]+) ([\d.]+)/);
-  const allPoints = [...routePath.matchAll(/[ML]([\d.]+) ([\d.]+)/g)];
-  const lastPoint = allPoints[allPoints.length - 1];
-
-  const startX = firstPoint ? parseFloat(firstPoint[1]) : 0;
-  const startY = firstPoint ? parseFloat(firstPoint[2]) : 0;
-  const endX = lastPoint ? parseFloat(lastPoint[1]) : 0;
-  const endY = lastPoint ? parseFloat(lastPoint[2]) : 0;
 
   return (
     <div className="route-preview shrink-0 overflow-hidden rounded-lg sm:rounded-[10px]">
       <svg
         aria-label={`${runName} route`}
         className="h-full w-full"
+        key={replayNonce}
         preserveAspectRatio="xMidYMid meet"
         role="img"
         viewBox={`0 0 ${ROUTE_PREVIEW_SIZE} ${ROUTE_PREVIEW_SIZE}`}
@@ -273,107 +262,116 @@ const RoutePreview = ({
 
         {/* Glow trail */}
         <path
-          className="animate-draw-route-glow"
           d={routePath}
           fill="none"
           filter={`url(#${glowId})`}
-          key={`glow-${replayNonce}`}
+          opacity={0.5}
           pathLength={1}
           stroke={`url(#${gradientId})`}
+          strokeDasharray={1}
+          strokeDashoffset={1}
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth={4}
-          style={{ animationDelay: `${drawDelay}s` }}
-        />
+        >
+          <animate
+            attributeName="stroke-dashoffset"
+            begin={`${drawDelay}s`}
+            calcMode="spline"
+            dur={`${ROUTE_ANIM.drawDuration}s`}
+            fill="freeze"
+            keySplines={ROUTE_ANIM.spline}
+            keyTimes="0;1"
+            values="1;0"
+          />
+          <animate
+            attributeName="opacity"
+            begin={`${drawDelay}s`}
+            dur={`${ROUTE_ANIM.drawDuration}s`}
+            fill="freeze"
+            keyTimes="0;0.8;1"
+            values="0.5;0.45;0.2"
+          />
+        </path>
 
-        {/* Main crisp stroke */}
+        {/* Main path stroke */}
         <path
-          className="animate-draw-route"
           d={routePath}
           fill="none"
-          key={`draw-${replayNonce}`}
           pathLength={1}
           stroke={`url(#${gradientId})`}
+          strokeDasharray={1}
+          strokeDashoffset={1}
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth={2}
-          style={{ animationDelay: `${drawDelay}s` }}
-        />
+        >
+          <animate
+            attributeName="stroke-dashoffset"
+            begin={`${drawDelay}s`}
+            calcMode="spline"
+            dur={`${ROUTE_ANIM.drawDuration}s`}
+            fill="freeze"
+            keySplines={ROUTE_ANIM.spline}
+            keyTimes="0;1"
+            values="1;0"
+          />
+        </path>
 
-        {/* Start marker */}
-        <circle
-          className="animate-route-marker"
-          cx={startX}
-          cy={startY}
-          fill="oklch(0.95 0.02 145)"
-          key={`start-${replayNonce}`}
-          r={2}
-          stroke="oklch(0.55 0.12 145)"
-          strokeWidth={0.8}
-          style={{ animationDelay: `${drawDelay}s` }}
-        />
-
-        {/* Runner dot glow — comet trail effect */}
+        {/* Runner dot glow */}
         <circle
           fill="var(--strava)"
           filter={`url(#${dotGlowId})`}
-          key={`dot-glow-${replayNonce}`}
           opacity={0}
           r={3.5}
         >
           <animateMotion
-            begin={`${dotDelay}s`}
-            dur={`${ROUTE_ANIM.dotDuration}s`}
+            begin={`${drawDelay}s`}
+            calcMode="spline"
+            dur={`${ROUTE_ANIM.drawDuration}s`}
             fill="freeze"
-            key={`dotglow-motion-${replayNonce}`}
+            keySplines={ROUTE_ANIM.spline}
+            keyTimes="0;1"
             path={routePath}
           />
           <animate
             attributeName="opacity"
-            begin={`${dotDelay}s`}
-            dur={`${ROUTE_ANIM.dotDuration}s`}
+            begin={`${drawDelay}s`}
+            dur={`${ROUTE_ANIM.drawDuration + ROUTE_ANIM.dotFadeOut}s`}
             fill="freeze"
-            key={`dotglow-opacity-${replayNonce}`}
-            values="0;0.7;0.7;0"
+            keyTimes="0;0.03;0.8;1"
+            values="0.6;0.6;0.6;0"
           />
         </circle>
 
-        {/* Runner dot — crisp white circle tracing the route */}
-        <circle
-          fill="white"
-          key={`dot-${replayNonce}`}
-          opacity={0}
-          r={1.8}
-          stroke="var(--strava)"
-          strokeWidth={1}
-        >
+        {/* Runner dot */}
+        <circle fill="var(--strava)" opacity={0} r={2.2}>
           <animateMotion
-            begin={`${dotDelay}s`}
-            dur={`${ROUTE_ANIM.dotDuration}s`}
+            begin={`${drawDelay}s`}
+            calcMode="spline"
+            dur={`${ROUTE_ANIM.drawDuration}s`}
             fill="freeze"
-            key={`dot-motion-${replayNonce}`}
+            keySplines={ROUTE_ANIM.spline}
+            keyTimes="0;1"
             path={routePath}
           />
           <animate
             attributeName="opacity"
-            begin={`${dotDelay}s`}
-            dur={`${ROUTE_ANIM.dotDuration}s`}
+            begin={`${drawDelay}s`}
+            dur={`${ROUTE_ANIM.drawDuration + ROUTE_ANIM.dotFadeOut}s`}
             fill="freeze"
-            key={`dot-vis-${replayNonce}`}
-            values="0;1;1;0"
+            keyTimes="0;0.03;0.8;1"
+            values="1;1;1;0"
+          />
+          <animate
+            attributeName="r"
+            begin={`${drawDelay + ROUTE_ANIM.drawDuration}s`}
+            dur="0.35s"
+            fill="freeze"
+            keyTimes="0;0.5;1"
+            values="2.2;3.2;2.2"
           />
         </circle>
-
-        {/* End marker — pulses in at finish point */}
-        <circle
-          className="animate-route-end-pulse"
-          cx={endX}
-          cy={endY}
-          fill="var(--strava)"
-          key={`end-${replayNonce}`}
-          r={2.2}
-          style={{ animationDelay: `${drawDelay + ROUTE_ANIM.endPulseAt}s` }}
-        />
       </svg>
     </div>
   );
@@ -429,15 +427,15 @@ export const RecentRuns = ({ runs }: RecentRunsProps) => {
             <div className="grid shrink-0 grid-cols-1 text-[11px] sm:grid-cols-2 sm:gap-3 sm:text-xs">
               <span className="flex items-center gap-1 tabular-nums">
                 <HugeiconsIcon
-                  className="size-4 opacity-50"
+                  className="text-muted-foreground size-5"
                   icon={RunningShoesIcon}
                 />
                 {MILES_FORMATTER.format(toMiles(run.distance))}
                 <span>mi</span>
               </span>
-              <span className="text-muted-foreground flex items-center gap-1 tabular-nums">
+              <span className="flex items-center gap-1 tabular-nums">
                 <HugeiconsIcon
-                  className="size-4 opacity-50"
+                  className="text-muted-foreground size-5"
                   icon={MountainIcon}
                 />
                 {WHOLE_NUMBER_FORMATTER.format(

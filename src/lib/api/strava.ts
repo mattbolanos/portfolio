@@ -1,3 +1,5 @@
+import { cacheLife } from "next/cache";
+import { connection } from "next/server";
 import {
   StravaActivitiesSchema,
   type StravaActivity,
@@ -22,6 +24,27 @@ type HeatmapDay = {
   runCount: number;
 };
 
+type JsonResponse = {
+  payload: unknown | null;
+  status: number;
+};
+
+type AccessTokenOptions = {
+  forceRefresh?: boolean;
+};
+
+type RefreshedTokenPayload = {
+  accessToken: string;
+  expiresAt: number;
+  refreshToken: string;
+};
+
+type StravaTokenState = {
+  accessToken: string | null;
+  expiresAt: number | null;
+  refreshToken: string | null;
+};
+
 export type GetActivitiesResult = {
   heatmap: HeatmapDay[];
   runActivities: StravaActivity[];
@@ -43,6 +66,14 @@ const EMPTY_ACTIVITIES_RESULT: GetActivitiesResult = {
     runMiles: 0,
   },
 };
+
+const tokenState: StravaTokenState = {
+  accessToken: null,
+  expiresAt: null,
+  refreshToken: process.env.STRAVA_REFRESH_TOKEN ?? null,
+};
+
+let tokenRefreshInFlight: Promise<string | null> | null = null;
 
 const roundTo = (value: number, digits: number): number => {
   const factor = 10 ** digits;
@@ -88,34 +119,40 @@ const parseRetryAfterMs = (retryAfterHeader: string | null): number | null => {
   if (Number.isFinite(asSeconds) && asSeconds >= 0) {
     return Math.min(asSeconds * 1_000, MAX_RETRY_DELAY_MS);
   }
-
-  const asDate = Date.parse(retryAfterHeader);
-
-  if (Number.isNaN(asDate)) {
-    return null;
-  }
-
-  return Math.min(Math.max(0, asDate - Date.now()), MAX_RETRY_DELAY_MS);
+  return null;
 };
 
 const getBackoffDelayMs = (attempt: number): number =>
   Math.min(250 * 2 ** attempt, MAX_RETRY_DELAY_MS);
 
-const fetchJsonWithRetry = async (
+const fetchJsonResponseWithRetry = async (
   url: string,
   init: RequestInit,
   retries = DEFAULT_RETRIES,
-): Promise<unknown | null> => {
+): Promise<JsonResponse | null> => {
   for (let attempt = 0; attempt <= retries; attempt += 1) {
     try {
       const res = await withTimeout(url, init, REQUEST_TIMEOUT_MS);
+      let payload: unknown | null = null;
+
+      try {
+        payload = await res.json();
+      } catch {
+        payload = null;
+      }
 
       if (res.ok) {
-        return await res.json();
+        return {
+          payload,
+          status: res.status,
+        };
       }
 
       if (!isRetriableStatus(res.status) || attempt >= retries) {
-        return null;
+        return {
+          payload,
+          status: res.status,
+        };
       }
 
       const retryAfterMs =
@@ -133,6 +170,20 @@ const fetchJsonWithRetry = async (
   }
 
   return null;
+};
+
+const fetchJsonWithRetry = async (
+  url: string,
+  init: RequestInit,
+  retries = DEFAULT_RETRIES,
+): Promise<unknown | null> => {
+  const response = await fetchJsonResponseWithRetry(url, init, retries);
+
+  if (!response || response.status < 200 || response.status >= 300) {
+    return null;
+  }
+
+  return response.payload;
 };
 
 const parseActivitiesPage = (payload: unknown): StravaActivity[] => {
@@ -159,15 +210,42 @@ const parseActivitiesPage = (payload: unknown): StravaActivity[] => {
   return activities;
 };
 
-const getAccessToken = async (): Promise<string | null> => {
-  const clientId = process.env.STRAVA_CLIENT_ID;
-  const clientSecret = process.env.STRAVA_CLIENT_SECRET;
-  const refreshToken = process.env.STRAVA_REFRESH_TOKEN;
-
-  if (!clientId || !clientSecret || !refreshToken) {
+const parseRefreshedTokenPayload = (
+  payload: unknown,
+  fallbackRefreshToken: string,
+): RefreshedTokenPayload | null => {
+  if (!payload || typeof payload !== "object") {
     return null;
   }
 
+  const data = payload as Record<string, unknown>;
+  const accessToken = data.access_token;
+  const refreshToken = data.refresh_token;
+  const expiresAtRaw = data.expires_at;
+  const expiresAt =
+    typeof expiresAtRaw === "number" ? expiresAtRaw : Number(expiresAtRaw);
+
+  if (
+    typeof accessToken !== "string" ||
+    !Number.isFinite(expiresAt) ||
+    expiresAt <= 0
+  ) {
+    return null;
+  }
+
+  return {
+    accessToken,
+    expiresAt,
+    refreshToken:
+      typeof refreshToken === "string" ? refreshToken : fallbackRefreshToken,
+  };
+};
+
+const requestRefreshedToken = async (
+  clientId: string,
+  clientSecret: string,
+  refreshToken: string,
+): Promise<RefreshedTokenPayload | null> => {
   const payload = await fetchJsonWithRetry(
     "https://www.strava.com/oauth/token",
     {
@@ -177,58 +255,143 @@ const getAccessToken = async (): Promise<string | null> => {
         grant_type: "refresh_token",
         refresh_token: refreshToken,
       }),
+      cache: "no-store",
       headers: { "Content-Type": "application/json" },
       method: "POST",
-      next: { revalidate: 300 },
     },
     3,
   );
 
-  if (!payload || typeof payload !== "object") {
+  return parseRefreshedTokenPayload(payload, refreshToken);
+};
+
+const refreshAccessToken = async (
+  clientId: string,
+  clientSecret: string,
+  envRefreshToken: string,
+): Promise<string | null> => {
+  const candidateRefreshTokens = [tokenState.refreshToken, envRefreshToken]
+    .filter((token, index, all) => token && all.indexOf(token) === index)
+    .map((token) => token as string);
+
+  for (const refreshToken of candidateRefreshTokens) {
+    const refreshed = await requestRefreshedToken(
+      clientId,
+      clientSecret,
+      refreshToken,
+    );
+
+    if (!refreshed) {
+      continue;
+    }
+
+    tokenState.accessToken = refreshed.accessToken;
+    tokenState.expiresAt = refreshed.expiresAt;
+    tokenState.refreshToken = refreshed.refreshToken;
+    process.env.STRAVA_REFRESH_TOKEN = refreshed.refreshToken;
+
+    return refreshed.accessToken;
+  }
+
+  tokenState.accessToken = null;
+  tokenState.expiresAt = null;
+  return null;
+};
+
+const getAccessToken = async ({
+  forceRefresh = false,
+}: AccessTokenOptions = {}): Promise<string | null> => {
+  const clientId = process.env.STRAVA_CLIENT_ID;
+  const clientSecret = process.env.STRAVA_CLIENT_SECRET;
+  const envRefreshToken = process.env.STRAVA_REFRESH_TOKEN;
+
+  if (!clientId || !clientSecret || !envRefreshToken) {
     return null;
   }
 
-  return "access_token" in payload && typeof payload.access_token === "string"
-    ? payload.access_token
-    : null;
-};
-
-export const getActivities = async ({
-  maxPages = 8,
-  perPage = 100,
-}: GetActivitiesOptions = {}): Promise<GetActivitiesResult | null> => {
-  "use cache";
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    return EMPTY_ACTIVITIES_RESULT;
+  if (!tokenState.refreshToken) {
+    tokenState.refreshToken = envRefreshToken;
   }
 
-  const oneYearAgo = new Date();
-  oneYearAgo.setDate(oneYearAgo.getDate() - 366);
+  if (!forceRefresh && tokenState.accessToken) {
+    return tokenState.accessToken;
+  }
+
+  if (tokenRefreshInFlight) {
+    return tokenRefreshInFlight;
+  }
+
+  tokenRefreshInFlight = refreshAccessToken(
+    clientId,
+    clientSecret,
+    envRefreshToken,
+  ).finally(() => {
+    tokenRefreshInFlight = null;
+  });
+
+  return tokenRefreshInFlight;
+};
+
+type FetchActivitiesOptions = Required<GetActivitiesOptions> & {
+  afterEpochSeconds: string;
+};
+
+const fetchActivitiesUncached = async ({
+  afterEpochSeconds,
+  maxPages,
+  perPage,
+}: FetchActivitiesOptions): Promise<GetActivitiesResult | null> => {
+  let accessToken = await getAccessToken();
+
+  if (!accessToken) {
+    return null;
+  }
 
   const runActivities: StravaActivity[] = [];
   const seenActivityIds = new Set<number>();
 
   for (let page = 1; page <= maxPages; page += 1) {
     const searchParams = new URLSearchParams({
-      after: toEpochSeconds(oneYearAgo),
+      after: afterEpochSeconds,
       page: page.toString(),
       per_page: perPage.toString(),
     });
 
-    const payload = await fetchJsonWithRetry(
-      `https://www.strava.com/api/v3/athlete/activities?${searchParams.toString()}`,
+    const activitiesUrl = `https://www.strava.com/api/v3/athlete/activities?${searchParams.toString()}`;
+
+    let response = await fetchJsonResponseWithRetry(
+      activitiesUrl,
       {
+        cache: "no-store",
         headers: { Authorization: `Bearer ${accessToken}` },
-        next: { revalidate: 300 },
       },
       3,
     );
 
+    if (response?.status === 401) {
+      const refreshedAccessToken = await getAccessToken({ forceRefresh: true });
+
+      if (refreshedAccessToken) {
+        accessToken = refreshedAccessToken;
+        response = await fetchJsonResponseWithRetry(
+          activitiesUrl,
+          {
+            cache: "no-store",
+            headers: { Authorization: `Bearer ${accessToken}` },
+          },
+          3,
+        );
+      }
+    }
+
+    const payload =
+      response && response.status >= 200 && response.status < 300
+        ? response.payload
+        : null;
+
     if (!Array.isArray(payload)) {
       if (page === 1 && runActivities.length === 0) {
-        return EMPTY_ACTIVITIES_RESULT;
+        return null;
       }
 
       break;
@@ -297,4 +460,39 @@ export const getActivities = async ({
       runMiles: roundTo(runDistanceMeters / METERS_PER_MILE, 2),
     },
   };
+};
+
+const getActivitiesCached = async (
+  options: FetchActivitiesOptions,
+): Promise<GetActivitiesResult> => {
+  "use cache";
+  cacheLife("hours");
+
+  const activities = await fetchActivitiesUncached(options);
+
+  if (!activities) {
+    throw new Error("Unable to fetch Strava activities");
+  }
+
+  return activities;
+};
+
+export const getActivities = async ({
+  maxPages = 8,
+  perPage = 100,
+}: GetActivitiesOptions = {}): Promise<GetActivitiesResult | null> => {
+  await connection();
+
+  const oneYearAgo = new Date();
+  oneYearAgo.setDate(oneYearAgo.getDate() - 366);
+
+  try {
+    return await getActivitiesCached({
+      afterEpochSeconds: toEpochSeconds(oneYearAgo),
+      maxPages,
+      perPage,
+    });
+  } catch {
+    return EMPTY_ACTIVITIES_RESULT;
+  }
 };
