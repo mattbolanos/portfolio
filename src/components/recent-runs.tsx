@@ -401,7 +401,7 @@ export const RecentRuns = ({ runs }: RecentRunsProps) => {
 
         return (
           <article
-            className="animate-card-in run-card bg-card ring-foreground/6 hover:ring-foreground/10 flex items-center gap-1.5 rounded-xl px-2.5 py-2 ring-1 transition-all duration-200 ease-out sm:gap-3"
+            className="animate-card-in run-card bg-card ring-foreground/6 hover:ring-foreground/10 flex items-center gap-1.5 rounded-xl px-2.5 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3"
             key={run.id}
             style={{ animationDelay: `${delay}s` }}
           >
@@ -427,7 +427,7 @@ export const RecentRuns = ({ runs }: RecentRunsProps) => {
             <div className="grid shrink-0 grid-cols-1 text-[11px] sm:grid-cols-2 sm:gap-3 sm:text-xs">
               <span className="flex items-center gap-1 tabular-nums">
                 <HugeiconsIcon
-                  className="text-muted-foreground size-5"
+                  className="text-muted-foreground size-3.5 sm:size-5"
                   icon={RunningShoesIcon}
                 />
                 {MILES_FORMATTER.format(toMiles(run.distance))}
@@ -435,7 +435,7 @@ export const RecentRuns = ({ runs }: RecentRunsProps) => {
               </span>
               <span className="flex items-center gap-1 tabular-nums">
                 <HugeiconsIcon
-                  className="text-muted-foreground size-5"
+                  className="text-muted-foreground size-3.5 sm:size-5"
                   icon={MountainIcon}
                 />
                 {WHOLE_NUMBER_FORMATTER.format(

@@ -20,14 +20,20 @@ const selectLatestRuns = (runs: RecentRun[], limit = 3): RecentRun[] =>
     )
     .slice(0, limit);
 
-async function RecentTrackWrapper() {
+async function RecentTracksWrapper() {
   const tracks = await getRecentTracks(3);
 
   if (!tracks || tracks.length === 0) {
     return null;
   }
 
-  return <TrackCard tracks={tracks} />;
+  return (
+    <>
+      {tracks.map((track, index) => (
+        <TrackCard index={index} key={track.mbid} track={track} />
+      ))}
+    </>
+  );
 }
 
 async function ActivitiesPreviewWrapper() {
@@ -47,10 +53,10 @@ async function ActivitiesPreviewWrapper() {
   const latestRuns = selectLatestRuns(activities.runActivities);
 
   return (
-    <div className="bg-muted space-y-1.5 rounded-xl p-1.5">
+    <>
       <Heatmap heatmap={activities.heatmap} />
       <RecentRuns runs={latestRuns} />
-    </div>
+    </>
   );
 }
 
@@ -62,7 +68,7 @@ export default function Home() {
           <h1 className="text-xl leading-snug font-semibold tracking-tight md:text-3xl">
             Matt Bolaños
           </h1>
-          <div className="bg-primary h-px w-full" />
+          <div className="bg-primary h-0.5 w-full" />
         </div>
         <p>
           I&apos;m a developer based in New York City. I work as a full stack
@@ -96,16 +102,24 @@ export default function Home() {
 
       <div className="space-y-3">
         <h2>Recent Tracks</h2>
-        <Suspense fallback={<TrackCardSkeleton />}>
-          <RecentTrackWrapper />
-        </Suspense>
+        <div className="bg-muted space-y-1.5 rounded-xl p-2">
+          <Suspense
+            fallback={[1, 2, 3].map((number) => (
+              <TrackCardSkeleton key={number} />
+            ))}
+          >
+            <RecentTracksWrapper />
+          </Suspense>
+        </div>
       </div>
 
       <div className="space-y-3">
         <h2>Recent Runs</h2>
-        <Suspense fallback={<ActivitiesWrapperSkeleton />}>
-          <ActivitiesPreviewWrapper />
-        </Suspense>
+        <div className="bg-muted space-y-1.5 rounded-xl p-2">
+          <Suspense fallback={<ActivitiesWrapperSkeleton />}>
+            <ActivitiesPreviewWrapper />
+          </Suspense>
+        </div>
       </div>
 
       <ContactLinks />

@@ -15,28 +15,11 @@ const TRACK_TIME_ONLY_FORMATTER = new Intl.DateTimeFormat("en-US", {
 });
 
 interface TrackCardProps {
-  tracks: RecentTrack[];
+  track: RecentTrack;
+  index: number;
 }
 
-export function TrackCard({ tracks }: TrackCardProps) {
-  if (tracks.length === 0) return null;
-
-  return (
-    <div className="bg-muted rounded-xl p-1.5">
-      <div className="space-y-1.5">
-        {tracks.map((track, index) => (
-          <TrackItem
-            index={index}
-            key={`${track.name}-${track.date?.uts ?? index}`}
-            track={track}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function TrackItem({ track, index }: { track: RecentTrack; index: number }) {
+export function TrackCard({ track, index }: TrackCardProps) {
   const bestImage = track.image.reduce<string>((best, image) => {
     if (image.size === "large") return image["#text"] || best;
     if (image.size === "extralarge" && !best) return image["#text"] || best;
@@ -49,7 +32,7 @@ function TrackItem({ track, index }: { track: RecentTrack; index: number }) {
 
   return (
     <article
-      className="animate-card-in track-card bg-card ring-foreground/6 hover:ring-foreground/10 flex items-center gap-1.5 rounded-xl px-2.5 py-2 ring-1 transition-all duration-200 ease-out sm:gap-3"
+      className="animate-card-in track-card bg-card ring-foreground/6 hover:ring-foreground/10 flex items-center gap-1.5 rounded-xl px-2.5 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3"
       style={{ animationDelay: `${index * 0.08}s` }}
     >
       {bestImage ? (
@@ -97,24 +80,15 @@ function TrackItem({ track, index }: { track: RecentTrack; index: number }) {
 
 export function TrackCardSkeleton() {
   return (
-    <div className="bg-muted rounded-xl p-1.5">
-      <div className="space-y-1.5">
-        {[1, 2, 3].map((i) => (
-          <div
-            className="bg-card ring-foreground/6 flex items-center gap-1.5 rounded-xl px-2.5 py-2 ring-1 sm:gap-3"
-            key={i}
-          >
-            <Skeleton className="size-9 rounded-lg sm:size-11 sm:rounded-[10px]" />
-            <div className="min-w-0 flex-1 space-y-1">
-              <Skeleton className="h-4 w-24 sm:w-32" />
-              <Skeleton className="h-3 w-20 sm:w-24" />
-            </div>
-            <div className="flex shrink-0 flex-col items-end gap-0.5 sm:flex-row sm:gap-1">
-              <Skeleton className="h-3 w-10 sm:w-12" />
-              <Skeleton className="h-3 w-16 sm:w-20" />
-            </div>
-          </div>
-        ))}
+    <div className="bg-card ring-foreground/6 flex items-center gap-1.5 rounded-xl px-2.5 py-2 ring-1 sm:gap-3">
+      <Skeleton className="size-9 rounded-lg sm:size-11 sm:rounded-[10px]" />
+      <div className="min-w-0 flex-1 space-y-1">
+        <Skeleton className="h-4 w-24 sm:w-32" />
+        <Skeleton className="h-3 w-20 sm:w-24" />
+      </div>
+      <div className="flex shrink-0 flex-col items-end gap-0.5 sm:flex-row sm:gap-1">
+        <Skeleton className="h-3 w-10 sm:w-12" />
+        <Skeleton className="h-3 w-16 sm:w-20" />
       </div>
     </div>
   );

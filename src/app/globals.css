@@ -91,7 +91,7 @@
   --primary-foreground: oklch(0.98 0.016 73.684);
   --secondary: oklch(0.274 0.006 286.033);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.225 0.009 80);
+  --muted: oklch(0.194 0.009 80);
   --muted-foreground: oklch(0.62 0.015 75);
   --accent: oklch(0.39 0.01 68);
   --accent-foreground: oklch(0.985 0 0);
@@ -132,11 +132,11 @@ p {
   font-weight: 300;
 }
 
-a {
+.text-link {
   text-decoration-line: underline;
   text-underline-offset: 4px;
   text-decoration-color: color-mix(in oklch, currentColor 25%, transparent);
-  text-decoration-thickness: 1px;
+  text-decoration-thickness: 2px;
   transition: text-decoration-color 0.2s ease;
 }
 
@@ -172,8 +172,6 @@ html *::-webkit-scrollbar-thumb {
   border-radius: 9999px;
 }
 
-
-
 /* ── Staggered card entrance ── */
 @keyframes card-in {
   from {
@@ -202,15 +200,15 @@ html *::-webkit-scrollbar-thumb {
 .run-card:hover,
 .track-card:hover {
   box-shadow:
-    0 1px 3px oklch(0 0 0 / 0.04),
-    0 4px 12px oklch(0 0 0 / 0.03);
+    0 1px 4px oklch(0 0 0 / 0.06),
+    0 6px 20px oklch(0 0 0 / 0.07);
 }
 
 .dark .run-card:hover,
 .dark .track-card:hover {
   box-shadow:
-    0 1px 3px oklch(0 0 0 / 0.2),
-    0 4px 12px oklch(0 0 0 / 0.15);
+    0 1px 4px oklch(0 0 0 / 0.3),
+    0 6px 20px oklch(0 0 0 / 0.25);
 }
 
 /* ── Route preview tile ── */
@@ -293,5 +291,4 @@ html *::-webkit-scrollbar-thumb {
   .route-preview svg animateMotion {
     display: none;
   }
-
 }
