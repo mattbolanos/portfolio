@@ -41,7 +41,7 @@ export default function RootLayout({
       </head>
       <body className="m-auto max-w-3xl overscroll-y-contain leading-relaxed">
         <Providers>
-          <main className="min-h-screen p-6 pt-4 md:pt-8">{children}</main>
+          <main className="min-h-screen p-6 md:pt-8">{children}</main>
           <Footer />
         </Providers>
       </body>
