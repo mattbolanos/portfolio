@@ -1,84 +1,127 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { ActivitiesWrapperSkeleton } from "@/components/activities-wrapper-skeleton";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
+import { Heatmap } from "@/components/heatmap";
+import { RecentRuns } from "@/components/recent-runs";
 import { TrackCard, TrackCardSkeleton } from "@/components/track-card";
-import { RecentTracksSchema } from "@/lib/schemas/last-fm";
+import { getRecentTracks } from "@/lib/api/last-fm";
+import { type GetActivitiesResult, getActivities } from "@/lib/api/strava";
 
-async function RecentTrackWrapper() {
-  const res = await fetch(
-    `https://ws.audioscrobbler.com/2.0/?` +
-      new URLSearchParams({
-        api_key: process.env.LASTFM_API_KEY as string,
-        format: "json",
-        limit: "3",
-        method: "user.getrecenttracks",
-        user: "mattbolanos",
-      }),
-    {
-      next: {
-        revalidate: 30,
-      },
-    },
-  ).then((res) => res.json());
+type RecentRun = GetActivitiesResult["runActivities"][number];
 
-  const { success, data } = RecentTracksSchema.safeParse(res);
+const selectLatestRuns = (runs: RecentRun[], limit = 3): RecentRun[] =>
+  [...runs]
+    .sort(
+      (runA, runB) =>
+        new Date(runB.start_date_local).getTime() -
+        new Date(runA.start_date_local).getTime(),
+    )
+    .slice(0, limit);
 
-  if (!success) {
+async function RecentTracksWrapper() {
+  const tracks = await getRecentTracks(3);
+
+  if (!tracks || tracks.length === 0) {
     return null;
   }
 
-  const tracksWithUts = data.recenttracks.track.filter(
-    (track) => track.date?.uts,
+  return (
+    <>
+      {tracks.map((track, index) => (
+        <TrackCard index={index} key={track.mbid} track={track} />
+      ))}
+    </>
   );
+}
 
-  if (tracksWithUts.length === 0) {
-    return null;
+async function ActivitiesPreviewWrapper() {
+  const activities = await getActivities({
+    maxPages: 6,
+    perPage: 100,
+  });
+
+  if (!activities) {
+    return (
+      <div className="border-border bg-card text-muted-foreground rounded-xl border p-4 text-sm">
+        Unable to load Strava activities.
+      </div>
+    );
   }
 
-  return <TrackCard latestTrack={tracksWithUts[0]} />;
+  const latestRuns = selectLatestRuns(activities.runActivities);
+
+  return (
+    <>
+      <Heatmap heatmap={activities.heatmap} />
+      <RecentRuns runs={latestRuns} />
+    </>
+  );
 }
 
 export default function Home() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-xl leading-14 font-medium md:text-2xl">
-        Matt Bolaños
-      </h1>
-      <p>
-        I'm a developer based in New York City. I work as a full stack developer
-        and data analyst for the Basketball Analytics and Innovation team at the{" "}
-        <Link
-          className="text-link"
-          href="https://www.nba.com/warriors"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Golden State Warriors
-        </Link>
-        .
-      </p>
-      <p>
-        I spend my downtime trail running, gluten-free baking and{" "}
-        <Link
-          className="text-link"
-          href="https://letterboxd.com/mattbolanos"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          watching movies
-        </Link>
-        .
-      </p>
-      {/* experience */}
+    <div className="space-y-10">
+      <div className="space-y-3">
+        <div className="w-fit space-y-1.5">
+          <h1 className="text-xl leading-snug font-semibold tracking-tight md:text-3xl">
+            Matt Bolaños
+          </h1>
+          <div className="bg-primary h-0.5 w-full" />
+        </div>
+        <p>
+          I&apos;m a developer based in New York City. I work as a full stack
+          developer and data analyst for the Basketball Analytics and Innovation
+          team at the{" "}
+          <Link
+            className="text-link"
+            href="https://www.nba.com/warriors"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Golden State Warriors
+          </Link>
+          .
+        </p>
+        <p>
+          I spend my downtime trail running, gluten-free baking and{" "}
+          <Link
+            className="text-link"
+            href="https://letterboxd.com/mattbolanos"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            watching movies
+          </Link>
+          .
+        </p>
+      </div>
+
       <Experience />
 
-      {/* recent track */}
-      <Suspense fallback={<TrackCardSkeleton />}>
-        <RecentTrackWrapper />
-      </Suspense>
+      <div className="space-y-3">
+        <h2>Recent Tracks</h2>
+        <div className="bg-muted space-y-1.5 rounded-xl p-2">
+          <Suspense
+            fallback={[1, 2, 3].map((number) => (
+              <TrackCardSkeleton key={number} />
+            ))}
+          >
+            <RecentTracksWrapper />
+          </Suspense>
+        </div>
+      </div>
 
-      {/* contact links */}
+      <div className="space-y-3">
+        <h2>Recent Runs</h2>
+        <div className="bg-muted space-y-1.5 rounded-xl p-2">
+          <Suspense fallback={<ActivitiesWrapperSkeleton />}>
+            <ActivitiesPreviewWrapper />
+          </Suspense>
+        </div>
+      </div>
+
       <ContactLinks />
     </div>
   );
