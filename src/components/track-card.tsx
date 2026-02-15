@@ -32,19 +32,19 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
   return (
     <article
-      className="animate-card-in track-card bg-card ring-foreground/6 hover:ring-foreground/10 flex items-center gap-1.5 rounded-xl px-2.5 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3"
+      className="animate-card-in track-card bg-card ring-foreground/6 hover:ring-foreground/10 flex items-center gap-1.5 rounded-lg px-2.5 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3"
       style={{ animationDelay: `${index * 0.08}s` }}
     >
       {bestImage ? (
         <Image
           alt={track.name}
-          className="track-art track-art-responsive aspect-square size-9 shrink-0 rounded-lg object-cover sm:size-11 sm:rounded-[10px]"
+          className="track-art track-art-responsive aspect-square size-9 shrink-0 rounded-[10px] object-cover sm:size-11"
           height={44}
           src={bestImage}
           width={44}
         />
       ) : (
-        <div className="track-art-empty grid size-9 shrink-0 place-items-center rounded-lg sm:size-11 sm:rounded-[10px]">
+        <div className="track-art-empty grid size-9 shrink-0 place-items-center rounded-[10px] sm:size-11">
           <HugeiconsIcon
             className="text-muted-foreground size-4 sm:size-5"
             icon={Vynil01Icon}
@@ -80,8 +80,8 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
 export function TrackCardSkeleton() {
   return (
-    <div className="bg-card ring-foreground/6 flex items-center gap-1.5 rounded-xl px-2.5 py-2 ring-1 sm:gap-3">
-      <Skeleton className="size-9 rounded-lg sm:size-11 sm:rounded-[10px]" />
+    <div className="bg-card ring-foreground/6 flex items-center gap-1.5 rounded-lg px-2.5 py-2 ring-1 sm:gap-3">
+      <Skeleton className="size-9 rounded-[10px] sm:size-11" />
       <div className="min-w-0 flex-1 space-y-1">
         <Skeleton className="h-4 w-24 sm:w-32" />
         <Skeleton className="h-3 w-20 sm:w-24" />

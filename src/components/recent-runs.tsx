@@ -206,7 +206,7 @@ const RoutePreview = ({
   const terrainId = `terrain-${uid}`;
 
   return (
-    <div className="route-preview shrink-0 overflow-hidden rounded-lg sm:rounded-[10px]">
+    <div className="route-preview shrink-0 overflow-hidden rounded-[10px]">
       <svg
         aria-label={`${runName} route`}
         className="h-full w-full"
@@ -401,7 +401,7 @@ export const RecentRuns = ({ runs }: RecentRunsProps) => {
 
         return (
           <article
-            className="animate-card-in run-card bg-card ring-foreground/6 hover:ring-foreground/10 flex items-center gap-1.5 rounded-xl px-2.5 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3"
+            className="animate-card-in run-card bg-card ring-foreground/6 hover:ring-foreground/10 flex items-center gap-1.5 rounded-lg px-2.5 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3"
             key={run.id}
             style={{ animationDelay: `${delay}s` }}
           >
@@ -453,7 +453,7 @@ export const RecentRuns = ({ runs }: RecentRunsProps) => {
       })}
 
       {hasAnyRoute && (
-        <Button className="w-full rounded-xl" onClick={handleReplay}>
+        <Button className="w-full rounded-lg" onClick={handleReplay}>
           <HugeiconsIcon className="size-5" icon={ReplayIcon} />
           Replay
         </Button>

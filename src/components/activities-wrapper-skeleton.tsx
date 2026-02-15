@@ -74,10 +74,10 @@ export function ActivitiesWrapperSkeleton() {
       <div className="space-y-1.5">
         {RUN_CARD_KEYS.map((runCardKey) => (
           <article
-            className="bg-card ring-foreground/6 flex items-center gap-1.5 rounded-xl px-2.5 py-2 ring-1 sm:gap-3"
+            className="bg-card ring-foreground/6 flex items-center gap-1.5 rounded-lg px-2.5 py-2 ring-1 sm:gap-3"
             key={runCardKey}
           >
-            <Skeleton className="size-9 shrink-0 rounded-lg sm:size-11 sm:rounded-[10px]" />
+            <Skeleton className="size-9 shrink-0 rounded-[10px] sm:size-11" />
 
             <div className="flex min-w-0 flex-1 flex-col">
               <Skeleton className="h-3.5 w-24 sm:h-4 sm:w-32" />
