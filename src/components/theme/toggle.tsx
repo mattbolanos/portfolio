@@ -12,7 +12,7 @@ const EASE_OUT = "cubic-bezier(0.16, 1, 0.3, 1)"; // expo-out
 const BODY = {
   duration: 500, // ms
   moonScale: 1, // scale when showing moon
-  sunScale: 0.75, // scale when showing sun
+  sunScale: 0.5, // scale when showing sun — compact to let rays breathe
 };
 
 /* ── Crescent mask ── */
@@ -47,15 +47,15 @@ const CRATERS = [
   { cx: 13, cy: 9, r: 1.1 },
 ];
 
-/* ── Sun rays: 8 tapered teardrop shapes at 45° intervals ── */
+/* ── Sun rays: 8 elegantly tapered rays at 45° intervals ── */
 const RAY_CONFIG = {
-  cardinalBaseHW: 2.4,
-  diagonalBaseHW: 1.8,
-  duration: { entering: 420, exiting: 250 },
-  innerR: 8.5,
-  longOuterR: 12.2,
-  shortOuterR: 10.8,
-  stagger: { entering: 30, exiting: 20 },
+  cardinalBaseHW: 1.5, // slender base for refined taper
+  diagonalBaseHW: 1.1, // thinner diagonal rays
+  duration: { entering: 460, exiting: 220 },
+  innerR: 6.8, // starts just outside the sun body
+  longOuterR: 14, // cardinal rays — dramatically long
+  shortOuterR: 12, // diagonal rays — proportionally long
+  stagger: { entering: 35, exiting: 15 },
 };
 
 const RAYS = Array.from({ length: 8 }, (_, i) => {
@@ -82,9 +82,9 @@ const RAYS = Array.from({ length: 8 }, (_, i) => {
   const tx = 12 + outerR * sin;
   const ty = 12 - outerR * cos;
 
-  // Control points at ~60% ray length, ~30% base width for organic curvature
-  const cpR = RAY_CONFIG.innerR + (outerR - RAY_CONFIG.innerR) * 0.6;
-  const cpW = baseHW * 0.3;
+  // Control points at ~55% ray length, ~20% base width for sleek taper
+  const cpR = RAY_CONFIG.innerR + (outerR - RAY_CONFIG.innerR) * 0.55;
+  const cpW = baseHW * 0.2;
   const cpx1 = 12 + cpR * sin - cpW * px;
   const cpy1 = 12 - cpR * cos - cpW * py;
   const cpx2 = 12 + cpR * sin + cpW * px;
@@ -135,6 +135,7 @@ export function ThemeToggle() {
           filter: isDark
             ? "drop-shadow(0 0 2px oklch(0.95 0.02 80 / 0.6)) drop-shadow(0 0 8px oklch(0.88 0.03 75 / 0.25))"
             : "drop-shadow(0 0 2px oklch(0.82 0.18 70 / 0.5)) drop-shadow(0 0 7px oklch(0.75 0.14 65 / 0.2))",
+          overflow: "visible",
           transform: `rotate(${isDark ? ICON.moonAngle : ICON.sunAngle}deg)`,
           transition: `transform ${ICON.duration}ms ${SPRING}, filter 500ms ease, color 400ms ease`,
         }}
@@ -193,7 +194,7 @@ export function ThemeToggle() {
             key={`ray-${ray.d}`}
             stroke="none"
             style={{
-              opacity: isDark ? 0 : ray.isCardinal ? 1 : 0.7,
+              opacity: isDark ? 0 : ray.isCardinal ? 1 : 0.82,
               transform: isDark ? "scale(0)" : "scale(1)",
               transformOrigin: "12px 12px",
               transition: isDark

@@ -58,7 +58,10 @@ function ContactLinkItem({ href, label, renderIcon }: ContactLink) {
         target="_blank"
       >
         {renderIcon(iconRef)}
-        <span className="text-muted-foreground text-xs font-medium tracking-wide" style={{ textDecoration: "none" }}>
+        <span
+          className="text-muted-foreground text-xs font-medium tracking-wide"
+          style={{ textDecoration: "none" }}
+        >
           {label}
         </span>
       </Link>
@@ -70,7 +73,7 @@ export function ContactLinks() {
   return (
     <div className="space-y-3">
       <h2>Connect</h2>
-      <ul className="flex flex-wrap items-center gap-2">
+      <ul className="flex flex-wrap items-center gap-1.5">
         {LINKS.map((link) => (
           <ContactLinkItem key={link.href} {...link} />
         ))}

@@ -88,7 +88,7 @@ export function TrackCardSkeleton() {
       </div>
       <div className="flex shrink-0 flex-col items-end gap-0.5 sm:flex-row sm:gap-1">
         <Skeleton className="h-3 w-10 sm:w-12" />
-        <Skeleton className="h-3 w-16 sm:w-20" />
+        <Skeleton className="h-3 w-16 sm:w-18" />
       </div>
     </div>
   );

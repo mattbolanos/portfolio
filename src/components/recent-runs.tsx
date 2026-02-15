@@ -424,23 +424,27 @@ export const RecentRuns = ({ runs }: RecentRunsProps) => {
               </time>
             </div>
 
-            <div className="grid shrink-0 grid-cols-1 text-[11px] sm:grid-cols-2 sm:gap-3 sm:text-xs">
-              <span className="flex items-center gap-1 tabular-nums">
+            <div className="text-muted-foreground flex flex-col-reverse items-end text-[10px] sm:flex-row sm:items-center sm:gap-2.5 sm:text-xs">
+              <span className="flex items-center gap-[3px] tabular-nums sm:gap-1">
                 <HugeiconsIcon
-                  className="text-muted-foreground size-3.5 sm:size-5"
+                  className="hidden size-5 sm:block"
                   icon={RunningShoesIcon}
                 />
-                {MILES_FORMATTER.format(toMiles(run.distance))}
+                <span className="text-foreground">
+                  {MILES_FORMATTER.format(toMiles(run.distance))}
+                </span>
                 <span>mi</span>
               </span>
-              <span className="flex items-center gap-1 tabular-nums">
+              <span className="flex items-center gap-[3px] tabular-nums sm:gap-1">
                 <HugeiconsIcon
-                  className="text-muted-foreground size-3.5 sm:size-5"
+                  className="hidden size-5 sm:block"
                   icon={MountainIcon}
                 />
-                {WHOLE_NUMBER_FORMATTER.format(
-                  toFeet(run.total_elevation_gain),
-                )}
+                <span className="text-foreground">
+                  {WHOLE_NUMBER_FORMATTER.format(
+                    toFeet(run.total_elevation_gain),
+                  )}
+                </span>
                 <span>ft</span>
               </span>
             </div>
