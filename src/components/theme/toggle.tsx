@@ -4,32 +4,30 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
-/* ── Easing presets ── */
-const SPRING = "cubic-bezier(0.34, 1.56, 0.64, 1)"; // overshoot
-const EASE_OUT = "cubic-bezier(0.16, 1, 0.3, 1)"; // expo-out
+const SPRING = "cubic-bezier(0.34, 1.56, 0.64, 1)";
+const EASE_OUT = "cubic-bezier(0.16, 1, 0.3, 1)";
 
 /* ── Body (sun disc / moon crescent) ── */
 const BODY = {
-  duration: 500, // ms
-  moonScale: 1, // scale when showing moon
-  sunScale: 0.5, // scale when showing sun — compact to let rays breathe
+  duration: 500,
+  moonScale: 1,
+  sunScale: 0.5,
 };
 
 /* ── Crescent mask ── */
 const MASK = {
-  duration: 500, // ms
-  moonOffset: "translate(4px, -4px)", // slides in to carve crescent
-  sunOffset: "translate(14px, -14px)", // offscreen — no carve
+  duration: 500,
+  moonOffset: "translate(4px, -4px)",
+  sunOffset: "translate(14px, -14px)",
 };
 
 /* ── Icon rotation ── */
 const ICON = {
-  duration: 650, // ms
-  moonAngle: 25, // degrees rotated in dark mode
-  sunAngle: 0, // degrees in light mode
+  duration: 650,
+  moonAngle: 25,
+  sunAngle: 0,
 };
 
-/* ── Stars: 3 tiny circles that appear around the crescent in dark mode ── */
 const STAR_CONFIG = {
   duration: { entering: 380, exiting: 120 },
   stagger: { entering: 60, exiting: 0 },
@@ -41,13 +39,11 @@ const STARS = [
   { cx: 6, cy: 19.5, r: 1 },
 ];
 
-/* ── Craters: subtle surface detail on the moon face ── */
 const CRATERS = [
   { cx: 9.5, cy: 13.5, r: 1.8 },
   { cx: 13, cy: 9, r: 1.1 },
 ];
 
-/* ── Sun rays: 8 elegantly tapered rays at 45° intervals ── */
 const RAY_CONFIG = {
   cardinalBaseHW: 1.5, // slender base for refined taper
   diagonalBaseHW: 1.1, // thinner diagonal rays
@@ -101,7 +97,7 @@ const RAYS = Array.from({ length: 8 }, (_, i) => {
   return { d, isCardinal };
 });
 
-export function ThemeToggle() {
+export const ThemeToggle = () => {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -226,4 +222,4 @@ export function ThemeToggle() {
       </svg>
     </button>
   );
-}
+};

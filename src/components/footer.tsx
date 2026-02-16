@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ThemeToggle } from "./theme/toggle";
 
-export function Footer() {
+export const Footer = () => {
   return (
     <footer className="p-8 pt-6 text-xs md:text-sm">
       <div className="flex items-center justify-between">
@@ -19,4 +19,4 @@ export function Footer() {
       </div>
     </footer>
   );
-}
+};

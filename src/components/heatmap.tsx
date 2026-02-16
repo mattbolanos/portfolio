@@ -14,7 +14,6 @@ import {
   TILE_SIZE,
   toDateKey,
 } from "@/lib/strava/heatmap";
-import { Card } from "./ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 interface HeatmapProps {
@@ -44,9 +43,9 @@ export const Heatmap = ({ heatmap }: HeatmapProps) => {
   }, []);
 
   return (
-    <Card className="rounded-xl p-4">
+    <article className="bg-card rounded-lg p-4">
       <div className="flex justify-between gap-2">
-        <div className="text-muted-foreground mt-6 hidden shrink-0 grid-rows-7 gap-1 text-xs sm:grid">
+        <div className="text-muted-foreground mt-6 hidden shrink-0 grid-rows-7 text-xs sm:grid">
           {DAY_LABELS.map((dayLabel) => (
             <span className="h-[11px] leading-[11px]" key={dayLabel.key}>
               {dayLabel.label}
@@ -127,7 +126,7 @@ export const Heatmap = ({ heatmap }: HeatmapProps) => {
         </div>
       </div>
 
-      <div className="text-muted-foreground mt-2 space-y-2 text-xs sm:mt-0">
+      <div className="text-muted-foreground mt-2 space-y-2 text-xs sm:mt-1">
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
           <span className="tabular-nums">{`${view.totalMiles.toFixed(1)} miles ran in the last year`}</span>
           <div className="flex items-center gap-1">
@@ -147,6 +146,6 @@ export const Heatmap = ({ heatmap }: HeatmapProps) => {
           </div>
         </div>
       </div>
-    </Card>
+    </article>
   );
 };

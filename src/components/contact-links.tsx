@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useRef } from "react";
-
 import { GithubIcon } from "./ui/github";
 import { LinkedinIcon } from "./ui/linkedin";
 import { MailCheckIcon } from "./ui/mail-check";
@@ -50,7 +49,7 @@ function ContactLinkItem({ href, label, renderIcon }: ContactLink) {
   return (
     <li className="cursor-pointer">
       <Link
-        className="border-border bg-input/30 flex items-center gap-2 rounded-full border px-3.5 py-2 transition-transform duration-150 [text-decoration:none] hover:scale-105 motion-reduce:transition-none"
+        className="border-border bg-input/10 dark:bg-card flex items-center gap-2 rounded-full border px-3.5 py-2 transition-transform duration-150 [text-decoration:none] hover:scale-105 motion-reduce:transition-none"
         href={href}
         onMouseEnter={() => iconRef.current?.startAnimation()}
         onMouseLeave={() => iconRef.current?.stopAnimation()}
@@ -59,7 +58,7 @@ function ContactLinkItem({ href, label, renderIcon }: ContactLink) {
       >
         {renderIcon(iconRef)}
         <span
-          className="text-muted-foreground text-xs font-medium tracking-wide"
+          className="text-foreground/80 text-xs font-medium tracking-wide"
           style={{ textDecoration: "none" }}
         >
           {label}
@@ -69,7 +68,7 @@ function ContactLinkItem({ href, label, renderIcon }: ContactLink) {
   );
 }
 
-export function ContactLinks() {
+export const ContactLinks = () => {
   return (
     <div className="space-y-3">
       <h2>Connect</h2>
@@ -80,4 +79,4 @@ export function ContactLinks() {
       </ul>
     </div>
   );
-}
+};

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Sora } from "next/font/google";
+import { Providers } from "./providers";
 import "./globals.css";
 import { Footer } from "@/components/footer";
-import { Providers } from "./providers";
 
 const sora = Sora({
   subsets: ["latin"],

@@ -19,7 +19,7 @@ interface TrackCardProps {
   index: number;
 }
 
-export function TrackCard({ track, index }: TrackCardProps) {
+export const TrackCard = ({ track, index }: TrackCardProps) => {
   const bestImage = track.image.reduce<string>((best, image) => {
     if (image.size === "large") return image["#text"] || best;
     if (image.size === "extralarge" && !best) return image["#text"] || best;
@@ -32,13 +32,13 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
   return (
     <article
-      className="animate-card-in track-card bg-card ring-foreground/6 hover:ring-foreground/10 flex items-center gap-1.5 rounded-lg px-2.5 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3"
+      className="animate-card-in bg-card ring-foreground/6 hover:ring-foreground/10 relative flex items-center gap-1.5 rounded-lg px-2.5 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3"
       style={{ animationDelay: `${index * 0.08}s` }}
     >
       {bestImage ? (
         <Image
           alt={track.name}
-          className="track-art track-art-responsive aspect-square size-9 shrink-0 rounded-[10px] object-cover sm:size-11"
+          className="track-art aspect-square size-9 shrink-0 rounded-[10px] object-cover sm:size-11"
           height={44}
           src={bestImage}
           width={44}
@@ -76,9 +76,9 @@ export function TrackCard({ track, index }: TrackCardProps) {
       )}
     </article>
   );
-}
+};
 
-export function TrackCardSkeleton() {
+export const TrackCardSkeleton = () => {
   return (
     <div className="bg-card ring-foreground/6 flex items-center gap-1.5 rounded-lg px-2.5 py-2 ring-1 sm:gap-3">
       <Skeleton className="size-9 rounded-[10px] sm:size-11" />
@@ -92,4 +92,4 @@ export function TrackCardSkeleton() {
       </div>
     </div>
   );
-}
+};

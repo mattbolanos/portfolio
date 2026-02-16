@@ -38,6 +38,7 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-strava: var(--strava);
+  --color-strava-route: var(--strava-route);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -63,7 +64,7 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.815 0.004 286.32);
   --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.712 0.194 13.428);
+  --ring: oklch(0.646 0.222 41.116);
   --chart-1: oklch(0.81 0.117 11.638);
   --chart-2: oklch(0.645 0.246 16.439);
   --chart-3: oklch(0.586 0.253 17.585);
@@ -78,6 +79,7 @@
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.712 0.194 13.428);
   --strava: oklch(0.6679 0.2169 38.29);
+  --strava-route: oklch(0.95 0.025 145);
 }
 
 .dark {
@@ -98,7 +100,7 @@
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.41 0.159 10.272);
+  --ring: oklch(0.705 0.213 47.604);
   --chart-1: oklch(0.81 0.117 11.638);
   --chart-2: oklch(0.645 0.246 16.439);
   --chart-3: oklch(0.586 0.253 17.585);
@@ -113,6 +115,7 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.41 0.159 10.272);
   --strava: oklch(0.6618 0.2214 36.88);
+  --strava-route: oklch(0.28 0.03 145);
 }
 
 @layer base {
@@ -147,7 +150,7 @@ p {
 html {
   --scrollbar-thumb: color-mix(
     in oklch,
-    var(--strava) 25%,
+    var(--primary) 25%,
     var(--muted-foreground)
   );
   --scrollbar-track: transparent;
@@ -172,7 +175,6 @@ html *::-webkit-scrollbar-thumb {
   border-radius: 9999px;
 }
 
-/* ── Staggered card entrance ── */
 @keyframes card-in {
   from {
     opacity: 0;
@@ -191,93 +193,6 @@ html *::-webkit-scrollbar-thumb {
   will-change: opacity, transform;
 }
 
-/* ── Shared card craft ── */
-.run-card,
-.track-card {
-  position: relative;
-}
-
-.run-card:hover,
-.track-card:hover {
-  box-shadow:
-    0 1px 4px oklch(0 0 0 / 0.06),
-    0 6px 20px oklch(0 0 0 / 0.07);
-}
-
-.dark .run-card:hover,
-.dark .track-card:hover {
-  box-shadow:
-    0 1px 4px oklch(0 0 0 / 0.3),
-    0 6px 20px oklch(0 0 0 / 0.25);
-}
-
-/* ── Route preview tile ── */
-.route-preview,
-.route-preview-empty {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: oklch(0.95 0.025 145);
-  box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.15),
-    inset 0 -1px 0 oklch(0 0 0 / 0.04),
-    0 0 0 1px oklch(0.7 0.08 145 / 0.2);
-}
-
-.dark .route-preview,
-.dark .route-preview-empty {
-  background: oklch(0.28 0.03 145);
-  box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.06),
-    inset 0 -1px 0 oklch(0 0 0 / 0.12),
-    0 0 0 1px oklch(0.5 0.06 145 / 0.2);
-}
-
-/* ── Track album art ── */
-.track-art {
-  box-shadow:
-    0 0 0 1px oklch(0 0 0 / 0.06),
-    0 1px 2px oklch(0 0 0 / 0.04);
-}
-
-.dark .track-art {
-  box-shadow:
-    0 0 0 1px oklch(1 0 0 / 0.06),
-    0 1px 2px oklch(0 0 0 / 0.15);
-}
-
-.track-art-empty {
-  background: oklch(0.94 0.01 285);
-  box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.15),
-    0 0 0 1px oklch(0 0 0 / 0.05);
-}
-
-.dark .track-art-empty {
-  background: oklch(0.3 0.01 285);
-  box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.04),
-    0 0 0 1px oklch(1 0 0 / 0.06);
-}
-
-/* ── Responsive image/preview sizing ── */
-@media (min-width: 640px) {
-  .route-preview,
-  .route-preview-empty {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-  }
-
-  .track-art-responsive {
-    width: 44px;
-    height: 44px;
-  }
-}
-
-/* ── Route path draw ── */
-/* Path + dot animations now use SVG <animate> elements for
-   pixel-perfect sync. See recent-runs.tsx ROUTE_ANIM. */
 
 @media (prefers-reduced-motion: reduce) {
   .animate-card-in {
@@ -286,7 +201,6 @@ html *::-webkit-scrollbar-thumb {
     transform: translateY(0);
   }
 
-  /* Disable all SVG animations in route previews */
   .route-preview svg animate,
   .route-preview svg animateMotion {
     display: none;

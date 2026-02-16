@@ -15,16 +15,14 @@ const LEGEND_TILE_KEYS = [
 
 const RUN_CARD_KEYS = ["run-card-1", "run-card-2", "run-card-3"];
 
-/** Approximate month label positions across 52 weeks (~12 months). */
 const MONTH_LABEL_POSITIONS = [0, 4, 9, 13, 17, 22, 26, 30, 35, 39, 43, 48];
 
-export function ActivitiesWrapperSkeleton() {
+export const ActivitiesWrapperSkeleton = () => {
   return (
     <>
-      {/* Heatmap — matches <Card className="rounded-xl p-4"> */}
-      <div className="ring-foreground/10 bg-card flex flex-col gap-6 overflow-hidden rounded-xl p-4 ring-1 sm:gap-4">
+      <article className="bg-card rounded-lg p-4">
         <div className="flex justify-between gap-2">
-          <div className="text-muted-foreground mt-6 hidden shrink-0 grid-rows-7 gap-1 text-xs sm:grid sm:gap-[3px]">
+          <div className="text-muted-foreground mt-6 hidden shrink-0 grid-rows-7 text-xs sm:grid">
             {DAY_LABELS.map((dayLabel) => (
               <span className="h-3 leading-[11px]" key={dayLabel.key}>
                 {dayLabel.label}
@@ -56,9 +54,9 @@ export function ActivitiesWrapperSkeleton() {
           </div>
         </div>
 
-        <div className="text-muted-foreground mt-1 space-y-2 text-xs sm:mt-0.5">
+        <div className="text-muted-foreground mt-2 space-y-2 text-xs sm:mt-1">
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <Skeleton className="h-5 w-44" />
+            <Skeleton className="h-4 w-44" />
             <div className="flex items-center gap-1">
               <Skeleton className="h-4 w-5" />
               {LEGEND_TILE_KEYS.map((tileKey) => (
@@ -68,7 +66,7 @@ export function ActivitiesWrapperSkeleton() {
             </div>
           </div>
         </div>
-      </div>
+      </article>
 
       {/* Recent runs — matches <RecentRuns> */}
       <div className="space-y-1.5">
@@ -95,4 +93,4 @@ export function ActivitiesWrapperSkeleton() {
       </div>
     </>
   );
-}
+};

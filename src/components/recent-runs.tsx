@@ -33,10 +33,9 @@ const ROUTE_PREVIEW_SIZE = 52;
 const ROUTE_PREVIEW_PADDING = 5;
 
 const ROUTE_ANIM = {
-  dotFadeOut: 0.5, // seconds for dot to fade after reaching end
-  drawDuration: 2.5, // seconds for route to fully draw
-  drawOffset: 0.3, // delay after card-in before animation starts
-  /* CSS cubic-bezier(0.22, 1, 0.36, 1) as SVG keySplines */
+  dotFadeOut: 0.5,
+  drawDuration: 2.5,
+  drawOffset: 0.3,
   spline: "0.22 1 0.36 1",
 };
 
@@ -120,7 +119,6 @@ const toRoutePath = (points: LatLng[]): string | null => {
     .join(" ");
 };
 
-/** Topographic contour lines + vignette for route preview background. */
 const TerrainDefs = ({ id }: { id: string }) => (
   <defs>
     <pattern
@@ -169,7 +167,7 @@ interface RoutePreviewProps {
 }
 
 const EmptyPreview = () => (
-  <div className="route-preview-empty grid shrink-0 place-items-center rounded-lg sm:rounded-[10px]">
+  <div className="bg-strava-route route-preview grid size-9 shrink-0 place-items-center rounded-lg sm:size-11 sm:rounded-[10px]">
     <svg
       aria-hidden="true"
       className="h-full w-full"
@@ -206,7 +204,7 @@ const RoutePreview = ({
   const terrainId = `terrain-${uid}`;
 
   return (
-    <div className="route-preview shrink-0 overflow-hidden rounded-[10px]">
+    <div className="bg-strava-route route-preview size-9 shrink-0 overflow-hidden rounded-[10px] sm:size-11">
       <svg
         aria-label={`${runName} route`}
         className="h-full w-full"
@@ -401,7 +399,7 @@ export const RecentRuns = ({ runs }: RecentRunsProps) => {
 
         return (
           <article
-            className="animate-card-in run-card bg-card ring-foreground/6 hover:ring-foreground/10 flex items-center gap-1.5 rounded-lg px-2.5 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3"
+            className="animate-card-in bg-card ring-foreground/6 hover:ring-foreground/10 relative flex items-center gap-1.5 rounded-lg px-2.5 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3"
             key={run.id}
             style={{ animationDelay: `${delay}s` }}
           >

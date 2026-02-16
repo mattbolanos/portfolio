@@ -39,7 +39,7 @@ const experienceEntries: ExperienceEntry[] = [
   },
 ];
 
-export function Experience() {
+export const Experience = () => {
   return (
     <div className="space-y-3">
       <h2>Experience</h2>
@@ -60,7 +60,7 @@ export function Experience() {
       </p>
     </div>
   );
-}
+};
 
 function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
   return (
