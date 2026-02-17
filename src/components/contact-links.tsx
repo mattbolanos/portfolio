@@ -14,36 +14,40 @@ interface IconHandle {
   stopAnimation: () => void;
 }
 
+type ContactIconComponent = React.ForwardRefExoticComponent<
+  { size?: number } & React.RefAttributes<IconHandle>
+>;
+
 interface ContactLink {
   href: string;
   label: string;
-  renderIcon: (ref: React.Ref<IconHandle>) => React.ReactNode;
+  Icon: ContactIconComponent;
 }
 
 const LINKS: ContactLink[] = [
   {
     href: "https://github.com/mattbolanos",
+    Icon: GithubIcon,
     label: "GitHub",
-    renderIcon: (ref) => <GithubIcon ref={ref} size={ICON_SIZE} />,
   },
   {
     href: "https://x.com/mattabolanos",
+    Icon: TwitterIcon,
     label: "Twitter",
-    renderIcon: (ref) => <TwitterIcon ref={ref} size={ICON_SIZE} />,
   },
   {
     href: "https://www.linkedin.com/in/mattbolanos/",
+    Icon: LinkedinIcon,
     label: "LinkedIn",
-    renderIcon: (ref) => <LinkedinIcon ref={ref} size={ICON_SIZE} />,
   },
   {
     href: "mailto:matthew.a.bolanos@gmail.com",
+    Icon: MailCheckIcon,
     label: "Email",
-    renderIcon: (ref) => <MailCheckIcon ref={ref} size={ICON_SIZE} />,
   },
 ];
 
-function ContactLinkItem({ href, label, renderIcon }: ContactLink) {
+function ContactLinkItem({ href, label, Icon }: ContactLink) {
   const iconRef = useRef<IconHandle>(null);
 
   return (
@@ -56,7 +60,7 @@ function ContactLinkItem({ href, label, renderIcon }: ContactLink) {
         rel="noopener noreferrer"
         target="_blank"
       >
-        {renderIcon(iconRef)}
+        <Icon ref={iconRef} size={ICON_SIZE} />
         <span
           className="text-foreground/80 text-xs font-medium tracking-wide"
           style={{ textDecoration: "none" }}

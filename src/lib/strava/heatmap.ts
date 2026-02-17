@@ -2,18 +2,18 @@ import type { GetActivitiesResult } from "@/lib/api/strava";
 
 export type HeatmapDay = GetActivitiesResult["heatmap"][number];
 
-export type HeatmapCell = {
+type HeatmapCell = {
   date: Date;
   miles: number;
   runCount: number;
 };
 
-export type HeatmapWeek = {
+type HeatmapWeek = {
   start: Date;
   values: HeatmapCell[];
 };
 
-export type HeatmapView = {
+type HeatmapView = {
   maxMiles: number;
   today: Date;
   totalMiles: number;
@@ -22,7 +22,7 @@ export type HeatmapView = {
 
 export const TILE_SIZE = 11;
 export const TILE_GAP = 2;
-export const WEEKS_TO_SHOW = 52;
+const WEEKS_TO_SHOW = 52;
 export const DAY_LABELS = [
   { key: "sun", label: "" },
   { key: "mon", label: "Mon" },

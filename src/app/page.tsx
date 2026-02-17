@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ActivitiesWrapperSkeleton } from "@/components/activities-wrapper-skeleton";
 import { ContactLinks } from "@/components/contact-links";
@@ -8,6 +9,11 @@ import { RecentRuns } from "@/components/recent-runs";
 import { TrackCard, TrackCardSkeleton } from "@/components/track-card";
 import { getRecentTracks } from "@/lib/api/last-fm";
 import { getActivities } from "@/lib/api/strava";
+
+export const metadata: Metadata = {
+  description: "Recent runs, music, and work from Matt Bolaños.",
+  title: "Home | Matt Bolaños",
+};
 
 async function RecentTracksWrapper() {
   const tracks = await getRecentTracks(3);
