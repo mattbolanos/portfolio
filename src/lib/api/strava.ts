@@ -1,5 +1,4 @@
 import { cacheLife } from "next/cache";
-import { connection } from "next/server";
 import {
   StravaActivitiesSchema,
   type StravaActivity,
@@ -462,37 +461,21 @@ const fetchActivitiesUncached = async ({
   };
 };
 
-const getActivitiesCached = async (
-  options: FetchActivitiesOptions,
-): Promise<GetActivitiesResult> => {
-  "use cache";
-  cacheLife("hours");
-
-  const activities = await fetchActivitiesUncached(options);
-
-  if (!activities) {
-    throw new Error("Unable to fetch Strava activities");
-  }
-
-  return activities;
-};
-
 export const getActivities = async ({
   maxPages = 8,
   perPage = 100,
 }: GetActivitiesOptions = {}): Promise<GetActivitiesResult | null> => {
-  await connection();
+  "use cache";
+  cacheLife("hours");
 
   const oneYearAgo = new Date();
   oneYearAgo.setDate(oneYearAgo.getDate() - 366);
 
-  try {
-    return await getActivitiesCached({
-      afterEpochSeconds: toEpochSeconds(oneYearAgo),
-      maxPages,
-      perPage,
-    });
-  } catch {
-    return EMPTY_ACTIVITIES_RESULT;
-  }
+  const activities = await fetchActivitiesUncached({
+    afterEpochSeconds: toEpochSeconds(oneYearAgo),
+    maxPages,
+    perPage,
+  });
+
+  return activities ?? EMPTY_ACTIVITIES_RESULT;
 };
