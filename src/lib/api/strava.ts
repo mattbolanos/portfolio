@@ -464,7 +464,7 @@ const fetchActivitiesUncached = async ({
 export const getActivities = async ({
   maxPages = 8,
   perPage = 100,
-}: GetActivitiesOptions = {}): Promise<GetActivitiesResult | null> => {
+}: GetActivitiesOptions = {}): Promise<GetActivitiesResult> => {
   "use cache";
   cacheLife("hours");
 
