@@ -1,3 +1,5 @@
+"use client";
+
 import { Vynil01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Image from "next/image";
