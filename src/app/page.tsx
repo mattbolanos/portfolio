@@ -11,8 +11,8 @@ import { getRecentTracks } from "@/lib/api/last-fm";
 import { getActivities } from "@/lib/api/strava";
 
 export const metadata: Metadata = {
-  description: "Recent runs, music, and work from Matt Bolaños.",
-  title: "Home | Matt Bolaños",
+  description: "Matt Bolaños' personal website",
+  title: "Matt Bolaños",
 };
 
 async function RecentTracksWrapper() {
