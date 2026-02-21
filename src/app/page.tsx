@@ -6,30 +6,12 @@ import { Experience } from "@/components/experience";
 import { Heatmap } from "@/components/heatmap";
 import { Intro } from "@/components/intro";
 import { RecentRuns } from "@/components/recent-runs";
-import { TrackCard, TrackCardSkeleton } from "@/components/track-card";
-import { getRecentTracks } from "@/lib/api/last-fm";
 import { getActivities } from "@/lib/api/strava";
 
 export const metadata: Metadata = {
   description: "Matt Bolaños' personal website",
   title: "Matt Bolaños",
 };
-
-async function RecentTracksWrapper() {
-  const tracks = await getRecentTracks(3);
-
-  if (!tracks || tracks.length === 0) {
-    return null;
-  }
-
-  return (
-    <>
-      {tracks.map((track, index) => (
-        <TrackCard index={index} key={track.mbid} track={track} />
-      ))}
-    </>
-  );
-}
 
 async function ActivitiesPreviewWrapper() {
   const activities = await getActivities({
@@ -67,19 +49,6 @@ export default function Home() {
       <Intro />
 
       <Experience />
-
-      <div className="space-y-3">
-        <h2>Recent Tracks</h2>
-        <div className="bg-muted space-y-1.5 rounded-xl p-2">
-          <Suspense
-            fallback={[1, 2, 3].map((number) => (
-              <TrackCardSkeleton key={number} />
-            ))}
-          >
-            <RecentTracksWrapper />
-          </Suspense>
-        </div>
-      </div>
 
       <div className="space-y-3">
         <h2>Recent Runs</h2>
