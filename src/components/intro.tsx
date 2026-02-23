@@ -24,7 +24,7 @@ export const Intro = () => {
         .
       </p>
       <p>
-        I spend my downtime trail running, gluten-free baking and{" "}
+        I spend my downtime trail running, tinkering on side projects and{" "}
         <Link
           className="text-link"
           href="https://letterboxd.com/mattbolanos"
