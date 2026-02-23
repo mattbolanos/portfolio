@@ -2,13 +2,7 @@ import Link from "next/link";
 
 export const Intro = () => {
   return (
-    <div className="space-y-3">
-      <div className="w-fit space-y-1.5">
-        <h1 className="text-xl leading-snug font-semibold tracking-tight md:text-3xl">
-          Matt Bolaños
-        </h1>
-        <div className="bg-primary h-0.5 w-full" />
-      </div>
+    <div className="space-y-6">
       <p>
         I&apos;m a developer based in New York City. I work as a full stack
         developer and data analyst for the Basketball Analytics and Innovation
@@ -24,7 +18,7 @@ export const Intro = () => {
         .
       </p>
       <p>
-        I spend my downtime trail running, tinkering on side projects and{" "}
+        I spend my downtime trail running, tinkering on projects, and{" "}
         <Link
           className="text-link"
           href="https://letterboxd.com/mattbolanos"
