@@ -33,7 +33,7 @@ async function ActivitiesPreviewWrapper() {
         new Date(runB.start_date_local).getTime() -
         new Date(runA.start_date_local).getTime(),
     )
-    .slice(0, 3);
+    .slice(0, 4);
 
   return (
     <>

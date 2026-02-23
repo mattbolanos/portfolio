@@ -145,7 +145,7 @@ export const buildHeatmapView = (
   const days = weeks.flatMap((week) => week.values);
 
   return {
-    maxMiles: Math.max(0, ...days.map((day) => day.miles)),
+    maxMiles: Math.max(0, ...days.map((day) => day.miles)) - 4,
     today,
     totalMiles: days.reduce((sum, day) => sum + day.miles, 0),
     weeks,
