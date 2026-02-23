@@ -1,26 +1,47 @@
 "use client";
 
+import type { Variants } from "motion/react";
 import { motion, useAnimation } from "motion/react";
 import type { HTMLAttributes } from "react";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
+
 import { cn } from "@/lib/utils";
 
-export interface SendIconHandle {
+export interface MailCheckIconHandle {
   startAnimation: () => void;
   stopAnimation: () => void;
 }
 
-interface SendIconProps extends HTMLAttributes<HTMLDivElement> {
+interface MailCheckIconProps extends HTMLAttributes<HTMLDivElement> {
   size?: number;
 }
 
-const SendIcon = forwardRef<SendIconHandle, SendIconProps>(
+const CHECK_VARIANTS: Variants = {
+  animate: {
+    opacity: [0, 1],
+    pathLength: [0, 1],
+    transition: {
+      opacity: { duration: 0.4, ease: "easeInOut" },
+      pathLength: { duration: 0.4, ease: "easeInOut" },
+    },
+  },
+  normal: {
+    opacity: 1,
+    pathLength: 1,
+    transition: {
+      duration: 0.3,
+    },
+  },
+};
+
+const MailCheckIcon = forwardRef<MailCheckIconHandle, MailCheckIconProps>(
   ({ onMouseEnter, onMouseLeave, className, size = 28, ...props }, ref) => {
     const controls = useAnimation();
     const isControlledRef = useRef(false);
 
     useImperativeHandle(ref, () => {
       isControlledRef.current = true;
+
       return {
         startAnimation: () => controls.start("animate"),
         stopAnimation: () => controls.start("normal"),
@@ -57,7 +78,6 @@ const SendIcon = forwardRef<SendIconHandle, SendIconProps>(
         {...props}
       >
         <svg
-          className="overflow-visible"
           fill="none"
           height={size}
           stroke="currentColor"
@@ -68,46 +88,15 @@ const SendIcon = forwardRef<SendIconHandle, SendIconProps>(
           width={size}
           xmlns="http://www.w3.org/2000/svg"
         >
-          <title>Send</title>
-          <motion.g
-            animate={controls}
-            transition={{ duration: 0.5 }}
-            variants={{
-              animate: {
-                scale: 0.75,
-                x: 3,
-                y: -3,
-              },
-              normal: { scale: 1, x: 0, y: 0 },
-            }}
-          >
-            <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
-            <path d="m21.854 2.147-10.94 10.939" />
-          </motion.g>
+          <title>Mail Check</title>
+          <path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8" />
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
           <motion.path
             animate={controls}
-            d="M -3 28 C -0.5 26.8 1.6 24.6 3.3 22 C 4.8 19.7 5.2 17.6 4.2 16.1 C 3.2 14.7 1.4 14.5 0.3 15.8 C -0.9 17.2 -0.6 19.4 1.2 20.4 C 3.4 21.5 6.4 19.4 9 15.8"
-            fill="none"
-            initial={{ opacity: 0, pathLength: 0 }}
-            stroke="currentColor"
-            strokeDasharray="2 2"
-            strokeWidth="1"
-            transition={{ delay: 0.1, duration: 0.55 }}
-            variants={{
-              animate: {
-                opacity: 1,
-                pathLength: 1,
-                translateX: 0,
-                translateY: 0,
-              },
-              normal: {
-                opacity: 0,
-                pathLength: 0,
-                transition: { duration: 0.3 },
-                translateX: -3,
-                translateY: 3,
-              },
-            }}
+            d="m16 19 2 2 4-4"
+            initial="normal"
+            style={{ transformOrigin: "center" }}
+            variants={CHECK_VARIANTS}
           />
         </svg>
       </div>
@@ -115,6 +104,6 @@ const SendIcon = forwardRef<SendIconHandle, SendIconProps>(
   },
 );
 
-SendIcon.displayName = "SendIcon";
+MailCheckIcon.displayName = "MailCheckIcon";
 
-export { SendIcon };
+export { MailCheckIcon };

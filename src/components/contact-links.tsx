@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef } from "react";
 import { GithubIcon } from "./ui/github";
 import { LinkedinIcon } from "./ui/linkedin";
-import { SendIcon } from "./ui/send";
+import { MailCheckIcon } from "./ui/mail-check";
 import { TwitterIcon } from "./ui/twitter";
 
 const ICON_SIZE = 18;
@@ -42,7 +42,7 @@ const LINKS: ContactLink[] = [
   },
   {
     href: "mailto:matthew.a.bolanos@gmail.com",
-    Icon: SendIcon,
+    Icon: MailCheckIcon,
     label: "Email",
   },
 ];
