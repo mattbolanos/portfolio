@@ -53,7 +53,7 @@ function ContactLinkItem({ href, label, Icon }: ContactLink) {
   return (
     <li className="cursor-pointer">
       <Link
-        className="border-border bg-input/10 dark:bg-card flex items-center gap-2 rounded-full border px-3.5 py-2 transition-transform duration-150 [text-decoration:none] hover:scale-105 motion-reduce:transition-none"
+        className="border-border bg-card flex items-center gap-2 rounded-full border px-3.5 py-2 transition-transform duration-150 [text-decoration:none] hover:scale-105 motion-reduce:transition-none"
         href={href}
         onMouseEnter={() => iconRef.current?.startAnimation()}
         onMouseLeave={() => iconRef.current?.stopAnimation()}
