@@ -15,7 +15,7 @@ const experienceEntries: ExperienceEntry[] = [
   {
     company: "Golden State Warriors",
     description:
-      "Building internal software to aid front office decision-making.",
+      "Building internal software to influence front office decisions.",
     endDate: "Present",
     imageUrl: "/gsw.svg",
     startDate: "Oct 2023",
