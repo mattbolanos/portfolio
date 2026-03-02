@@ -5,6 +5,7 @@ import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
 import { Heatmap } from "@/components/heatmap";
 import { Intro } from "@/components/intro";
+import { Projects } from "@/components/projects";
 import { RecentRuns } from "@/components/recent-runs";
 import { getActivities } from "@/lib/api/strava";
 
@@ -55,6 +56,8 @@ export default function Home() {
       <Intro />
 
       <Experience />
+
+      <Projects />
 
       <div className="space-y-3">
         <h2>Recent Runs</h2>
