@@ -1,27 +1,7 @@
 import Image from "next/image";
-
-interface Project {
-  name: string;
-  description: string;
-  tags: string[];
-  url: string;
-  imageUrl: string;
-}
-
-function formatTagLabel(tag: string): string {
-  return tag.replace(/[-_]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-const projects: Project[] = [
-  {
-    description:
-      "iOS widget that displays a GitHub-style heatmap of your Strava activities.",
-    imageUrl: "stratiles.png",
-    name: "Stratiles",
-    tags: ["swift", "cloudflare-workers"],
-    url: "https://github.com/mattbolanos/stratiles",
-  },
-];
+import Link from "next/link";
+import type { Project } from "@/lib/projects";
+import { formatTagLabel, projects } from "@/lib/projects";
 
 export const Projects = () => {
   return (
@@ -50,7 +30,9 @@ function ProjectItem({ project }: { project: Project }) {
       </div>
       <div className="flex flex-1 flex-col items-start gap-y-1">
         <h3 className="text-sm leading-none font-normal sm:text-base">
-          {project.name}
+          <Link className="text-link" href={`/projects/${project.slug}`}>
+            {project.name}
+          </Link>
         </h3>
         <p className="text-sm">{project.description}</p>
         <div className="flex flex-wrap items-center gap-1">
