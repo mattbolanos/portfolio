@@ -4,6 +4,7 @@ import { Providers } from "./providers";
 import "./globals.css";
 import Script from "next/script";
 import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -43,7 +44,10 @@ export default function RootLayout({
       </head>
       <body className="m-auto max-w-2xl overscroll-y-contain leading-relaxed">
         <Providers>
-          <main className="min-h-screen p-6 pt-10 md:pt-12">{children}</main>
+          <main className="min-h-screen p-6 pt-10 md:pt-12">
+            <Header />
+            {children}
+          </main>
           <Footer />
         </Providers>
       </body>

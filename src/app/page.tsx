@@ -46,13 +46,7 @@ async function ActivitiesPreviewWrapper() {
 
 export default function Home() {
   return (
-    <div className="space-y-12">
-      <div className="w-fit space-y-1.5">
-        <h1 className="text-xl leading-snug font-semibold tracking-tight md:text-2xl">
-          Matt Bolaños
-        </h1>
-        <div className="bg-primary h-0.5 w-full" />
-      </div>
+    <div className="space-y-10 md:space-y-12">
       <Intro />
 
       <Experience />
