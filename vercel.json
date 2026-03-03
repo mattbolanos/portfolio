@@ -1,0 +1,4 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "ignoreCommand": "if [ \"$VERCEL_GIT_COMMIT_AUTHOR_LOGIN\" = \"github-actions[bot]\" ] && echo \"$VERCEL_GIT_COMMIT_MESSAGE\" | grep -q '\\[skip deploy\\]'; then exit 0; else exit 1; fi"
+}
