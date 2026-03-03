@@ -52,7 +52,7 @@ export default async function ProjectPage({
   if (!project) notFound();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-9">
       <section className="space-y-3">
         <div className="flex items-center gap-x-3">
           <Image
