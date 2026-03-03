@@ -48,7 +48,7 @@ export const Experience = () => {
           <ExperienceItem entry={entry} key={entry.company} />
         ))}
       </ul>
-      <p className="mt-1.5">
+      <p>
         <Link
           className="text-link"
           href="/matt-bolanos-resume.pdf"
