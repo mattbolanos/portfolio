@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export const Intro = () => {
   return (
-    <div className="text-sm space-y-3 sm:text-base">
+    <div className="text-sm space-y-6 sm:text-base">
       <p>
         I&apos;m a developer based in New York City. I work as a full stack
         developer and data analyst for the Basketball Analytics and Innovation
