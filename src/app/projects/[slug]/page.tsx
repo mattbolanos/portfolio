@@ -93,7 +93,7 @@ export default async function ProjectPage({
       </section>
 
       <section className="space-y-6 text-sm leading-relaxed">
-        <div className="space-y-3">
+        <div className="text-sm space-y-3 sm:text-base">
           {project.longDescription.map((paragraph, i) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: <paragraph order won't change / re-render>
             <p key={i}>{paragraph}</p>
