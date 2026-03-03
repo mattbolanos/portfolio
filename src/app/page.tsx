@@ -5,6 +5,7 @@ import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
 import { Heatmap } from "@/components/heatmap";
 import { Intro } from "@/components/intro";
+import { Projects } from "@/components/projects";
 import { RecentRuns } from "@/components/recent-runs";
 import { getActivities } from "@/lib/api/strava";
 
@@ -45,16 +46,12 @@ async function ActivitiesPreviewWrapper() {
 
 export default function Home() {
   return (
-    <div className="space-y-12">
-      <div className="w-fit space-y-1.5">
-        <h1 className="text-xl leading-snug font-semibold tracking-tight md:text-2xl">
-          Matt Bolaños
-        </h1>
-        <div className="bg-primary h-0.5 w-full" />
-      </div>
+    <div className="space-y-8">
       <Intro />
 
       <Experience />
+
+      <Projects />
 
       <div className="space-y-3">
         <h2>Recent Runs</h2>

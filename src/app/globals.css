@@ -47,7 +47,7 @@
 
 :root {
   --radius: 0.8rem;
-  --background: oklch(0.984 0.0054 95.1);
+  --background: oklch(0.98 0.0054 95.1);
   --foreground: oklch(0.18 0.012 55);
   --card: oklch(0.98 0.012 78);
   --card-foreground: oklch(0.18 0.012 55);
@@ -83,11 +83,11 @@
 }
 
 .dark {
-  --background: oklch(0.203 0.012 65);
+  --background: oklch(0.203 0.009 65);
   --foreground: oklch(0.92 0.015 75);
-  --card: oklch(0.243 0.014 68);
+  --card: oklch(0.243 0.012 68);
   --card-foreground: oklch(0.92 0.015 75);
-  --popover: oklch(0.243 0.014 68);
+  --popover: oklch(0.243 0.012 68);
   --popover-foreground: oklch(0.92 0.015 75);
   --primary: oklch(0.705 0.213 47.604);
   --primary-foreground: oklch(0.98 0.016 73.684);
@@ -146,7 +146,6 @@ p {
 .text-link:hover {
   text-decoration-color: var(--primary);
 }
-
 html {
   --scrollbar-thumb: color-mix(
     in oklch,

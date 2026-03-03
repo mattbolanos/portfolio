@@ -1,7 +1,12 @@
 "use client";
 
-import type { Variants } from "motion/react";
-import { domAnimation, LazyMotion, m, useAnimation } from "motion/react";
+import {
+  domAnimation,
+  LazyMotion,
+  m,
+  useAnimation,
+  type Variants,
+} from "motion/react";
 import type { HTMLAttributes } from "react";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 

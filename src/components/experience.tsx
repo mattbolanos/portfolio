@@ -64,7 +64,7 @@ export const Experience = () => {
 
 function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
   return (
-    <li className="flex gap-x-3 py-4 first:pt-0 last:pb-0">
+    <li className="flex gap-x-3 py-3 first:pt-0 last:pb-0">
       <div className="flex-none pt-0.5">
         <Image
           alt={entry.company}

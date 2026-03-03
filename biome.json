@@ -43,6 +43,9 @@
         "noAccumulatingSpread": "error"
       },
       "recommended": true,
+      "style": {
+        "useImportType": "error"
+      },
       "suspicious": {
         "noConsole": "warn",
         "noUnknownAtRules": "off"
