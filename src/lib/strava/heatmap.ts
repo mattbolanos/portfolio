@@ -20,8 +20,6 @@ type HeatmapView = {
   weeks: HeatmapWeek[];
 };
 
-export const TILE_SIZE = 11;
-export const TILE_GAP = 2;
 const WEEKS_TO_SHOW = 52;
 export const DAY_LABELS = [
   { key: "sun", label: "" },
@@ -33,6 +31,13 @@ export const DAY_LABELS = [
   { key: "sat", label: "" },
 ] as const;
 export const COLOR_MIX_BY_LEVEL = [0, 30, 50, 75, 100] as const;
+export const TILE_LEVEL_CLASS_BY_LEVEL = [
+  "bg-[color-mix(in_oklch,var(--strava)_0%,var(--empty))]",
+  "bg-[color-mix(in_oklch,var(--strava)_30%,var(--empty))]",
+  "bg-[color-mix(in_oklch,var(--strava)_50%,var(--empty))]",
+  "bg-[color-mix(in_oklch,var(--strava)_75%,var(--empty))]",
+  "bg-[color-mix(in_oklch,var(--strava)_100%,var(--empty))]",
+] as const;
 
 const MONTH_LABEL_MIN_WEEK_GAP = 3;
 const MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", { month: "short" });
@@ -68,9 +73,6 @@ export const getLevel = (miles: number, maxMiles: number): number => {
 
   return Math.min(4, Math.max(1, Math.ceil((miles / maxMiles) * 4)));
 };
-
-export const getTileColor = (level: number): string =>
-  `color-mix(in oklch, var(--strava) ${COLOR_MIX_BY_LEVEL[level]}%, var(--muted))`;
 
 export const getDayTitle = (day: HeatmapCell): string => {
   const formattedDate = DATE_FORMATTER.format(day.date);

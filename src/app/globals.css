@@ -43,6 +43,12 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-tile: 3px;
+  --gap-tile: var(--heatmap-tile-gap);
+  --spacing-tile: var(--heatmap-tile-size);
+  --spacing-tile-step: var(--heatmap-tile-step);
+  --leading-tile: var(--heatmap-tile-size);
+  --color-empty: var(--empty);
 }
 
 :root {
@@ -80,6 +86,10 @@
   --sidebar-ring: oklch(0.712 0.194 13.428);
   --strava: oklch(0.6679 0.2169 38.29);
   --strava-route: oklch(0.95 0.025 145);
+  --heatmap-tile-size: 10px;
+  --heatmap-tile-gap: 3px;
+  --heatmap-tile-step: calc(var(--heatmap-tile-size) + var(--heatmap-tile-gap));
+  --empty: oklch(0.925 0.012 75);
 }
 
 .dark {
@@ -116,6 +126,7 @@
   --sidebar-ring: oklch(0.41 0.159 10.272);
   --strava: oklch(0.6618 0.2214 36.88);
   --strava-route: oklch(0.28 0.03 145);
+  --empty: oklch(0.2 0 75);
 }
 
 @layer base {
@@ -191,7 +202,6 @@ html *::-webkit-scrollbar-thumb {
   animation: card-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   will-change: opacity, transform;
 }
-
 
 @media (prefers-reduced-motion: reduce) {
   .animate-card-in {

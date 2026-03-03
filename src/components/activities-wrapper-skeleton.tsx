@@ -1,9 +1,10 @@
-import { DAY_LABELS, TILE_GAP, TILE_SIZE } from "@/lib/strava/heatmap";
+import { DAY_LABELS } from "@/lib/strava/heatmap";
 import { Skeleton } from "./ui/skeleton";
 
 const HEATMAP_TILE_KEYS = Array.from({ length: 7 * 52 }, (_, index) => {
   return `heatmap-tile-${index + 1}`;
 });
+const HEATMAP_WEEK_KEYS = Array.from({ length: 52 }, (_, index) => index);
 
 const LEGEND_TILE_KEYS = [
   "legend-tile-1",
@@ -16,6 +17,7 @@ const LEGEND_TILE_KEYS = [
 const RUN_CARD_KEYS = ["run-card-1", "run-card-2", "run-card-3"];
 
 const MONTH_LABEL_POSITIONS = [0, 4, 9, 13, 17, 22, 26, 30, 35, 39, 43, 48];
+const MONTH_LABEL_POSITION_SET = new Set(MONTH_LABEL_POSITIONS);
 
 export const ActivitiesWrapperSkeleton = () => {
   return (
@@ -24,7 +26,7 @@ export const ActivitiesWrapperSkeleton = () => {
         <div className="flex justify-between gap-2">
           <div className="text-muted-foreground mt-6 hidden shrink-0 grid-rows-7 text-xs sm:grid">
             {DAY_LABELS.map((dayLabel) => (
-              <span className="h-3 leading-[11px]" key={dayLabel.key}>
+              <span className="h-tile leading-tile" key={dayLabel.key}>
                 {dayLabel.label}
               </span>
             ))}
@@ -32,22 +34,19 @@ export const ActivitiesWrapperSkeleton = () => {
 
           <div className="overflow-x-hidden">
             <div className="inline-block min-w-max pb-1">
-              <div className="text-muted-foreground relative mb-2 h-4 text-xs">
-                {MONTH_LABEL_POSITIONS.map((weekIndex) => (
-                  <Skeleton
-                    className="absolute top-0 h-3 w-5"
-                    key={`month-${weekIndex}`}
-                    style={{ left: weekIndex * (TILE_SIZE + TILE_GAP) }}
-                  />
+              <div className="text-muted-foreground mb-2 grid h-4 auto-cols-(--heatmap-tile-step) grid-flow-col text-xs">
+                {HEATMAP_WEEK_KEYS.map((weekIndex) => (
+                  <div className="w-tile-step" key={`month-${weekIndex}`}>
+                    {MONTH_LABEL_POSITION_SET.has(weekIndex) ? (
+                      <Skeleton className="h-3 w-5" />
+                    ) : null}
+                  </div>
                 ))}
               </div>
 
-              <div className="grid grid-flow-col grid-rows-7 gap-[2px]">
+              <div className="gap-tile grid grid-flow-col grid-rows-7">
                 {HEATMAP_TILE_KEYS.map((tileKey) => (
-                  <Skeleton
-                    className="size-[11px] rounded-[3px]"
-                    key={tileKey}
-                  />
+                  <Skeleton className="rounded-tile size-tile" key={tileKey} />
                 ))}
               </div>
             </div>
@@ -60,7 +59,7 @@ export const ActivitiesWrapperSkeleton = () => {
             <div className="flex items-center gap-1">
               <Skeleton className="h-4 w-5" />
               {LEGEND_TILE_KEYS.map((tileKey) => (
-                <Skeleton className="size-[11px] rounded-[3px]" key={tileKey} />
+                <Skeleton className="rounded-tile size-tile" key={tileKey} />
               ))}
               <Skeleton className="h-4 w-6" />
             </div>

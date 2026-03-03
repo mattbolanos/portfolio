@@ -8,12 +8,11 @@ import {
   DAY_LABELS,
   getDayTitle,
   getLevel,
-  getTileColor,
   type HeatmapDay,
-  TILE_GAP,
-  TILE_SIZE,
+  TILE_LEVEL_CLASS_BY_LEVEL,
   toDateKey,
 } from "@/lib/strava/heatmap";
+import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 interface HeatmapProps {
@@ -26,6 +25,16 @@ export const Heatmap = ({ heatmap }: HeatmapProps) => {
     () => buildMonthLabels(view.weeks),
     [view.weeks],
   );
+  const monthLabelsByWeek = React.useMemo(() => {
+    const labels = new Map(
+      monthLabels.map((monthLabel) => [monthLabel.weekIndex, monthLabel.label]),
+    );
+
+    return view.weeks.map((week, weekIndex) => ({
+      label: labels.get(weekIndex) ?? "",
+      weekKey: toDateKey(week.start),
+    }));
+  }, [monthLabels, view.weeks]);
   const [isScrolling, setIsScrolling] = React.useState(false);
   const scrollTimeoutRef = React.useRef<number | null>(null);
 
@@ -47,7 +56,7 @@ export const Heatmap = ({ heatmap }: HeatmapProps) => {
       <div className="flex justify-between gap-2">
         <div className="text-muted-foreground mt-6 hidden shrink-0 grid-rows-7 text-xs sm:grid">
           {DAY_LABELS.map((dayLabel) => (
-            <span className="h-[11px] leading-[11px]" key={dayLabel.key}>
+            <span className="h-tile leading-tile" key={dayLabel.key}>
               {dayLabel.label}
             </span>
           ))}
@@ -58,46 +67,38 @@ export const Heatmap = ({ heatmap }: HeatmapProps) => {
           onScroll={handleHeatmapScroll}
         >
           <div className="inline-block min-w-max pb-1">
-            <div className="text-muted-foreground relative mb-2 h-4 text-xs">
-              {monthLabels.map((month) => (
+            <div className="text-muted-foreground mb-2 grid h-4 auto-cols-(--heatmap-tile-step) grid-flow-col text-xs">
+              {monthLabelsByWeek.map((monthLabelByWeek) => (
                 <span
-                  className="absolute top-0 whitespace-nowrap"
-                  key={`${month.label}-${month.weekIndex}`}
-                  style={{ left: month.weekIndex * (TILE_SIZE + TILE_GAP) }}
+                  className="w-tile-step whitespace-nowrap"
+                  key={monthLabelByWeek.weekKey}
                 >
-                  {month.label}
+                  {monthLabelByWeek.label}
                 </span>
               ))}
             </div>
 
-            <div className="grid grid-flow-col grid-rows-7 gap-[2px]">
+            <div className="gap-tile grid grid-flow-col grid-rows-7">
               {view.weeks.flatMap((week) =>
                 week.values.map((day) => {
                   const isFuture = day.date > view.today;
                   const level = getLevel(day.miles, view.maxMiles);
+                  const tileColorClass = TILE_LEVEL_CLASS_BY_LEVEL[level];
 
                   return (
                     <React.Fragment key={toDateKey(day.date)}>
                       {isFuture ? (
-                        <div
-                          className="bg-muted hidden cursor-not-allowed rounded-[3px] opacity-50 sm:block dark:opacity-35"
-                          style={{
-                            height: TILE_SIZE,
-                            width: TILE_SIZE,
-                          }}
-                        />
+                        <div className="bg-muted rounded-tile size-tile hidden cursor-not-allowed opacity-50 sm:block dark:opacity-20" />
                       ) : (
                         <Tooltip disableHoverablePopup>
                           <TooltipTrigger
                             className={`hidden sm:block ${isScrolling ? "pointer-events-none" : ""}`}
                           >
                             <div
-                              className="rounded-[3px] transition-opacity duration-150 hover:opacity-85"
-                              style={{
-                                backgroundColor: getTileColor(level),
-                                height: TILE_SIZE,
-                                width: TILE_SIZE,
-                              }}
+                              className={cn(
+                                "rounded-tile size-tile transition-opacity duration-150 hover:opacity-85",
+                                tileColorClass,
+                              )}
                             />
                           </TooltipTrigger>
                           <TooltipContent>{getDayTitle(day)}</TooltipContent>
@@ -106,16 +107,12 @@ export const Heatmap = ({ heatmap }: HeatmapProps) => {
                       <div
                         className={
                           isFuture
-                            ? "bg-muted cursor-not-allowed rounded-[3px] opacity-50 sm:hidden dark:opacity-35"
-                            : "rounded-[3px] transition-opacity duration-150 hover:opacity-85 sm:hidden"
+                            ? "bg-muted rounded-tile size-tile cursor-not-allowed opacity-50 sm:hidden dark:opacity-20"
+                            : cn(
+                                "rounded-tile size-tile transition-opacity duration-150 hover:opacity-85 sm:hidden",
+                                tileColorClass,
+                              )
                         }
-                        style={{
-                          backgroundColor: isFuture
-                            ? undefined
-                            : getTileColor(level),
-                          height: TILE_SIZE,
-                          width: TILE_SIZE,
-                        }}
                       />
                     </React.Fragment>
                   );
@@ -133,13 +130,11 @@ export const Heatmap = ({ heatmap }: HeatmapProps) => {
             <span>Less</span>
             {COLOR_MIX_BY_LEVEL.map((mix, level) => (
               <div
-                className="rounded-[3px]"
+                className={cn(
+                  "rounded-tile size-tile",
+                  TILE_LEVEL_CLASS_BY_LEVEL[level],
+                )}
                 key={`legend-${mix}`}
-                style={{
-                  backgroundColor: getTileColor(level),
-                  height: TILE_SIZE,
-                  width: TILE_SIZE,
-                }}
               />
             ))}
             <span>More</span>
