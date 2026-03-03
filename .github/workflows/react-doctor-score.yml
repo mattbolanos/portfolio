@@ -1,0 +1,70 @@
+name: React Doctor Score
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  react-doctor-score:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Run React Doctor and extract score
+        id: react_doctor
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          OUTPUT_FILE="$(mktemp)"
+          bunx -y react-doctor@latest . | tee "$OUTPUT_FILE"
+
+          SCORE="$(grep -Eo 's=[0-9]+' "$OUTPUT_FILE" | tail -1 | cut -d= -f2 || true)"
+          if [[ -z "$SCORE" ]]; then
+            SCORE="$(grep -Eo '[0-9]+ / 100' "$OUTPUT_FILE" | tail -1 | awk '{print $1}' || true)"
+          fi
+
+          if [[ -z "$SCORE" ]]; then
+            echo "Unable to extract React Doctor score from output."
+            exit 1
+          fi
+
+          echo "score=$SCORE" >> "$GITHUB_OUTPUT"
+          echo "Extracted React Doctor score: $SCORE"
+
+      - name: Update README score
+        shell: bash
+        env:
+          SCORE: ${{ steps.react_doctor.outputs.score }}
+        run: |
+          set -euo pipefail
+
+          perl -0pi -e 's#(https://www\\.react\\.doctor/share/badge\\?[^)\\s]*\\bs=)\\d+#${1}$ENV{SCORE}#g' README.md
+          perl -0pi -e 's#(https://www\\.react\\.doctor/share\\?[^)\\s]*\\bs=)\\d+#${1}$ENV{SCORE}#g' README.md
+
+      - name: Commit README update
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- README.md; then
+            echo "README already up to date."
+            exit 0
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          git add README.md
+          git commit -m "chore(readme): update React Doctor score [skip ci]"
+          git push
