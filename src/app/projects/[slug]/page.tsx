@@ -111,17 +111,18 @@ export default async function ProjectPage({
       <section className="space-y-3">
         <h2>Images</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6">
-          {project.imgs.map((src) => (
+          {project.images.map((image) => (
             <div
               className="group border-border bg-muted/50 relative overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md motion-reduce:transition-none"
-              key={src}
+              key={image.src}
             >
               <Image
-                alt={`${project.name} screenshot`}
+                alt={`${project.name} image`}
                 className="w-full transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none"
-                height={720}
-                src={src}
-                width={1280}
+                height={image.height ?? image.width}
+                sizes="(min-width: 640px) 50vw, 100vw"
+                src={image.src}
+                width={image.width}
               />
               <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-black/5 ring-inset dark:ring-white/8" />
             </div>
