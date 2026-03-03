@@ -48,11 +48,8 @@ export default function Home() {
   return (
     <div className="space-y-8">
       <Intro />
-
       <Experience />
-
       <Projects />
-
       <div className="space-y-3">
         <h2>Recent Runs</h2>
         <div className="bg-muted space-y-1.5 rounded-xl p-2">
@@ -61,7 +58,6 @@ export default function Home() {
           </Suspense>
         </div>
       </div>
-
       <ContactLinks />
     </div>
   );
