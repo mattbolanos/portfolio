@@ -3,7 +3,8 @@ name: React Doctor Score
 on:
   push:
     branches:
-      - main
+      - '**'
+  pull_request:
 
 permissions:
   contents: write
@@ -52,6 +53,7 @@ jobs:
           perl -0pi -e 's#(https://www\.react\.doctor/share(?:/badge)?\?[^)\s]*\bs=)\d+#$1$ENV{SCORE}#g' README.md
 
       - name: Commit README update
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         shell: bash
         run: |
           set -euo pipefail
@@ -65,5 +67,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
           git add README.md
-          git commit -m "chore(readme): update React Doctor score [skip ci] [skip deploy]"
+          git commit -m "chore(readme): update React Doctor score [skip deploy]"
           git push
