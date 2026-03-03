@@ -93,7 +93,7 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
         <p className="text-muted-foreground text-[10px] tracking-widest uppercase sm:text-xs">
           {entry.startDate} — {entry.endDate}
         </p>
-        <p className="text-sm">{entry.description}</p>
+        <p className="text-xs sm:text-sm">{entry.description}</p>
       </div>
     </li>
   );
