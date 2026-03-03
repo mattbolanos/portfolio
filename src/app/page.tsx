@@ -46,7 +46,7 @@ async function ActivitiesPreviewWrapper() {
 
 export default function Home() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <Intro />
       <Experience />
       <Projects />

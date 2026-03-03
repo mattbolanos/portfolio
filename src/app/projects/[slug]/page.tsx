@@ -52,12 +52,12 @@ export default async function ProjectPage({
   if (!project) notFound();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <section className="space-y-3">
         <div className="flex items-center gap-x-3">
           <Image
             alt={project.name}
-            className="size-12 rounded-lg sm:size-13"
+            className="size-12 sm:size-13"
             height={52}
             src={`/projects/${project.imageUrl}`}
             width={52}
@@ -93,12 +93,10 @@ export default async function ProjectPage({
       </section>
 
       <section className="space-y-6 text-sm leading-relaxed">
-        <div className="space-y-3">
-          {project.longDescription.map((paragraph, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: <paragraph order won't change / re-render>
-            <p key={i}>{paragraph}</p>
-          ))}
-        </div>
+        {project.longDescription.map((paragraph, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: <paragraph order won't change / re-render>
+          <p key={i}>{paragraph}</p>
+        ))}
 
         <LinkItem
           className="w-fit"

@@ -29,14 +29,6 @@ const experienceEntries: ExperienceEntry[] = [
     imageUrl: "/sis.svg",
     startDate: "Oct 2021",
   },
-  {
-    company: "Northwestern University Men's Basketball",
-    description:
-      "Created reports and dashboards for coaching staff and performance team. Developed models and ETL scripts for lineup and shot location analysis.",
-    endDate: "Mar 2021",
-    imageUrl: "/northwestern.svg",
-    startDate: "Aug 2020",
-  },
 ];
 
 export const Experience = () => {
@@ -48,7 +40,7 @@ export const Experience = () => {
           <ExperienceItem entry={entry} key={entry.company} />
         ))}
       </ul>
-      <p className="mt-1.5">
+      <p className="text-sm sm:text-base">
         <Link
           className="text-link"
           href="/matt-bolanos-resume.pdf"
@@ -65,27 +57,26 @@ export const Experience = () => {
 function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
   return (
     <li className="flex gap-x-3 py-3 first:pt-0 last:pb-0">
-      <div className="flex-none pt-0.5">
+      <Image
+        alt={entry.company}
+        className={cn(
+          "size-10 sm:size-13",
+          entry.hasDarkImage && "dark:hidden",
+        )}
+        height={52}
+        src={entry.imageUrl}
+        width={52}
+      />
+      {entry.hasDarkImage && (
         <Image
           alt={entry.company}
-          className={cn(
-            "size-10 sm:size-12",
-            entry.hasDarkImage && "dark:hidden",
-          )}
-          height={48}
-          src={entry.imageUrl}
-          width={48}
+          className="hidden size-10 sm:size-13 dark:block"
+          height={52}
+          src={`${entry.imageUrl.replace(".svg", "-dark.svg")}`}
+          width={52}
         />
-        {entry.hasDarkImage && (
-          <Image
-            alt={entry.company}
-            className="hidden size-10 sm:size-12 dark:block"
-            height={48}
-            src={`${entry.imageUrl.replace(".svg", "-dark.svg")}`}
-            width={48}
-          />
-        )}
-      </div>
+      )}
+
       <div className="flex flex-1 flex-col items-start gap-y-1">
         <h3 className="text-sm leading-none font-normal sm:text-base">
           {entry.company}
@@ -93,7 +84,7 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
         <p className="text-muted-foreground text-[10px] tracking-widest uppercase sm:text-xs">
           {entry.startDate} — {entry.endDate}
         </p>
-        <p className="text-sm">{entry.description}</p>
+        <p className="text-xs sm:text-sm">{entry.description}</p>
       </div>
     </li>
   );

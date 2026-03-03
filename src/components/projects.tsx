@@ -19,15 +19,13 @@ export const Projects = () => {
 function ProjectItem({ project }: { project: Project }) {
   return (
     <li className="flex gap-x-3 py-3 first:pt-0 last:pb-0">
-      <div className="flex-none pt-0.5">
-        <Image
-          alt={project.name}
-          className="size-10 rounded-lg sm:size-12"
-          height={48}
-          src={`/projects/${project.imageUrl}`}
-          width={48}
-        />
-      </div>
+      <Image
+        alt={project.name}
+        className="size-10 sm:size-13"
+        height={52}
+        src={`/projects/${project.imageUrl}`}
+        width={52}
+      />
       <div className="flex flex-1 flex-col items-start gap-y-1">
         <h3 className="text-sm leading-none font-normal sm:text-base">
           <Link
