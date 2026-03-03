@@ -9,7 +9,7 @@ export const Header = () => {
 
   if (isHome) {
     return (
-      <div className="mb-8 w-fit md:mb-10">
+      <div className="mb-7 w-fit">
         <h1 className="text-xl leading-snug font-semibold tracking-tight md:text-2xl">
           Matt Bolaños
         </h1>
@@ -19,7 +19,7 @@ export const Header = () => {
   }
 
   return (
-    <div className="group mb-8 w-fit md:mb-10">
+    <div className="group mb-7 w-fit">
       <Link
         className="text-xl leading-snug font-semibold tracking-tight transition-opacity group-hover:opacity-60 md:text-2xl"
         href="/"

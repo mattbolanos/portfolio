@@ -38,7 +38,7 @@ function ProjectItem({ project }: { project: Project }) {
             {project.name}
           </Link>
         </h3>
-        <p className="text-xs sm:text-sm">{project.description}</p>
+        <p className="pt-1 text-xs sm:text-sm">{project.description}</p>
         <div className="flex flex-wrap items-center gap-1">
           {project.tags.map((tag) => (
             <div

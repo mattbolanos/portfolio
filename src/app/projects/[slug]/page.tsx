@@ -33,7 +33,7 @@ export default async function ProjectPage({
   if (!project) notFound();
 
   return (
-    <div className="space-y-9">
+    <div className="space-y-8">
       <section className="space-y-3">
         <div className="flex items-center gap-x-3">
           <Image
@@ -44,7 +44,7 @@ export default async function ProjectPage({
             width={56}
           />
           <div>
-            <h1 className="font-medium sm:text-lg">{project.name}</h1>
+            <h1 className="text-lg font-medium sm:text-xl">{project.name}</h1>
             <p className="text-xs sm:text-sm">{project.description}</p>
           </div>
         </div>
@@ -86,7 +86,7 @@ export default async function ProjectPage({
         )}
       </section>
 
-      <div className="space-y-3">
+      <section className="space-y-3">
         <h2>Images</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6">
           {project.imgs.map((src) => (
@@ -105,7 +105,7 @@ export default async function ProjectPage({
             </div>
           ))}
         </div>
-      </div>
+      </section>
     </div>
   );
 }

@@ -21,8 +21,8 @@ export const projects: Project[] = [
       "/projects/stratiles/preview-2.png",
     ],
     longDescription: [
-      "Stratiles is an iOS home screen widget that visualizes your Strava activity data as a GitHub-style contribution heatmap. It gives you a quick, at-a-glance view of your training consistency directly from your home screen — no need to open any app.",
-      "The widget fetches activity data through a Cloudflare Worker that acts as a lightweight proxy to the Strava API, handling OAuth token refresh and caching to keep things fast and within rate limits. The widget itself is built in SwiftUI using WidgetKit.",
+      "Inspired by GitHub's contribution graphs, I built this iOS app to visualize my Strava activity consistency in a widget on my home screen. The project uses SwiftUI and WidgetKit, with a backend powered by Cloudflare Workers to manage API authentication and data caching.",
+      "The companion app offers fun insights, including visualizations of activity patterns by time and day.  Users can fully customize their experience by filtering which activity types are included or excluded from the heatmaps.",
     ],
     name: "Stratiles",
     slug: "stratiles",
