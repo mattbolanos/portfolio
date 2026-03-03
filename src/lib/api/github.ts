@@ -15,8 +15,6 @@ export async function getRepoPushedAt(
   const repo = parseGithubRepo(githubUrl);
   if (!repo) return null;
 
-  console.log(repo);
-
   const res = await fetch(`https://api.github.com/repos/${repo}`, {
     headers: { Accept: "application/vnd.github+json" },
   });
