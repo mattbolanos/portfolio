@@ -33,13 +33,15 @@ const experienceEntries: ExperienceEntry[] = [
 
 export const Experience = () => {
   return (
-    <div className="space-y-3">
-      <h2>Experience</h2>
-      <ul className="divide-border/50 flex flex-col divide-y">
-        {experienceEntries.map((entry) => (
-          <ExperienceItem entry={entry} key={entry.company} />
-        ))}
-      </ul>
+    <div className="space-y-6">
+      <div className="space-y-3">
+        <h2>Experience</h2>
+        <ul className="divide-border/50 flex flex-col divide-y">
+          {experienceEntries.map((entry) => (
+            <ExperienceItem entry={entry} key={entry.company} />
+          ))}
+        </ul>
+      </div>
       <p className="text-sm sm:text-base">
         <Link
           className="text-link"
