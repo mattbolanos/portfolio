@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { LinkItem } from "@/components/link-item";
 import { GithubIcon } from "@/components/ui/github";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getRepoPushedAt } from "@/lib/api/github";
 import { formatTagLabel, projects } from "@/lib/projects";
 
 export function generateStaticParams() {
@@ -19,8 +22,24 @@ export async function generateMetadata({
   if (!project) return {};
   return {
     description: project.description,
-    title: `${project.name} — Matt Bolaños`,
+    title: `${project.name} | Matt Bolaños`,
   };
+}
+
+async function RepoLastUpdated({ githubUrl }: { githubUrl: string }) {
+  const pushedAt = await getRepoPushedAt(githubUrl);
+  if (!pushedAt) return null;
+
+  return (
+    <p className="text-muted-foreground text-xs">
+      Updated{" "}
+      {new Date(pushedAt).toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })}
+    </p>
+  );
 }
 
 export default async function ProjectPage({
@@ -38,10 +57,10 @@ export default async function ProjectPage({
         <div className="flex items-center gap-x-3">
           <Image
             alt={project.name}
-            className="size-12 rounded-lg sm:size-14"
-            height={56}
+            className="size-12 rounded-lg sm:size-13"
+            height={52}
             src={`/projects/${project.imageUrl}`}
-            width={56}
+            width={52}
           />
           <div>
             <h1 className="text-lg font-medium sm:text-xl">{project.name}</h1>
@@ -67,6 +86,10 @@ export default async function ProjectPage({
             </div>
           ))}
         </div>
+
+        <Suspense fallback={<Skeleton className="h-4 w-32" />}>
+          <RepoLastUpdated githubUrl={project.githubUrl} />
+        </Suspense>
       </section>
 
       <section className="space-y-6 text-sm leading-relaxed">
@@ -76,14 +99,13 @@ export default async function ProjectPage({
             <p key={i}>{paragraph}</p>
           ))}
         </div>
-        {project.githubUrl && (
-          <LinkItem
-            className="w-fit"
-            href={project.githubUrl}
-            Icon={GithubIcon}
-            label="View on GitHub"
-          />
-        )}
+
+        <LinkItem
+          className="w-fit"
+          href={project.githubUrl}
+          Icon={GithubIcon}
+          label="View on GitHub"
+        />
       </section>
 
       <section className="space-y-3">

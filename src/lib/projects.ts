@@ -4,7 +4,7 @@ export interface Project {
   description: string;
   longDescription: string[];
   tags: string[];
-  githubUrl?: string;
+  githubUrl: string;
   imageUrl: string;
   imgs: string[];
 }
@@ -21,7 +21,7 @@ export const projects: Project[] = [
       "/projects/stratiles/preview-2.png",
     ],
     longDescription: [
-      "Inspired by GitHub's contribution graphs, I built this iOS app to visualize my Strava activity consistency in a widget on my home screen. The project uses SwiftUI and WidgetKit, with a backend powered by Cloudflare Workers to manage API authentication and data caching.",
+      "Inspired by GitHub's contribution graphs, I built this iOS app to visualize my Strava activity consistency as a widget on my iPhone. The project uses SwiftUI and WidgetKit, with a backend powered by Cloudflare Workers to manage API authentication and data caching.",
       "The companion app offers fun insights, including visualizations of activity patterns by time and day.  Users can fully customize their experience by filtering which activity types are included or excluded from the heatmaps.",
     ],
     name: "Stratiles",
