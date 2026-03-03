@@ -1,13 +1,8 @@
-"use client";
-
-import Link from "next/link";
-import { useRef } from "react";
+import { LinkItem } from "./link-item";
 import { GithubIcon } from "./ui/github";
 import { LinkedinIcon } from "./ui/linkedin";
 import { MailCheckIcon } from "./ui/mail-check";
 import { TwitterIcon } from "./ui/twitter";
-
-const ICON_SIZE = 18;
 
 interface IconHandle {
   startAnimation: () => void;
@@ -47,38 +42,15 @@ const LINKS: ContactLink[] = [
   },
 ];
 
-function ContactLinkItem({ href, label, Icon }: ContactLink) {
-  const iconRef = useRef<IconHandle>(null);
-
-  return (
-    <li className="cursor-pointer">
-      <Link
-        className="border-border bg-card flex items-center gap-2 rounded-full border px-3.5 py-2 transition-transform duration-150 [text-decoration:none] hover:scale-105 motion-reduce:transition-none"
-        href={href}
-        onMouseEnter={() => iconRef.current?.startAnimation()}
-        onMouseLeave={() => iconRef.current?.stopAnimation()}
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        <Icon ref={iconRef} size={ICON_SIZE} />
-        <span
-          className="text-foreground/80 text-xs font-medium tracking-wide"
-          style={{ textDecoration: "none" }}
-        >
-          {label}
-        </span>
-      </Link>
-    </li>
-  );
-}
-
 export const ContactLinks = () => {
   return (
     <div className="space-y-3">
       <h2>Connect</h2>
       <ul className="flex flex-wrap items-center gap-1.5">
         {LINKS.map((link) => (
-          <ContactLinkItem key={link.href} {...link} />
+          <li className="cursor-pointer" key={link.href}>
+            <LinkItem href={link.href} Icon={link.Icon} label={link.label} />
+          </li>
         ))}
       </ul>
     </div>

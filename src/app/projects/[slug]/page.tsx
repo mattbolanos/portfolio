@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { LinkItem } from "@/components/link-item";
+import { GithubIcon } from "@/components/ui/github";
 import { formatTagLabel, projects } from "@/lib/projects";
 
 export function generateStaticParams() {
@@ -31,8 +33,8 @@ export default async function ProjectPage({
   if (!project) notFound();
 
   return (
-    <div className="space-y-8">
-      <div className="space-y-4">
+    <div className="space-y-9">
+      <section className="space-y-3">
         <div className="flex items-center gap-x-3">
           <Image
             alt={project.name}
@@ -42,17 +44,15 @@ export default async function ProjectPage({
             width={56}
           />
           <div>
-            <h1 className="text-xl font-medium sm:text-2xl">{project.name}</h1>
-            <p className="text-muted-foreground text-sm">
-              {project.description}
-            </p>
+            <h1 className="font-medium sm:text-lg">{project.name}</h1>
+            <p className="text-xs sm:text-sm">{project.description}</p>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5">
           {project.tags.map((tag) => (
             <div
-              className="border-border bg-card flex items-center justify-center gap-x-1 rounded-full border px-2 py-0.5"
+              className="border-border bg-card flex items-center justify-center gap-x-1 rounded-full border px-3 py-1.5"
               key={tag}
               title={formatTagLabel(tag)}
             >
@@ -67,38 +67,45 @@ export default async function ProjectPage({
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      <div className="text-muted-foreground space-y-4 text-sm leading-relaxed">
-        {project.longDescription.split("\n\n").map((paragraph, i) => (
-          <p key={i}>{paragraph}</p>
-        ))}
-      </div>
+      <section className="space-y-6 text-sm leading-relaxed">
+        <div className="space-y-3">
+          {project.longDescription.map((paragraph, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: <paragraph order won't change / re-render>
+            <p key={i}>{paragraph}</p>
+          ))}
+        </div>
+        {project.githubUrl && (
+          <LinkItem
+            className="w-fit"
+            href={project.githubUrl}
+            Icon={GithubIcon}
+            label="View on GitHub"
+          />
+        )}
+      </section>
 
       <div className="space-y-3">
-        <h2 className="text-base font-medium">Screenshots</h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {project.screenshots.map((src, i) => (
+        <h2>Images</h2>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6">
+          {project.imgs.map((src) => (
             <div
-              className="border-border bg-muted flex aspect-video items-center justify-center rounded-lg border"
-              key={i}
+              className="group border-border bg-muted/50 relative overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md motion-reduce:transition-none"
+              key={src}
             >
-              <span className="text-muted-foreground text-xs">
-                Screenshot {i + 1}
-              </span>
+              <Image
+                alt={`${project.name} screenshot`}
+                className="w-full transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none"
+                height={720}
+                src={src}
+                width={1280}
+              />
+              <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-black/5 ring-inset dark:ring-white/8" />
             </div>
           ))}
         </div>
       </div>
-
-      <a
-        className="border-border bg-card hover:bg-muted inline-flex items-center gap-x-2 rounded-lg border px-4 py-2 text-sm transition-colors"
-        href={project.url}
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        View on GitHub &rarr;
-      </a>
     </div>
   );
 }
