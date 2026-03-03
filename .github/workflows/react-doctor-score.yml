@@ -49,8 +49,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          perl -0pi -e 's#(https://www\\.react\\.doctor/share/badge\\?[^)\\s]*\\bs=)\\d+#${1}$ENV{SCORE}#g' README.md
-          perl -0pi -e 's#(https://www\\.react\\.doctor/share\\?[^)\\s]*\\bs=)\\d+#${1}$ENV{SCORE}#g' README.md
+          perl -0pi -e 's#(https://www\.react\.doctor/share(?:/badge)?\?[^)\s]*\bs=)\d+#$1$ENV{SCORE}#g' README.md
 
       - name: Commit README update
         shell: bash
