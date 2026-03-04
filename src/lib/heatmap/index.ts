@@ -1,11 +1,11 @@
-import type { GetActivitiesResult } from "@/lib/api/strava";
+export type HeatmapEntry = {
+  date: string;
+  value: number;
+};
 
-export type HeatmapDay = GetActivitiesResult["heatmap"][number];
-
-type HeatmapCell = {
+export type HeatmapCell = {
   date: Date;
-  miles: number;
-  runCount: number;
+  value: number;
 };
 
 type HeatmapWeek = {
@@ -14,13 +14,20 @@ type HeatmapWeek = {
 };
 
 type HeatmapView = {
-  maxMiles: number;
   today: Date;
-  totalMiles: number;
+  totalValue: number;
   weeks: HeatmapWeek[];
 };
 
+export type HeatmapConfig = {
+  colorVar: string;
+  formatDayTitle: (cell: HeatmapCell) => string;
+  formatSummary: (total: number) => string;
+  range: [min: number, max: number];
+};
+
 const WEEKS_TO_SHOW = 52;
+
 export const DAY_LABELS = [
   { key: "sun", label: "" },
   { key: "mon", label: "Mon" },
@@ -30,22 +37,11 @@ export const DAY_LABELS = [
   { key: "fri", label: "Fri" },
   { key: "sat", label: "" },
 ] as const;
+
 export const COLOR_MIX_BY_LEVEL = [0, 30, 50, 75, 100] as const;
-export const TILE_LEVEL_CLASS_BY_LEVEL = [
-  "bg-[color-mix(in_oklch,var(--strava)_0%,var(--empty))]",
-  "bg-[color-mix(in_oklch,var(--strava)_30%,var(--empty))]",
-  "bg-[color-mix(in_oklch,var(--strava)_50%,var(--empty))]",
-  "bg-[color-mix(in_oklch,var(--strava)_75%,var(--empty))]",
-  "bg-[color-mix(in_oklch,var(--strava)_100%,var(--empty))]",
-] as const;
 
 const MONTH_LABEL_MIN_WEEK_GAP = 3;
 const MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", { month: "short" });
-const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-});
 
 const startOfDay = (date: Date): Date =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -66,22 +62,19 @@ export const toDateKey = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
-export const getLevel = (miles: number, maxMiles: number): number => {
-  if (miles <= 0 || maxMiles <= 0) {
+export const getLevel = (
+  value: number,
+  [min, max]: [number, number],
+): number => {
+  if (value <= min || max <= min) {
     return 0;
   }
 
-  return Math.min(4, Math.max(1, Math.ceil((miles / maxMiles) * 4)));
-};
-
-export const getDayTitle = (day: HeatmapCell): string => {
-  const formattedDate = DATE_FORMATTER.format(day.date);
-
-  if (day.runCount === 0) {
-    return `No miles run on ${formattedDate}`;
+  if (value >= max) {
+    return 4;
   }
 
-  return `${day.miles.toFixed(2)} miles on ${formattedDate}`;
+  return Math.ceil(((value - min) / (max - min)) * 3);
 };
 
 export const buildMonthLabels = (
@@ -115,11 +108,11 @@ export const buildMonthLabels = (
 };
 
 export const buildHeatmapView = (
-  heatmap: HeatmapDay[],
+  entries: HeatmapEntry[],
   weeksToShow = WEEKS_TO_SHOW,
 ): HeatmapView => {
   const today = startOfDay(new Date());
-  const daysByDate = new Map(heatmap.map((day) => [day.date, day]));
+  const entriesByDate = new Map(entries.map((entry) => [entry.date, entry]));
   const windowStart = addDays(today, -(weeksToShow * 7 - 1));
   const gridStart = startOfWeek(windowStart);
   const gridEnd = endOfWeek(today);
@@ -132,12 +125,11 @@ export const buildHeatmapView = (
   ) {
     const values = Array.from({ length: 7 }, (_, dayOffset) => {
       const date = addDays(weekStart, dayOffset);
-      const day = daysByDate.get(toDateKey(date));
+      const entry = entriesByDate.get(toDateKey(date));
 
       return {
         date,
-        miles: day?.miles ?? 0,
-        runCount: day?.runCount ?? 0,
+        value: entry?.value ?? 0,
       };
     });
 
@@ -147,9 +139,8 @@ export const buildHeatmapView = (
   const days = weeks.flatMap((week) => week.values);
 
   return {
-    maxMiles: Math.max(0, ...days.map((day) => day.miles)) - 4,
     today,
-    totalMiles: days.reduce((sum, day) => sum + day.miles, 0),
+    totalValue: days.reduce((sum, day) => sum + day.value, 0),
     weeks,
   };
 };
