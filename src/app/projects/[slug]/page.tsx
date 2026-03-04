@@ -8,7 +8,7 @@ import { HeatmapSkeleton } from "@/components/skeletons/heatmap-skeleton";
 import { GithubIcon } from "@/components/ui/github";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getGithubRepoContributions, getRepoPushedAt } from "@/lib/api/github";
-import { toGithubHeatmapEntries } from "@/lib/github/heatmap";
+import { toGithubHeatmapEntries } from "@/lib/heatmap/github";
 import { formatTagLabel, projects } from "@/lib/projects";
 
 export function generateStaticParams() {

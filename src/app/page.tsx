@@ -10,8 +10,8 @@ import { ActivitiesWrapperSkeleton } from "@/components/skeletons/activities-wra
 import { HeatmapSkeleton } from "@/components/skeletons/heatmap-skeleton";
 import { getGithubContributions } from "@/lib/api/github";
 import { getActivities } from "@/lib/api/strava";
-import { toGithubHeatmapEntries } from "@/lib/github/heatmap";
-import { toStravaHeatmapEntries } from "@/lib/strava/heatmap";
+import { toGithubHeatmapEntries } from "@/lib/heatmap/github";
+import { toStravaHeatmapEntries } from "@/lib/heatmap/strava";
 
 export const metadata: Metadata = {
   description: "Matt Bolaños' personal website",

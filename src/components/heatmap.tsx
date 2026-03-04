@@ -10,7 +10,7 @@ import {
   type HeatmapEntry,
   toDateKey,
 } from "@/lib/heatmap";
-import { getHeatmapConfig, type HeatmapConfigId } from "@/lib/heatmap-configs";
+import { getHeatmapConfig, type HeatmapConfigId } from "@/lib/heatmap/configs";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
