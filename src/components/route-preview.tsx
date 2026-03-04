@@ -199,7 +199,7 @@ export const RoutePreview = ({
             <feGaussianBlur in="SourceGraphic" stdDeviation="2" />
           </filter>
           <filter id={dotGlowId}>
-            <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="2" />
           </filter>
         </defs>
 
@@ -336,6 +336,27 @@ export const RoutePreview = ({
             fill="freeze"
             keyTimes="0;0.5;1"
             values="2.2;3.2;2.2"
+          />
+        </circle>
+
+        {/* Dot highlight core – subtle in light, prominent on dark */}
+        <circle className="route-dot-core" fill="white" opacity={0} r={1.2}>
+          <animateMotion
+            begin={`${drawDelay}s`}
+            calcMode="spline"
+            dur={`${ROUTE_ANIM.drawDuration}s`}
+            fill="freeze"
+            keySplines={ROUTE_ANIM.spline}
+            keyTimes="0;1"
+            path={routePath}
+          />
+          <animate
+            attributeName="opacity"
+            begin={`${drawDelay}s`}
+            dur={`${ROUTE_ANIM.drawDuration + ROUTE_ANIM.dotFadeOut}s`}
+            fill="freeze"
+            keyTimes="0;0.03;0.8;1"
+            values="0.45;0.45;0.45;0"
           />
         </circle>
       </svg>
