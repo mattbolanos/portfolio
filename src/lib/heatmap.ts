@@ -1,21 +1,19 @@
 export type HeatmapEntry = {
   date: string;
   value: number;
-  count: number;
 };
 
 export type HeatmapCell = {
   date: Date;
   value: number;
-  count: number;
 };
 
-export type HeatmapWeek = {
+type HeatmapWeek = {
   start: Date;
   values: HeatmapCell[];
 };
 
-export type HeatmapView = {
+type HeatmapView = {
   today: Date;
   totalValue: number;
   weeks: HeatmapWeek[];
@@ -130,7 +128,6 @@ export const buildHeatmapView = (
       const entry = entriesByDate.get(toDateKey(date));
 
       return {
-        count: entry?.count ?? 0,
         date,
         value: entry?.value ?? 0,
       };

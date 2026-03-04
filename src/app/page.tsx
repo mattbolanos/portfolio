@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { ActivitiesWrapperSkeleton } from "@/components/activities-wrapper-skeleton";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
 import { Heatmap } from "@/components/heatmap";
 import { Intro } from "@/components/intro";
 import { Projects } from "@/components/projects";
 import { RecentRuns } from "@/components/recent-runs";
+import { ActivitiesWrapperSkeleton } from "@/components/skeletons/activities-wrapper-skeleton";
+import { HeatmapSkeleton } from "@/components/skeletons/heatmap-skeleton";
+import { getGithubContributions } from "@/lib/api/github";
 import { getActivities } from "@/lib/api/strava";
+import { toGithubHeatmapEntries } from "@/lib/github/heatmap";
 import { toStravaHeatmapEntries } from "@/lib/strava/heatmap";
 
 export const metadata: Metadata = {
@@ -23,9 +26,9 @@ async function ActivitiesPreviewWrapper() {
 
   if (!activities) {
     return (
-      <div className="border-border bg-card text-muted-foreground rounded-xl border p-4 text-sm">
+      <article className="bg-card rounded-lg p-4">
         Unable to load Strava activities.
-      </div>
+      </article>
     );
   }
 
@@ -48,20 +51,48 @@ async function ActivitiesPreviewWrapper() {
   );
 }
 
+async function GithubContributions() {
+  const githubContributions = await getGithubContributions();
+
+  if (!githubContributions) {
+    return (
+      <article className="bg-card rounded-lg p-4">
+        Unable to load Github contributions.
+      </article>
+    );
+  }
+
+  return (
+    <Heatmap
+      configId="github"
+      data={toGithubHeatmapEntries(githubContributions)}
+    />
+  );
+}
+
 export default function Home() {
   return (
     <div className="space-y-10">
       <Intro />
       <Experience />
       <Projects />
-      <div className="space-y-3">
-        <h2>Recent Runs</h2>
-        <div className="bg-muted space-y-1.5 rounded-xl p-2">
+
+      <section className="space-y-3">
+        <h2>Running</h2>
+        <div className="heatmap-container">
           <Suspense fallback={<ActivitiesWrapperSkeleton />}>
             <ActivitiesPreviewWrapper />
           </Suspense>
         </div>
-      </div>
+      </section>
+      <section className="space-y-3">
+        <h2>Coding</h2>
+        <div className="heatmap-container">
+          <Suspense fallback={<HeatmapSkeleton />}>
+            <GithubContributions />
+          </Suspense>
+        </div>
+      </section>
       <ContactLinks />
     </div>
   );

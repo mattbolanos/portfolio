@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { Heatmap } from "@/components/heatmap";
 import { LinkItem } from "@/components/link-item";
+import { HeatmapSkeleton } from "@/components/skeletons/heatmap-skeleton";
 import { GithubIcon } from "@/components/ui/github";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getRepoPushedAt } from "@/lib/api/github";
+import { getGithubRepoContributions, getRepoPushedAt } from "@/lib/api/github";
+import { toGithubHeatmapEntries } from "@/lib/github/heatmap";
 import { formatTagLabel, projects } from "@/lib/projects";
 
 export function generateStaticParams() {
@@ -39,6 +42,25 @@ async function RepoLastUpdated({ githubUrl }: { githubUrl: string }) {
         year: "numeric",
       })}
     </p>
+  );
+}
+
+async function GithubContributions({ githubUrl }: { githubUrl: string }) {
+  const githubContributions = await getGithubRepoContributions(githubUrl);
+
+  if (!githubContributions) {
+    return (
+      <article className="bg-card rounded-lg p-4">
+        Unable to load GitHub contributions.
+      </article>
+    );
+  }
+
+  return (
+    <Heatmap
+      configId="github"
+      data={toGithubHeatmapEntries(githubContributions)}
+    />
   );
 }
 
@@ -92,7 +114,7 @@ export default async function ProjectPage({
         </Suspense>
       </section>
 
-      <section className="space-y-6 text-sm leading-relaxed">
+      <section className="space-y-6 leading-relaxed">
         {project.longDescription.map((paragraph, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: <paragraph order won't change / re-render>
           <p key={i}>{paragraph}</p>
@@ -125,6 +147,15 @@ export default async function ProjectPage({
               <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-black/5 ring-inset dark:ring-white/8" />
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="space-y-3">
+        <h2>Contributions</h2>
+        <div className="heatmap-container">
+          <Suspense fallback={<HeatmapSkeleton />}>
+            <GithubContributions githubUrl={project.githubUrl} />
+          </Suspense>
         </div>
       </section>
     </div>

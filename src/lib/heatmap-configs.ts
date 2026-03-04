@@ -7,12 +7,30 @@ const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
 });
 
 const HEATMAP_CONFIGS = {
+  github: {
+    colorVar: "--github",
+    formatDayTitle: (cell) => {
+      const formattedDate = DATE_FORMATTER.format(cell.date);
+
+      if (cell.value === 0) {
+        return `No contributions on ${formattedDate}`;
+      }
+
+      const contributionLabel =
+        cell.value === 1 ? "contribution" : "contributions";
+
+      return `${cell.value.toLocaleString("en-US")} ${contributionLabel} on ${formattedDate}`;
+    },
+    formatSummary: (total) =>
+      `${Math.round(total).toLocaleString("en-US")} contributions in the last year`,
+    range: [0, 40],
+  },
   strava: {
     colorVar: "--strava",
     formatDayTitle: (cell) => {
       const formattedDate = DATE_FORMATTER.format(cell.date);
 
-      if (cell.count === 0) {
+      if (cell.value === 0) {
         return `No miles run on ${formattedDate}`;
       }
 

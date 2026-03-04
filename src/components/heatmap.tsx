@@ -10,10 +10,8 @@ import {
   type HeatmapEntry,
   toDateKey,
 } from "@/lib/heatmap";
-import {
-  getHeatmapConfig,
-  type HeatmapConfigId,
-} from "@/lib/heatmap-configs";
+import { getHeatmapConfig, type HeatmapConfigId } from "@/lib/heatmap-configs";
+import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 interface HeatmapProps {
@@ -98,7 +96,10 @@ export const Heatmap = ({ configId, data }: HeatmapProps) => {
                       ) : (
                         <Tooltip disableHoverablePopup>
                           <TooltipTrigger
-                            className={`hidden sm:block ${isScrolling ? "pointer-events-none" : ""}`}
+                            className={cn(
+                              "size-tile hidden sm:inline-flex",
+                              isScrolling ? "pointer-events-none" : "",
+                            )}
                           >
                             <div
                               className="rounded-tile size-tile transition-opacity duration-150 hover:opacity-85"
@@ -137,10 +138,10 @@ export const Heatmap = ({ configId, data }: HeatmapProps) => {
             {COLOR_MIX_BY_LEVEL.map((mix, level) => (
               <div
                 className="rounded-tile size-tile"
+                key={`legend-${mix}`}
                 style={{
                   backgroundColor: tileColor(config.colorVar, level),
                 }}
-                key={`legend-${mix}`}
               />
             ))}
             <span>More</span>

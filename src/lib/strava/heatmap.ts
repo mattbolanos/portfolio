@@ -1,7 +1,7 @@
 import type { GetActivitiesResult } from "@/lib/api/strava";
 import type { HeatmapEntry } from "@/lib/heatmap";
 
-export type HeatmapDay = GetActivitiesResult["heatmap"][number];
+type HeatmapDay = GetActivitiesResult["heatmap"][number];
 
 export const toStravaHeatmapEntries = (days: HeatmapDay[]): HeatmapEntry[] =>
   days.map((day) => ({

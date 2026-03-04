@@ -37,6 +37,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-github: var(--github);
   --color-strava: var(--strava);
   --color-strava-route: var(--strava-route);
   --radius-sm: calc(var(--radius) - 4px);
@@ -84,6 +85,7 @@
   --sidebar-accent-foreground: oklch(0.22 0.012 55);
   --sidebar-border: oklch(0.88 0.016 74);
   --sidebar-ring: oklch(0.712 0.194 13.428);
+  --github: oklch(0.4393 0.1176 147.95);
   --strava: oklch(0.6679 0.2169 38.29);
   --strava-route: oklch(0.95 0.025 145);
   --heatmap-tile-size: 10px;
@@ -124,9 +126,10 @@
   --sidebar-accent-foreground: oklch(0.92 0.015 75);
   --sidebar-border: oklch(1 0.01 75 / 10%);
   --sidebar-ring: oklch(0.41 0.159 10.272);
+  --github: oklch(0.772 0.1876 145.36);
   --strava: oklch(0.6618 0.2214 36.88);
   --strava-route: oklch(0.28 0.03 145);
-  --empty: oklch(0.2 0 75);
+  --empty: oklch(0.18 0 0);
 }
 
 @layer base {
@@ -201,6 +204,10 @@ html *::-webkit-scrollbar-thumb {
   transform: translateY(6px);
   animation: card-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   will-change: opacity, transform;
+}
+
+.heatmap-container {
+  @apply bg-muted rounded-xl p-2;
 }
 
 @media (prefers-reduced-motion: reduce) {
