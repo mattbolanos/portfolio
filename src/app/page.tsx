@@ -8,6 +8,7 @@ import { Intro } from "@/components/intro";
 import { Projects } from "@/components/projects";
 import { RecentRuns } from "@/components/recent-runs";
 import { getActivities } from "@/lib/api/strava";
+import { toStravaHeatmapEntries } from "@/lib/strava/heatmap";
 
 export const metadata: Metadata = {
   description: "Matt Bolaños' personal website",
@@ -38,7 +39,10 @@ async function ActivitiesPreviewWrapper() {
 
   return (
     <>
-      <Heatmap heatmap={activities.heatmap} />
+      <Heatmap
+        configId="strava"
+        data={toStravaHeatmapEntries(activities.heatmap)}
+      />
       <RecentRuns runs={latestRuns} />
     </>
   );

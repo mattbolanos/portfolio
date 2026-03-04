@@ -1,4 +1,4 @@
-import { DAY_LABELS } from "@/lib/strava/heatmap";
+import { DAY_LABELS } from "@/lib/heatmap";
 import { Skeleton } from "./ui/skeleton";
 
 const HEATMAP_TILE_KEYS = Array.from({ length: 7 * 52 }, (_, index) => {

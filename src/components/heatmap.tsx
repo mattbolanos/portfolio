@@ -6,21 +6,27 @@ import {
   buildMonthLabels,
   COLOR_MIX_BY_LEVEL,
   DAY_LABELS,
-  getDayTitle,
   getLevel,
-  type HeatmapDay,
-  TILE_LEVEL_CLASS_BY_LEVEL,
+  type HeatmapEntry,
   toDateKey,
-} from "@/lib/strava/heatmap";
-import { cn } from "@/lib/utils";
+} from "@/lib/heatmap";
+import {
+  getHeatmapConfig,
+  type HeatmapConfigId,
+} from "@/lib/heatmap-configs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 interface HeatmapProps {
-  heatmap: HeatmapDay[];
+  configId: HeatmapConfigId;
+  data: HeatmapEntry[];
 }
 
-export const Heatmap = ({ heatmap }: HeatmapProps) => {
-  const view = React.useMemo(() => buildHeatmapView(heatmap), [heatmap]);
+const tileColor = (colorVar: string, level: number): string =>
+  `color-mix(in oklch, var(${colorVar}) ${COLOR_MIX_BY_LEVEL[level]}%, var(--empty))`;
+
+export const Heatmap = ({ configId, data }: HeatmapProps) => {
+  const config = getHeatmapConfig(configId);
+  const view = React.useMemo(() => buildHeatmapView(data), [data]);
   const monthLabels = React.useMemo(
     () => buildMonthLabels(view.weeks),
     [view.weeks],
@@ -82,8 +88,8 @@ export const Heatmap = ({ heatmap }: HeatmapProps) => {
               {view.weeks.flatMap((week) =>
                 week.values.map((day) => {
                   const isFuture = day.date > view.today;
-                  const level = getLevel(day.miles, view.maxMiles);
-                  const tileColorClass = TILE_LEVEL_CLASS_BY_LEVEL[level];
+                  const level = getLevel(day.value, config.range);
+                  const bg = tileColor(config.colorVar, level);
 
                   return (
                     <React.Fragment key={toDateKey(day.date)}>
@@ -95,24 +101,22 @@ export const Heatmap = ({ heatmap }: HeatmapProps) => {
                             className={`hidden sm:block ${isScrolling ? "pointer-events-none" : ""}`}
                           >
                             <div
-                              className={cn(
-                                "rounded-tile size-tile transition-opacity duration-150 hover:opacity-85",
-                                tileColorClass,
-                              )}
+                              className="rounded-tile size-tile transition-opacity duration-150 hover:opacity-85"
+                              style={{ backgroundColor: bg }}
                             />
                           </TooltipTrigger>
-                          <TooltipContent>{getDayTitle(day)}</TooltipContent>
+                          <TooltipContent>
+                            {config.formatDayTitle(day)}
+                          </TooltipContent>
                         </Tooltip>
                       )}
                       <div
                         className={
                           isFuture
                             ? "bg-muted rounded-tile size-tile cursor-not-allowed opacity-50 sm:hidden dark:opacity-20"
-                            : cn(
-                                "rounded-tile size-tile transition-opacity duration-150 hover:opacity-85 sm:hidden",
-                                tileColorClass,
-                              )
+                            : "rounded-tile size-tile transition-opacity duration-150 hover:opacity-85 sm:hidden"
                         }
+                        style={isFuture ? undefined : { backgroundColor: bg }}
                       />
                     </React.Fragment>
                   );
@@ -125,15 +129,17 @@ export const Heatmap = ({ heatmap }: HeatmapProps) => {
 
       <div className="text-muted-foreground mt-2 space-y-2 text-xs sm:mt-1">
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <span className="tabular-nums">{`${view.totalMiles.toFixed(1)} miles ran in the last year`}</span>
+          <span className="tabular-nums">
+            {config.formatSummary(view.totalValue)}
+          </span>
           <div className="flex items-center gap-1">
             <span>Less</span>
             {COLOR_MIX_BY_LEVEL.map((mix, level) => (
               <div
-                className={cn(
-                  "rounded-tile size-tile",
-                  TILE_LEVEL_CLASS_BY_LEVEL[level],
-                )}
+                className="rounded-tile size-tile"
+                style={{
+                  backgroundColor: tileColor(config.colorVar, level),
+                }}
                 key={`legend-${mix}`}
               />
             ))}
