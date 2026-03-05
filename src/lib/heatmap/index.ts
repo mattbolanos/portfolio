@@ -21,6 +21,7 @@ type HeatmapView = {
 
 export type HeatmapConfig = {
   colorVar: string;
+  colorsByLevel?: readonly [string, string, string, string, string];
   formatDayTitle: (cell: HeatmapCell) => string;
   formatSummary: (total: number) => string;
   range: [min: number, max: number];
