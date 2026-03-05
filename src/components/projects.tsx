@@ -21,7 +21,7 @@ function ProjectItem({ project }: { project: Project }) {
     <li className="flex gap-x-3 py-3 first:pt-0 last:pb-0">
       <Image
         alt={project.name}
-        className="size-10 sm:size-13"
+        className="image-card"
         height={52}
         src={`/projects/${project.imageUrl}`}
         width={52}

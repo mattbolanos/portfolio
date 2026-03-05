@@ -40,7 +40,7 @@ export const ActivityCard = ({
 
   return (
     <article
-      className="animate-card-in bg-card ring-foreground/6 hover:ring-foreground/10 relative flex items-center gap-1.5 rounded-lg px-2.5 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3"
+      className="animate-card-in bg-card ring-foreground/6 hover:ring-foreground/10 relative flex items-center gap-1.5 rounded-lg px-2 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3 sm:px-2.5"
       key={run.id}
       style={{ animationDelay: `${delay}s` }}
     >
