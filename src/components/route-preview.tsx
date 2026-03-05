@@ -135,7 +135,7 @@ interface RoutePreviewProps {
 }
 
 const EmptyPreview = () => (
-  <div className="bg-strava-route route-preview grid size-9 shrink-0 place-items-center rounded-lg sm:size-11 sm:rounded-[10px]">
+  <div className="bg-strava-route route-preview image-card grid shrink-0 place-items-center rounded-lg">
     <svg
       aria-hidden="true"
       className="h-full w-full"
@@ -172,7 +172,7 @@ export const RoutePreview = ({
   const terrainId = `terrain-${uid}`;
 
   return (
-    <div className="bg-strava-route route-preview size-9 shrink-0 overflow-hidden rounded-[10px] sm:size-11">
+    <div className="bg-strava-route route-preview image-card shrink-0 overflow-hidden rounded-lg">
       <svg
         aria-label={`${runName} route`}
         className="h-full w-full"

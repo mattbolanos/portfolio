@@ -199,6 +199,10 @@ html *::-webkit-scrollbar-thumb {
   }
 }
 
+.image-card {
+  @apply sm:size-13 size-10;
+}
+
 .animate-card-in {
   opacity: 0;
   transform: translateY(6px);

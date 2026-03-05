@@ -61,10 +61,7 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
     <li className="flex gap-x-3 py-3 first:pt-0 last:pb-0">
       <Image
         alt={entry.company}
-        className={cn(
-          "size-10 sm:size-13",
-          entry.hasDarkImage && "dark:hidden",
-        )}
+        className={cn("image-card", entry.hasDarkImage && "dark:hidden")}
         height={52}
         src={entry.imageUrl}
         width={52}
@@ -72,7 +69,7 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
       {entry.hasDarkImage && (
         <Image
           alt={entry.company}
-          className="hidden size-10 sm:size-13 dark:block"
+          className="image-card hidden dark:block"
           height={52}
           src={`${entry.imageUrl.replace(".svg", "-dark.svg")}`}
           width={52}
