@@ -7,6 +7,7 @@ import {
   COLOR_MIX_BY_LEVEL,
   DAY_LABELS,
   getLevel,
+  type HeatmapConfig,
   type HeatmapEntry,
   toDateKey,
 } from "@/lib/heatmap";
@@ -19,8 +20,10 @@ interface HeatmapProps {
   data: HeatmapEntry[];
 }
 
-const tileColor = (colorVar: string, level: number): string =>
-  `color-mix(in oklch, var(${colorVar}) ${COLOR_MIX_BY_LEVEL[level]}%, var(--empty))`;
+const tileColor = (config: HeatmapConfig, level: number): string =>
+  config.colorsByLevel
+    ? `var(${config.colorsByLevel[level]})`
+    : `color-mix(in oklch, var(${config.colorVar}) ${COLOR_MIX_BY_LEVEL[level]}%, var(--empty))`;
 
 export const Heatmap = ({ configId, data }: HeatmapProps) => {
   const config = getHeatmapConfig(configId);
@@ -87,7 +90,7 @@ export const Heatmap = ({ configId, data }: HeatmapProps) => {
                 week.values.map((day) => {
                   const isFuture = day.date > view.today;
                   const level = getLevel(day.value, config.range);
-                  const bg = tileColor(config.colorVar, level);
+                  const bg = tileColor(config, level);
 
                   return (
                     <React.Fragment key={toDateKey(day.date)}>
@@ -140,7 +143,7 @@ export const Heatmap = ({ configId, data }: HeatmapProps) => {
                 className="rounded-tile size-tile"
                 key={`legend-${mix}`}
                 style={{
-                  backgroundColor: tileColor(config.colorVar, level),
+                  backgroundColor: tileColor(config, level),
                 }}
               />
             ))}

@@ -85,7 +85,11 @@
   --sidebar-accent-foreground: oklch(0.22 0.012 55);
   --sidebar-border: oklch(0.88 0.016 74);
   --sidebar-ring: oklch(0.712 0.194 13.428);
-  --github: oklch(0.45 0.18 150);
+  --github: oklch(0.45 0.14 150);
+  --github-1: oklch(0.87 0.11 149);
+  --github-2: oklch(0.72 0.17 148);
+  --github-3: oklch(0.61 0.16 148);
+  --github-4: oklch(0.45 0.14 150);
   --strava: oklch(0.6679 0.2169 38.29);
   --strava-route: oklch(0.95 0.025 145);
   --heatmap-tile-size: 10px;
@@ -127,6 +131,10 @@
   --sidebar-border: oklch(1 0.01 75 / 10%);
   --sidebar-ring: oklch(0.41 0.159 10.272);
   --github: oklch(0.772 0.1876 145.36);
+  --github-1: color-mix(in oklch, var(--github) 30%, var(--empty));
+  --github-2: color-mix(in oklch, var(--github) 50%, var(--empty));
+  --github-3: color-mix(in oklch, var(--github) 75%, var(--empty));
+  --github-4: var(--github);
   --strava: oklch(0.6618 0.2214 36.88);
   --strava-route: oklch(0.28 0.03 145);
   --empty: oklch(0.18 0 0);
