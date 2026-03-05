@@ -172,7 +172,7 @@ export const RoutePreview = ({
   const terrainId = `terrain-${uid}`;
 
   return (
-    <div className="bg-strava-route route-preview image-card shrink-0 overflow-hidden rounded-lg">
+    <div className="bg-strava-route route-preview size-11 shrink-0 overflow-hidden rounded-lg sm:size-13">
       <svg
         aria-label={`${runName} route`}
         className="h-full w-full"
