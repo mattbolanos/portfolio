@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -28,14 +28,11 @@ jobs:
           set -euo pipefail
 
           OUTPUT_FILE="$(mktemp)"
-          bunx -y react-doctor@latest . | tee "$OUTPUT_FILE"
+          bunx react-doctor@latest . --yes --score --no-ami | tee "$OUTPUT_FILE"
 
-          SCORE="$(grep -Eo 's=[0-9]+' "$OUTPUT_FILE" | tail -1 | cut -d= -f2 || true)"
-          if [[ -z "$SCORE" ]]; then
-            SCORE="$(grep -Eo '[0-9]+ / 100' "$OUTPUT_FILE" | tail -1 | awk '{print $1}' || true)"
-          fi
+          SCORE="$(tail -1 "$OUTPUT_FILE" | tr -d '[:space:]')"
 
-          if [[ -z "$SCORE" ]]; then
+          if [[ -z "$SCORE" ]] || ! [[ "$SCORE" =~ ^[0-9]+$ ]]; then
             echo "Unable to extract React Doctor score from output."
             exit 1
           fi
