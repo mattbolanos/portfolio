@@ -26,7 +26,7 @@ async function ActivitiesPreviewWrapper() {
 
   if (!activities) {
     return (
-      <article className="bg-card rounded-lg p-4">
+      <article className="bg-card rounded-lg p-3 sm:p-4">
         Unable to load Strava activities.
       </article>
     );
@@ -56,7 +56,7 @@ async function GithubContributions() {
 
   if (!githubContributions) {
     return (
-      <article className="bg-card rounded-lg p-4">
+      <article className="bg-card rounded-lg p-3 sm:p-4">
         Unable to load Github contributions.
       </article>
     );

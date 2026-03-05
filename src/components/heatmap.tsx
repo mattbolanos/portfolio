@@ -56,7 +56,7 @@ export const Heatmap = ({ configId, data }: HeatmapProps) => {
   }, []);
 
   return (
-    <article className="bg-card rounded-lg p-4">
+    <article className="bg-card rounded-lg p-3 sm:p-4">
       <div className="flex justify-between gap-2">
         <div className="text-muted-foreground mt-6 hidden shrink-0 grid-rows-7 text-xs sm:grid">
           {DAY_LABELS.map((dayLabel) => (

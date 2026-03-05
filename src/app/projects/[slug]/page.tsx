@@ -50,7 +50,7 @@ async function GithubContributions({ githubUrl }: { githubUrl: string }) {
 
   if (!githubContributions) {
     return (
-      <article className="bg-card rounded-lg p-4">
+      <article className="bg-card rounded-lg p-3 sm:p-4">
         Unable to load GitHub contributions.
       </article>
     );
