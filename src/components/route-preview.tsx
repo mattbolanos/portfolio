@@ -289,7 +289,7 @@ export const RoutePreview = ({
           fill="var(--strava)"
           filter={`url(#${dotGlowId})`}
           opacity={0}
-          r={5}
+          r={6.5}
         >
           <animateMotion
             begin={`${drawDelay}s`}
@@ -311,7 +311,7 @@ export const RoutePreview = ({
         </circle>
 
         {/* Runner dot */}
-        <circle fill="var(--strava)" opacity={0} r={3.5}>
+        <circle fill="var(--strava)" opacity={0} r={5}>
           <animateMotion
             begin={`${drawDelay}s`}
             calcMode="spline"
@@ -335,12 +335,12 @@ export const RoutePreview = ({
             dur="0.35s"
             fill="freeze"
             keyTimes="0;0.5;1"
-            values="3.5;4.8;3.5"
+            values="5;6.5;5"
           />
         </circle>
 
         {/* Dot highlight core – subtle in light, prominent on dark */}
-        <circle className="route-dot-core" fill="white" opacity={0} r={1.8}>
+        <circle className="route-dot-core" fill="white" opacity={0} r={2.5}>
           <animateMotion
             begin={`${drawDelay}s`}
             calcMode="spline"
