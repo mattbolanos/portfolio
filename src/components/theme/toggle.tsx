@@ -1,33 +1,40 @@
 "use client";
 
+import { DarkModeIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { domAnimation, LazyMotion, m } from "motion/react";
 import { useTheme } from "next-themes";
-import { useSyncExternalStore } from "react";
-
-const subscribe = () => () => {};
+import { useEffect, useState } from "react";
 
 const spring = { bounce: 0.15, type: "spring" as const, visualDuration: 0.35 };
 
 export const ThemeToggle = () => {
   const { resolvedTheme, setTheme } = useTheme();
-  const mounted = useSyncExternalStore(
-    subscribe,
-    () => true,
-    () => false,
-  );
+  const [mounted, setMounted] = useState(false);
 
-  const isDark = mounted && resolvedTheme === "dark";
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <span aria-hidden className="block size-9 shrink-0 rounded-full">
+        <HugeiconsIcon
+          className="text-theme-toggle size-6"
+          icon={DarkModeIcon}
+        />
+      </span>
+    );
+  }
+
+  const isDark = resolvedTheme === "dark";
 
   return (
     <LazyMotion features={domAnimation}>
       <button
         aria-label="Toggle theme"
         className="focus-visible:ring-ring hover:bg-accent/60 dark:hover:bg-accent relative flex size-9 cursor-pointer items-center justify-center rounded-full transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:cursor-default"
-        disabled={!mounted}
-        onClick={() => {
-          if (!mounted) return;
-          setTheme(isDark ? "light" : "dark");
-        }}
+        onClick={() => setTheme(isDark ? "light" : "dark")}
         type="button"
       >
         <m.svg
