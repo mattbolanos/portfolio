@@ -4,9 +4,9 @@ export const Intro = () => {
   return (
     <div className="space-y-6 leading-relaxed">
       <p>
-        I&apos;m a developer based in New York City. I work as a full stack
-        developer and data analyst for the Basketball Analytics and Innovation
-        team at the{" "}
+        I&apos;m a developer from the Bay Area, now based in New York City. I
+        work as a full stack developer and data analyst for the Basketball
+        Analytics and Innovation team at the{" "}
         <Link
           className="text-link"
           href="https://www.nba.com/warriors"
