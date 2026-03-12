@@ -1,4 +1,4 @@
-import { cacheLife } from "next/cache";
+import { getCachedValue } from "@/lib/cache/ttl";
 import {
   StravaActivitiesSchema,
   type StravaActivity,
@@ -9,6 +9,7 @@ const METERS_PER_MILE = 1609.344;
 const DEFAULT_RETRIES = 2;
 const REQUEST_TIMEOUT_MS = 10_000;
 const MAX_RETRY_DELAY_MS = 8_000;
+const STRAVA_CACHE_TTL_MS = 4 * 60 * 60 * 1_000;
 
 type GetActivitiesOptions = {
   maxPages?: number;
@@ -465,17 +466,20 @@ export const getActivities = async ({
   maxPages = 8,
   perPage = 100,
 }: GetActivitiesOptions = {}): Promise<GetActivitiesResult> => {
-  "use cache";
-  cacheLife("hours");
+  return getCachedValue(
+    `strava:activities:${maxPages}:${perPage}`,
+    { ttlMs: STRAVA_CACHE_TTL_MS },
+    async () => {
+      const oneYearAgo = new Date();
+      oneYearAgo.setDate(oneYearAgo.getDate() - 366);
 
-  const oneYearAgo = new Date();
-  oneYearAgo.setDate(oneYearAgo.getDate() - 366);
+      const activities = await fetchActivitiesUncached({
+        afterEpochSeconds: toEpochSeconds(oneYearAgo),
+        maxPages,
+        perPage,
+      });
 
-  const activities = await fetchActivitiesUncached({
-    afterEpochSeconds: toEpochSeconds(oneYearAgo),
-    maxPages,
-    perPage,
-  });
-
-  return activities ?? EMPTY_ACTIVITIES_RESULT;
+      return activities ?? EMPTY_ACTIVITIES_RESULT;
+    },
+  );
 };
