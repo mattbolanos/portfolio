@@ -32,15 +32,8 @@ export const ThemeToggle = () => {
       >
         <m.svg
           animate={{ rotate: isDark ? 0 : 30 }}
-          className="size-6"
+          className="text-theme-toggle size-6 overflow-visible filter-(--theme-toggle-glow)"
           fill="currentColor"
-          style={{
-            color: isDark ? "oklch(0.78 0.16 70)" : "oklch(0.88 0.03 240)",
-            filter: isDark
-              ? "drop-shadow(0 0 2px oklch(0.82 0.18 70 / 0.5)) drop-shadow(0 0 7px oklch(0.75 0.14 65 / 0.2))"
-              : "drop-shadow(0 0 3px oklch(0.85 0.04 240 / 0.5)) drop-shadow(0 0 8px oklch(0.80 0.05 240 / 0.2))",
-            overflow: "visible",
-          }}
           transition={spring}
           viewBox="0 0 24 24"
         >
@@ -51,13 +44,13 @@ export const ThemeToggle = () => {
             <rect fill="white" height="24" width="24" x="0" y="0" />
             <m.circle
               animate={{
-                cx: isDark ? 28 : 17,
-                cy: isDark ? -2 : 7,
+                cx: isDark ? 28 : 16,
+                cy: isDark ? -2 : 6,
               }}
               cx={28}
               cy={-2}
               fill="black"
-              r="9"
+              r="8"
               transition={spring}
             />
           </mask>
@@ -65,13 +58,13 @@ export const ThemeToggle = () => {
           {/* Body: full disc masked into crescent for moon */}
           <m.circle
             animate={{
-              r: isDark ? 5.5 : 10,
+              r: isDark ? 7 : 10,
             }}
             cx="12"
             cy="12"
             fill="currentColor"
             mask="url(#theme-toggle-mask)"
-            r={5.5}
+            r={7}
             stroke="none"
             transition={spring}
           />

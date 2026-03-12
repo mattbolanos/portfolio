@@ -3,7 +3,7 @@ name: React Doctor Score
 on:
   push:
     branches:
-      - '**'
+      - "**"
   pull_request:
 
 permissions:
@@ -28,7 +28,7 @@ jobs:
           set -euo pipefail
 
           OUTPUT_FILE="$(mktemp)"
-          bunx react-doctor@latest . --yes --score --no-ami | tee "$OUTPUT_FILE"
+          bunx react-doctor@latest . --yes --score | tee "$OUTPUT_FILE"
 
           SCORE="$(tail -1 "$OUTPUT_FILE" | tr -d '[:space:]')"
 
