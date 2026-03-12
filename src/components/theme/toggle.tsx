@@ -4,33 +4,22 @@ import { useTheme } from "next-themes";
 import { useSyncExternalStore } from "react";
 import { cn } from "@/lib/utils";
 
-const SPRING = "cubic-bezier(0.34, 1.56, 0.64, 1)";
-const EASE_OUT = "cubic-bezier(0.16, 1, 0.3, 1)";
-
 /* ── Body (sun disc / moon crescent) ── */
 const BODY = {
-  duration: 500,
   moonScale: 1,
   sunScale: 0.5,
 };
 
 /* ── Crescent mask ── */
 const MASK = {
-  duration: 500,
   moonOffset: "translate(4px, -4px)",
   sunOffset: "translate(14px, -14px)",
 };
 
 /* ── Icon rotation ── */
 const ICON = {
-  duration: 650,
   moonAngle: 25,
   sunAngle: 0,
-};
-
-const STAR_CONFIG = {
-  duration: { entering: 380, exiting: 120 },
-  stagger: { entering: 60, exiting: 0 },
 };
 
 const STARS = [
@@ -47,11 +36,9 @@ const CRATERS = [
 const RAY_CONFIG = {
   cardinalBaseHW: 1.5, // slender base for refined taper
   diagonalBaseHW: 1.1, // thinner diagonal rays
-  duration: { entering: 460, exiting: 220 },
   innerR: 6.8, // starts just outside the sun body
   longOuterR: 14, // cardinal rays — dramatically long
   shortOuterR: 12, // diagonal rays — proportionally long
-  stagger: { entering: 35, exiting: 15 },
 };
 
 const RAYS = Array.from({ length: 8 }, (_, i) => {
@@ -113,7 +100,7 @@ export const ThemeToggle = () => {
     <button
       aria-label="Toggle theme"
       className={cn(
-        "focus-visible:ring-ring relative flex size-9 cursor-pointer items-center justify-center rounded-full transition-all duration-300 hover:scale-110 focus-visible:ring-2 focus-visible:outline-none active:scale-90 disabled:pointer-events-none disabled:cursor-default disabled:hover:scale-100 disabled:active:scale-100",
+        "focus-visible:ring-ring relative flex size-9 cursor-pointer items-center justify-center rounded-full hover:scale-110 focus-visible:ring-2 focus-visible:outline-none active:scale-90 disabled:pointer-events-none disabled:cursor-default disabled:hover:scale-100 disabled:active:scale-100",
         isDark ? "hover:bg-amber-100/10" : "hover:bg-amber-500/10",
       )}
       disabled={!mounted}
@@ -135,7 +122,6 @@ export const ThemeToggle = () => {
             : "drop-shadow(0 0 2px oklch(0.82 0.18 70 / 0.5)) drop-shadow(0 0 7px oklch(0.75 0.14 65 / 0.2))",
           overflow: "visible",
           transform: `rotate(${isDark ? ICON.moonAngle : ICON.sunAngle}deg)`,
-          transition: `transform ${ICON.duration}ms ${SPRING}, filter 500ms ease, color 400ms ease`,
         }}
         viewBox="0 0 24 24"
       >
@@ -151,7 +137,6 @@ export const ThemeToggle = () => {
             r="9"
             style={{
               transform: isDark ? MASK.moonOffset : MASK.sunOffset,
-              transition: `transform ${MASK.duration}ms ${SPRING}`,
             }}
           />
         </mask>
@@ -162,7 +147,6 @@ export const ThemeToggle = () => {
           style={{
             transform: `scale(${isDark ? BODY.moonScale : BODY.sunScale})`,
             transformOrigin: "12px 12px",
-            transition: `transform ${BODY.duration}ms ${SPRING}`,
           }}
         >
           <circle cx="12" cy="12" fill="currentColor" r="12" stroke="none" />
@@ -178,14 +162,13 @@ export const ThemeToggle = () => {
               style={{
                 filter: "brightness(0.85)",
                 opacity: isDark ? 0.08 : 0,
-                transition: `opacity 400ms ease`,
               }}
             />
           ))}
         </g>
 
-        {/* Sun rays — individually staggered with spring overshoot */}
-        {RAYS.map((ray, i) => (
+        {/* Sun rays */}
+        {RAYS.map((ray) => (
           <path
             d={ray.d}
             fill="currentColor"
@@ -195,15 +178,12 @@ export const ThemeToggle = () => {
               opacity: isDark ? 0 : ray.isCardinal ? 1 : 0.82,
               transform: isDark ? "scale(0)" : "scale(1)",
               transformOrigin: "12px 12px",
-              transition: isDark
-                ? `opacity 80ms ease ${i * RAY_CONFIG.stagger.exiting}ms, transform ${RAY_CONFIG.duration.exiting}ms ${EASE_OUT} ${i * RAY_CONFIG.stagger.exiting}ms`
-                : `opacity 80ms ease ${180 + i * RAY_CONFIG.stagger.entering}ms, transform ${RAY_CONFIG.duration.entering}ms ${SPRING} ${120 + i * RAY_CONFIG.stagger.entering}ms`,
             }}
           />
         ))}
 
-        {/* Stars — staggered entrance around the crescent in dark mode */}
-        {STARS.map((star, i) => (
+        {/* Stars */}
+        {STARS.map((star) => (
           <circle
             cx={star.cx}
             cy={star.cy}
@@ -215,9 +195,6 @@ export const ThemeToggle = () => {
               opacity: isDark ? 1 : 0,
               transform: isDark ? "scale(1)" : "scale(0)",
               transformOrigin: `${star.cx}px ${star.cy}px`,
-              transition: isDark
-                ? `opacity 120ms ease ${200 + i * STAR_CONFIG.stagger.entering}ms, transform ${STAR_CONFIG.duration.entering}ms ${SPRING} ${200 + i * STAR_CONFIG.stagger.entering}ms`
-                : `opacity ${STAR_CONFIG.duration.exiting}ms ease, transform ${STAR_CONFIG.duration.exiting}ms ease`,
             }}
           />
         ))}
