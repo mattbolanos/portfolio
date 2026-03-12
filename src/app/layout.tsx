@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Sora } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "next-themes";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { ThemeProvider } from "@/components/theme/provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 const sora = Sora({
@@ -36,12 +36,7 @@ export default function RootLayout({
         <meta content="mattbolanos" name="apple-mobile-web-app-title" />
       </head>
       <body className="m-auto max-w-2xl overscroll-y-contain leading-relaxed">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          disableTransitionOnChange
-          enableSystem
-        >
+        <ThemeProvider>
           <TooltipProvider>
             <main className="min-h-screen p-6 pt-8 md:pt-12">
               <Header />
