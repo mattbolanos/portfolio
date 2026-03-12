@@ -8,7 +8,6 @@ const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
 
 const HEATMAP_CONFIGS = {
   github: {
-    colorVar: "--github",
     colorsByLevel: [
       "--empty",
       "--github-1",
@@ -16,6 +15,7 @@ const HEATMAP_CONFIGS = {
       "--github-3",
       "--github-4",
     ],
+    colorVar: "--github",
     formatDayTitle: (cell) => {
       const formattedDate = DATE_FORMATTER.format(cell.date);
 
