@@ -76,20 +76,19 @@ export default function Home() {
       <Intro />
       <Experience />
       <Projects />
-
-      <section className="space-y-3">
-        <h2>Running</h2>
-        <div className="heatmap-container">
-          <Suspense fallback={<ActivitiesWrapperSkeleton />}>
-            <ActivitiesPreviewWrapper />
-          </Suspense>
-        </div>
-      </section>
       <section className="space-y-3">
         <h2>Coding</h2>
         <div className="heatmap-container">
           <Suspense fallback={<HeatmapSkeleton />}>
             <GithubContributions />
+          </Suspense>
+        </div>
+      </section>
+      <section className="space-y-3">
+        <h2>Running</h2>
+        <div className="heatmap-container">
+          <Suspense fallback={<ActivitiesWrapperSkeleton />}>
+            <ActivitiesPreviewWrapper />
           </Suspense>
         </div>
       </section>
