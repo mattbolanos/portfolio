@@ -5,7 +5,18 @@ import type * as React from "react";
 
 export const ThemeProvider = ({
   children,
-  ...props
-}: React.ComponentProps<typeof NextThemesProvider>) => {
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+}: Readonly<{
+  children: React.ReactNode;
+}>) => {
+  return (
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme="system"
+      disableTransitionOnChange
+      enableColorScheme
+      enableSystem
+    >
+      {children}
+    </NextThemesProvider>
+  );
 };

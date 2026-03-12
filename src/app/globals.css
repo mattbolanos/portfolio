@@ -98,8 +98,8 @@
   --heatmap-tile-step: calc(var(--heatmap-tile-size) + var(--heatmap-tile-gap));
   --empty: oklch(0.925 0.012 75);
   --theme-toggle: oklch(77.194% 0.17376 64.545);
-  --theme-toggle-glow: drop-shadow(0 0 3px oklch(0.90 0.18 75 / 0.6))
-    drop-shadow(0 0 10px oklch(0.80 0.16 70 / 0.3));
+  --theme-toggle-glow: drop-shadow(0 0 3px oklch(0.9 0.18 75 / 0.6))
+    drop-shadow(0 0 10px oklch(0.8 0.16 70 / 0.3));
 }
 
 .dark {
@@ -143,16 +143,24 @@
   --strava-route: oklch(0.28 0.03 145);
   --empty: oklch(0.18 0 0);
   --theme-toggle: oklch(80.157% 0.17044 73.264);
-  --theme-toggle-glow: drop-shadow(0 0 3px oklch(0.90 0.18 75 / 0.6))
-    drop-shadow(0 0 10px oklch(0.80 0.16 70 / 0.3));
+  --theme-toggle-glow: drop-shadow(0 0 3px oklch(0.9 0.18 75 / 0.6))
+    drop-shadow(0 0 10px oklch(0.8 0.16 70 / 0.3));
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
+  html {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
   body {
-    @apply bg-background text-foreground;
+    background-color: inherit;
+    color: inherit;
+    min-height: 100dvh;
   }
 }
 

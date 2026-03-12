@@ -1,4 +1,3 @@
-import { cacheLife } from "next/cache";
 import {
   GithubContributionsQuerySchema,
   GithubRepoContributionsQuerySchema,
@@ -120,14 +119,12 @@ const incrementContributionCount = (
 export async function getRepoPushedAt(
   githubUrl: string,
 ): Promise<string | null> {
-  "use cache";
-  cacheLife("hours");
-
   const repo = parseGithubRepo(githubUrl);
   if (!repo) return null;
 
   const res = await fetch(`https://api.github.com/repos/${repo}`, {
     headers: getGithubHeaders(),
+    next: { revalidate: 60 * 60 },
   });
 
   if (!res.ok) return null;
@@ -141,9 +138,6 @@ export async function getRepoPushedAt(
 export async function getGithubContributions(): Promise<
   GithubContributionDay[] | null
 > {
-  "use cache";
-  cacheLife("minutes");
-
   const { from, to } = getContributionWindow();
 
   const res = await fetch(GITHUB_GRAPHQL_ENDPOINT, {
@@ -157,6 +151,7 @@ export async function getGithubContributions(): Promise<
     }),
     headers: getGithubHeaders(),
     method: "POST",
+    next: { revalidate: 60 },
   });
 
   if (!res.ok) {
@@ -189,9 +184,6 @@ export async function getGithubContributions(): Promise<
 export async function getGithubRepoContributions(
   githubUrl: string,
 ): Promise<GithubContributionDay[] | null> {
-  "use cache";
-  cacheLife("minutes");
-
   const repoNameWithOwner = parseGithubRepo(githubUrl)?.toLowerCase();
 
   if (!repoNameWithOwner) {
@@ -210,6 +202,7 @@ export async function getGithubRepoContributions(
     }),
     headers: getGithubHeaders(),
     method: "POST",
+    next: { revalidate: 60 },
   });
 
   if (!res.ok) {

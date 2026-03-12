@@ -1,4 +1,3 @@
-import { cacheLife } from "next/cache";
 import {
   StravaActivitiesSchema,
   type StravaActivity,
@@ -335,7 +334,7 @@ type FetchActivitiesOptions = Required<GetActivitiesOptions> & {
   afterEpochSeconds: string;
 };
 
-const fetchActivitiesUncached = async ({
+const fetchActivities = async ({
   afterEpochSeconds,
   maxPages,
   perPage,
@@ -361,8 +360,8 @@ const fetchActivitiesUncached = async ({
     let response = await fetchJsonResponseWithRetry(
       activitiesUrl,
       {
-        cache: "no-store",
         headers: { Authorization: `Bearer ${accessToken}` },
+        next: { revalidate: 60 * 60 },
       },
       3,
     );
@@ -375,8 +374,8 @@ const fetchActivitiesUncached = async ({
         response = await fetchJsonResponseWithRetry(
           activitiesUrl,
           {
-            cache: "no-store",
             headers: { Authorization: `Bearer ${accessToken}` },
+            next: { revalidate: 60 * 60 },
           },
           3,
         );
@@ -465,13 +464,10 @@ export const getActivities = async ({
   maxPages = 8,
   perPage = 100,
 }: GetActivitiesOptions = {}): Promise<GetActivitiesResult> => {
-  "use cache";
-  cacheLife("hours");
-
   const oneYearAgo = new Date();
   oneYearAgo.setDate(oneYearAgo.getDate() - 366);
 
-  const activities = await fetchActivitiesUncached({
+  const activities = await fetchActivities({
     afterEpochSeconds: toEpochSeconds(oneYearAgo),
     maxPages,
     perPage,
