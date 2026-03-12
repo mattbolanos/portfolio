@@ -124,9 +124,8 @@ export default async function ProjectPage({
       </section>
 
       <section className="space-y-6 leading-relaxed">
-        {project.longDescription.map((paragraph, i) => (
-          // biome-ignore lint/suspicious/noArrayIndexKey: <paragraph order won't change / re-render>
-          <p key={i}>{paragraph}</p>
+        {project.longDescription.map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
         ))}
 
         <LinkItem
