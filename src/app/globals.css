@@ -140,13 +140,6 @@
   --empty: oklch(0.18 0 0);
 }
 
-/* Suppress transitions until hydration to prevent light→dark flash on load */
-html:not([data-hydrated]) *,
-html:not([data-hydrated]) *::before,
-html:not([data-hydrated]) *::after {
-  transition-duration: 0s !important;
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
