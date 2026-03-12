@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist_Mono, Sora } from "next/font/google";
 import { Providers } from "./providers";
 import "./globals.css";
-import Script from "next/script";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 
@@ -30,17 +29,10 @@ export default function RootLayout({
     <html
       className={`${sora.variable} ${geistMono.variable} antialiased`}
       lang="en"
-      suppressHydrationWarning
+      suppressHydrationWarning={true}
     >
       <head>
         <meta content="mattbolanos" name="apple-mobile-web-app-title" />
-        {process.env.NODE_ENV === "development" && (
-          <Script
-            crossOrigin="anonymous"
-            src="//unpkg.com/react-scan/dist/auto.global.js"
-            strategy="beforeInteractive"
-          />
-        )}
       </head>
       <body className="m-auto max-w-2xl overscroll-y-contain leading-relaxed">
         <Providers>

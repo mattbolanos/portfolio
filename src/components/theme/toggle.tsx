@@ -4,15 +4,15 @@ import { DarkModeIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { domAnimation, LazyMotion, m } from "motion/react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import * as React from "react";
 
 const spring = { bounce: 0.15, type: "spring" as const, visualDuration: 0.35 };
 
 export const ThemeToggle = () => {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setMounted(true);
   }, []);
 
