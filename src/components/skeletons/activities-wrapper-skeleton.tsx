@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { HeatmapSkeleton } from "./heatmap-skeleton";
 
-const RUN_CARD_KEYS = ["run-card-1", "run-card-2", "run-card-3"];
+const RUN_CARD_KEYS = ["run-card-1", "run-card-2", "run-card-3", "run-card-4"];
 
 export const ActivitiesWrapperSkeleton = () => {
   return (
@@ -10,6 +10,7 @@ export const ActivitiesWrapperSkeleton = () => {
 
       {/* Recent runs — matches <RecentRuns> */}
       <div className="space-y-1.5">
+        <Skeleton className="mt-1.5 h-9 w-full rounded-xl" />
         {RUN_CARD_KEYS.map((runCardKey) => (
           <article
             className="bg-card ring-foreground/6 flex items-center gap-1.5 rounded-lg px-2 py-2 ring-1 sm:gap-3 sm:px-2.5"
@@ -28,8 +29,6 @@ export const ActivitiesWrapperSkeleton = () => {
             </div>
           </article>
         ))}
-
-        <Skeleton className="h-9 w-full rounded-xl" />
       </div>
     </>
   );

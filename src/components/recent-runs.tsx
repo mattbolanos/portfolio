@@ -28,7 +28,7 @@ export const RecentRuns = ({ runs }: RecentRunsProps) => {
   return (
     <div className="space-y-1.5">
       {hasAnyRoute && (
-        <Button className="w-full rounded-lg" onClick={handleReplay}>
+        <Button className="mt-1.5 w-full rounded-lg" onClick={handleReplay}>
           <HugeiconsIcon className="size-5" icon={ReplayIcon} />
           Replay
         </Button>
