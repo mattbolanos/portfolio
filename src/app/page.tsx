@@ -19,10 +19,7 @@ export const metadata: Metadata = {
 };
 
 async function ActivitiesPreviewWrapper() {
-  const activities = await getActivities({
-    maxPages: 6,
-    perPage: 100,
-  });
+  const activities = await getActivities();
 
   if (!activities) {
     return (
