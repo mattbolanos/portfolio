@@ -10,6 +10,9 @@ const DEFAULT_RETRIES = 2;
 const REQUEST_TIMEOUT_MS = 10_000;
 const MAX_RETRY_DELAY_MS = 8_000;
 const STRAVA_CACHE_TTL_MS = 4 * 60 * 60 * 1_000;
+const STRAVA_LOOKBACK_DAYS = 366;
+const STRAVA_MAX_PER_PAGE = 200;
+const DEFAULT_ACTIVITIES_PER_PAGE = STRAVA_MAX_PER_PAGE;
 
 type GetActivitiesOptions = {
   maxPages?: number;
@@ -78,6 +81,29 @@ let tokenRefreshInFlight: Promise<string | null> | null = null;
 const roundTo = (value: number, digits: number): number => {
   const factor = 10 ** digits;
   return Math.round(value * factor) / factor;
+};
+
+const normalizeMaxPages = (maxPages?: number): number | null => {
+  if (typeof maxPages !== "number") {
+    return null;
+  }
+
+  const normalized = Math.floor(maxPages);
+  return normalized > 0 ? normalized : null;
+};
+
+const normalizePerPage = (perPage?: number): number => {
+  if (typeof perPage !== "number") {
+    return DEFAULT_ACTIVITIES_PER_PAGE;
+  }
+
+  const normalized = Math.floor(perPage);
+
+  if (normalized <= 0) {
+    return DEFAULT_ACTIVITIES_PER_PAGE;
+  }
+
+  return Math.min(normalized, STRAVA_MAX_PER_PAGE);
 };
 
 const toEpochSeconds = (date: Date): string =>
@@ -332,8 +358,10 @@ const getAccessToken = async ({
   return tokenRefreshInFlight;
 };
 
-type FetchActivitiesOptions = Required<GetActivitiesOptions> & {
+type FetchActivitiesOptions = {
   afterEpochSeconds: string;
+  maxPages: number | null;
+  perPage: number;
 };
 
 const fetchActivitiesUncached = async ({
@@ -350,7 +378,7 @@ const fetchActivitiesUncached = async ({
   const runActivities: StravaActivity[] = [];
   const seenActivityIds = new Set<number>();
 
-  for (let page = 1; page <= maxPages; page += 1) {
+  for (let page = 1; maxPages === null || page <= maxPages; page += 1) {
     const searchParams = new URLSearchParams({
       after: afterEpochSeconds,
       page: page.toString(),
@@ -463,20 +491,23 @@ const fetchActivitiesUncached = async ({
 };
 
 export const getActivities = async ({
-  maxPages = 8,
-  perPage = 100,
+  maxPages,
+  perPage = DEFAULT_ACTIVITIES_PER_PAGE,
 }: GetActivitiesOptions = {}): Promise<GetActivitiesResult> => {
+  const normalizedMaxPages = normalizeMaxPages(maxPages);
+  const normalizedPerPage = normalizePerPage(perPage);
+  const lookbackStart = new Date();
+  lookbackStart.setDate(lookbackStart.getDate() - STRAVA_LOOKBACK_DAYS);
+  const afterEpochSeconds = toEpochSeconds(lookbackStart);
+
   return getCachedValue(
-    `strava:activities:${maxPages}:${perPage}`,
+    `strava:activities:${STRAVA_LOOKBACK_DAYS}:${normalizedMaxPages ?? "all"}:${normalizedPerPage}`,
     { ttlMs: STRAVA_CACHE_TTL_MS },
     async () => {
-      const oneYearAgo = new Date();
-      oneYearAgo.setDate(oneYearAgo.getDate() - 366);
-
       const activities = await fetchActivitiesUncached({
-        afterEpochSeconds: toEpochSeconds(oneYearAgo),
-        maxPages,
-        perPage,
+        afterEpochSeconds,
+        maxPages: normalizedMaxPages,
+        perPage: normalizedPerPage,
       });
 
       return activities ?? EMPTY_ACTIVITIES_RESULT;
