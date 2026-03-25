@@ -63,7 +63,7 @@ export const ActivityCard = ({
         </time>
       </div>
 
-      <div className="text-muted-foreground flex flex-col-reverse items-end text-[10px] sm:flex-row sm:items-center sm:gap-2.5 sm:text-xs">
+      <div className="text-muted-foreground flex flex-col items-end text-[10px] sm:flex-row sm:items-center sm:gap-2.5 sm:text-xs">
         <span className="flex items-center gap-[3px] tabular-nums sm:gap-1">
           <HugeiconsIcon
             className="hidden size-5 sm:block"
@@ -72,7 +72,7 @@ export const ActivityCard = ({
           <span className="text-foreground">
             {MILES_FORMATTER.format(toMiles(run.distance))}
           </span>
-          <span>mi</span>
+          <span className="font-mono tracking-tight">mi</span>
         </span>
         <span className="flex items-center gap-[3px] tabular-nums sm:gap-1">
           <HugeiconsIcon
@@ -82,7 +82,7 @@ export const ActivityCard = ({
           <span className="text-foreground">
             {WHOLE_NUMBER_FORMATTER.format(toFeet(run.total_elevation_gain))}
           </span>
-          <span>ft</span>
+          <span className="font-mono tracking-tight">ft</span>
         </span>
       </div>
     </article>
