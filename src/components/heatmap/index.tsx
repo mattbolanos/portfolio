@@ -2,6 +2,11 @@
 
 import * as React from "react";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   buildHeatmapView,
   buildMonthLabels,
   COLOR_MIX_BY_LEVEL,
@@ -13,7 +18,6 @@ import {
 } from "@/lib/heatmap";
 import { getHeatmapConfig, type HeatmapConfigId } from "@/lib/heatmap/configs";
 import { cn } from "@/lib/utils";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 interface HeatmapProps {
   configId: HeatmapConfigId;

@@ -3,13 +3,14 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Heatmap } from "@/components/heatmap";
+import { HeatmapSkeleton } from "@/components/heatmap/heatmap-skeleton";
 import { LinkItem } from "@/components/link-item";
-import { HeatmapSkeleton } from "@/components/skeletons/heatmap-skeleton";
+import { ProjectTag } from "@/components/project-tag";
 import { GithubIcon } from "@/components/ui/github";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getGithubRepoContributions, getRepoPushedAt } from "@/lib/api/github";
 import { toGithubHeatmapEntries } from "@/lib/heatmap/github";
-import { formatTagLabel, projects } from "@/lib/projects";
+import { projects } from "@/lib/projects";
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
@@ -101,20 +102,7 @@ export default async function ProjectPage({
 
         <div className="flex flex-wrap items-center gap-1.5">
           {project.tags.map((tag) => (
-            <div
-              className="border-border bg-card flex items-center justify-center gap-x-1 rounded-full border px-3 py-1.5"
-              key={tag}
-              title={formatTagLabel(tag)}
-            >
-              <Image
-                alt={formatTagLabel(tag)}
-                className="size-3.5 sm:size-4"
-                height={16}
-                src={`/stack/${tag}.svg`}
-                width={16}
-              />
-              <span className="text-xs">{formatTagLabel(tag)}</span>
-            </div>
+            <ProjectTag key={tag} tag={tag} />
           ))}
         </div>
 

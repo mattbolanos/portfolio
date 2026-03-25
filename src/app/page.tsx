@@ -3,11 +3,11 @@ import { Suspense } from "react";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
 import { Heatmap } from "@/components/heatmap";
+import { HeatmapSkeleton } from "@/components/heatmap/heatmap-skeleton";
 import { Intro } from "@/components/intro";
 import { Projects } from "@/components/projects";
-import { RecentRuns } from "@/components/recent-runs";
-import { ActivitiesWrapperSkeleton } from "@/components/skeletons/activities-wrapper-skeleton";
-import { HeatmapSkeleton } from "@/components/skeletons/heatmap-skeleton";
+import { ActivitiesPreviewSkeleton } from "@/components/strava/activities-preview-skeleton";
+import { RecentRuns } from "@/components/strava/recent-runs";
 import { getGithubContributions } from "@/lib/api/github";
 import { getActivities } from "@/lib/api/strava";
 import { toGithubHeatmapEntries } from "@/lib/heatmap/github";
@@ -84,7 +84,7 @@ export default function Home() {
       <section className="space-y-3">
         <h2>Running</h2>
         <div className="heatmap-container">
-          <Suspense fallback={<ActivitiesWrapperSkeleton />}>
+          <Suspense fallback={<ActivitiesPreviewSkeleton />}>
             <ActivitiesPreviewWrapper />
           </Suspense>
         </div>

@@ -1,9 +1,9 @@
+import { HeatmapSkeleton } from "@/components/heatmap/heatmap-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
-import { HeatmapSkeleton } from "./heatmap-skeleton";
 
 const RUN_CARD_KEYS = ["run-card-1", "run-card-2", "run-card-3", "run-card-4"];
 
-export const ActivitiesWrapperSkeleton = () => {
+export const ActivitiesPreviewSkeleton = () => {
   return (
     <>
       <HeatmapSkeleton />

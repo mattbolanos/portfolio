@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ProjectTag } from "@/components/project-tag";
 import type { Project } from "@/lib/projects";
-import { formatTagLabel, projects } from "@/lib/projects";
+import { projects } from "@/lib/projects";
 
 export const Projects = () => {
   return (
@@ -39,20 +40,7 @@ function ProjectItem({ project }: { project: Project }) {
         <p className="pt-1 text-xs sm:text-sm">{project.description}</p>
         <div className="flex flex-wrap items-center gap-1">
           {project.tags.map((tag) => (
-            <div
-              className="border-border bg-card flex items-center justify-center gap-x-1 rounded-full border px-2 py-0.5"
-              key={tag}
-              title={formatTagLabel(tag)}
-            >
-              <Image
-                alt={formatTagLabel(tag)}
-                className="size-3.5 sm:size-4"
-                height={16}
-                src={`/stack/${tag}.svg`}
-                width={16}
-              />
-              <span className="text-xs">{formatTagLabel(tag)}</span>
-            </div>
+            <ProjectTag key={tag} size="sm" tag={tag} />
           ))}
         </div>
       </div>

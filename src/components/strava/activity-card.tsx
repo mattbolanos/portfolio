@@ -1,7 +1,7 @@
 import { MountainIcon, RunningShoesIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { RoutePreview } from "@/components/strava/route-preview";
 import type { GetActivitiesResult } from "@/lib/api/strava";
-import { RoutePreview } from "./route-preview";
 
 type RecentRun = GetActivitiesResult["runActivities"][number];
 

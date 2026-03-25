@@ -35,13 +35,15 @@ export default function RootLayout({
         <meta content="mattbolanos" name="apple-mobile-web-app-title" />
       </head>
       <body className="leading-relaxed">
-        <Providers>
-          <main className="min-h-screen overscroll-y-contain m-auto max-w-2xl p-6 pt-8 md:pt-12">
-            <Header />
-            {children}
-          </main>
-          <Footer />
-        </Providers>
+        <div className="m-auto max-w-2xl">
+          <Providers>
+            <main className="min-h-screen overscroll-y-contain p-6 pt-8 md:pt-12">
+              <Header />
+              {children}
+            </main>
+            <Footer />
+          </Providers>
+        </div>
       </body>
     </html>
   );

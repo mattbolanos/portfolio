@@ -3,9 +3,9 @@
 import { ReplayIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
+import { ActivityCard } from "@/components/strava/activity-card";
+import { Button } from "@/components/ui/button";
 import type { GetActivitiesResult } from "@/lib/api/strava";
-import { ActivityCard } from "./activity-card";
-import { Button } from "./ui/button";
 
 type RecentRun = GetActivitiesResult["runActivities"][number];
 interface RecentRunsProps {
