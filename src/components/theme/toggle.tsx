@@ -2,15 +2,30 @@
 
 import { DarkModeIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { domAnimation, LazyMotion, m } from "motion/react";
+import { domAnimation, LazyMotion, m, useReducedMotion } from "motion/react";
 import { useTheme } from "next-themes";
 import * as React from "react";
 
-const spring = { bounce: 0.15, type: "spring" as const, visualDuration: 0.35 };
+const springBody = {
+  bounce: 0.12,
+  type: "spring" as const,
+  visualDuration: 0.25,
+};
+const springMask = {
+  bounce: 0.1,
+  type: "spring" as const,
+  visualDuration: 0.2,
+};
+const springRay = {
+  bounce: 0.2,
+  type: "spring" as const,
+  visualDuration: 0.3,
+};
 
 export const ThemeToggle = () => {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   React.useEffect(() => {
     setMounted(true);
@@ -28,6 +43,7 @@ export const ThemeToggle = () => {
   }
 
   const isDark = resolvedTheme === "dark";
+  const noMotion = shouldReduceMotion ?? false;
 
   return (
     <LazyMotion features={domAnimation}>
@@ -38,15 +54,14 @@ export const ThemeToggle = () => {
         type="button"
       >
         <m.svg
-          animate={{ rotate: isDark ? 0 : 30 }}
+          animate={{ rotate: noMotion ? 0 : isDark ? 0 : 20 }}
           className="text-theme-toggle size-6 overflow-visible filter-(--theme-toggle-glow)"
           fill="currentColor"
-          transition={spring}
+          transition={springBody}
           viewBox="0 0 24 24"
         >
           <title>Toggle theme</title>
 
-          {/* Mask: circle slides in to carve crescent */}
           <mask id="theme-toggle-mask">
             <rect fill="white" height="24" width="24" x="0" y="0" />
             <m.circle
@@ -58,11 +73,10 @@ export const ThemeToggle = () => {
               cy={-2}
               fill="black"
               r="8"
-              transition={spring}
+              transition={noMotion ? { duration: 0 } : springMask}
             />
           </mask>
 
-          {/* Body: full disc masked into crescent for moon */}
           <m.circle
             animate={{
               r: isDark ? 7 : 10,
@@ -73,11 +87,10 @@ export const ThemeToggle = () => {
             mask="url(#theme-toggle-mask)"
             r={7}
             stroke="none"
-            transition={spring}
+            transition={noMotion ? { duration: 0 } : springBody}
           />
 
-          {/* Sun rays */}
-          {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => {
+          {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => {
             const rad = (angle * Math.PI) / 180;
             const x = 12 + 9.5 * Math.cos(rad);
             const y = 12 + 9.5 * Math.sin(rad);
@@ -85,7 +98,7 @@ export const ThemeToggle = () => {
               <m.circle
                 animate={{
                   opacity: isDark ? 1 : 0,
-                  scale: isDark ? 1 : 0,
+                  scale: isDark ? 1 : 0.4,
                 }}
                 cx={x}
                 cy={y}
@@ -94,7 +107,11 @@ export const ThemeToggle = () => {
                 r={angle % 90 === 0 ? 1.6 : 1.2}
                 stroke="none"
                 style={{ transformOrigin: `${x}px ${y}px` }}
-                transition={spring}
+                transition={
+                  noMotion
+                    ? { duration: 0 }
+                    : { ...springRay, delay: isDark ? i * 0.03 : 0 }
+                }
               />
             );
           })}
