@@ -117,7 +117,11 @@ export default async function ProjectPage({
             <ViewTransition
               default="none"
               name={getProjectImageTransitionName(project.slug)}
-              share={{ default: "morph", "nav-forward": "project-image-grow" }}
+              share={{
+                default: "morph",
+                "nav-back": "project-image-shrink",
+                "nav-forward": "project-image-grow",
+              }}
             >
               <Image
                 alt={project.name}
