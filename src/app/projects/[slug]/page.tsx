@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getGithubRepoContributions, getRepoPushedAt } from "@/lib/api/github";
 import { toGithubHeatmapEntries } from "@/lib/heatmap/github";
 import {
+  getProjectDescriptionTransitionName,
   getProjectImageTransitionName,
   getProjectTitleTransitionName,
 } from "@/lib/project-view-transitions";
@@ -136,7 +137,13 @@ export default async function ProjectPage({
                   <span>{project.name}</span>
                 </ViewTransition>
               </h1>
-              <p className="text-xs sm:text-sm">{project.description}</p>
+              <ViewTransition
+                default="none"
+                name={getProjectDescriptionTransitionName(project.slug)}
+                share="text-morph"
+              >
+                <p className="text-xs sm:text-sm">{project.description}</p>
+              </ViewTransition>
             </div>
           </div>
 

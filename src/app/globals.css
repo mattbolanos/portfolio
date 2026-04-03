@@ -160,7 +160,7 @@
 }
 
 h2 {
-  @apply text-xs font-medium uppercase tracking-widest text-muted-foreground;
+  @apply text-muted-foreground text-xs font-medium tracking-widest uppercase;
 }
 
 p {
@@ -340,8 +340,20 @@ html *::-webkit-scrollbar-thumb {
   }
 }
 
+@keyframes text-settle {
+  from {
+    filter: blur(2px);
+    opacity: 0.86;
+  }
+  to {
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
 ::view-transition-group(.text-morph) {
-  animation-duration: var(--duration-move);
+  animation-duration: calc(var(--duration-move) + 40ms);
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 ::view-transition-old(.text-morph) {
@@ -349,7 +361,7 @@ html *::-webkit-scrollbar-thumb {
 }
 
 ::view-transition-new(.text-morph) {
-  animation: none;
+  animation: 220ms cubic-bezier(0.22, 1, 0.36, 1) both text-settle;
   object-fit: none;
   object-position: left top;
 }
@@ -402,7 +414,7 @@ html *::-webkit-scrollbar-thumb {
 }
 
 .image-card {
-  @apply sm:size-13 size-10;
+  @apply size-10 sm:size-13;
 }
 
 .animate-card-in {

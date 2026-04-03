@@ -4,6 +4,7 @@ import { ViewTransition } from "react";
 import { DirectionalLink } from "@/components/directional-link";
 import { ProjectTag } from "@/components/project-tag";
 import {
+  getProjectDescriptionTransitionName,
   getProjectImageTransitionName,
   getProjectTitleTransitionName,
 } from "@/lib/project-view-transitions";
@@ -32,7 +33,11 @@ function ProjectItem({ project }: { project: Project }) {
       <ViewTransition
         default="none"
         name={getProjectImageTransitionName(project.slug)}
-        share={{ default: "morph", "nav-forward": "project-image-grow" }}
+        share={{
+          default: "morph",
+          "nav-back": "project-image-shrink",
+          "nav-forward": "project-image-grow",
+        }}
       >
         <Image
           alt={project.name}
@@ -59,7 +64,13 @@ function ProjectItem({ project }: { project: Project }) {
             </ViewTransition>
           </DirectionalLink>
         </h3>
-        <p className="pt-1 text-xs sm:text-sm">{project.description}</p>
+        <ViewTransition
+          default="none"
+          name={getProjectDescriptionTransitionName(project.slug)}
+          share="text-morph"
+        >
+          <p className="pt-1 text-xs sm:text-sm">{project.description}</p>
+        </ViewTransition>
         <div className="flex flex-wrap items-center gap-1">
           {project.tags.map((tag) => (
             <ProjectTag key={tag} size="sm" tag={tag} />

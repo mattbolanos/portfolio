@@ -6,10 +6,6 @@ import { DirectionalLink } from "@/components/directional-link";
 export const Header = () => {
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const projectSlug = pathname.startsWith("/projects/")
-    ? pathname.replace("/projects/", "")
-    : null;
-  const homeHref = projectSlug ? `/#project-${projectSlug}` : "/";
 
   if (isHome) {
     return (
@@ -32,9 +28,8 @@ export const Header = () => {
     >
       <DirectionalLink
         className="text-xl leading-snug font-semibold tracking-tight transition-opacity group-hover:opacity-60 md:text-2xl"
-        cleanupProjectHashOnArrival={Boolean(projectSlug)}
         direction="nav-back"
-        href={homeHref}
+        href="/"
         prefetch
       >
         Matt Bolaños
