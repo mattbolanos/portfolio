@@ -6,6 +6,7 @@ import { Heatmap } from "@/components/heatmap";
 import { HeatmapSkeleton } from "@/components/heatmap/heatmap-skeleton";
 import { LinkItem } from "@/components/link-item";
 import { ProjectTag } from "@/components/project-tag";
+import { FileStackIcon } from "@/components/ui/file-stack";
 import { GithubIcon } from "@/components/ui/github";
 import { LinkIcon } from "@/components/ui/link";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -76,21 +77,26 @@ export default async function ProjectPage({
   if (!project) notFound();
 
   const projectLinks = [
-    project.projectUrl
-      ? {
-          href: project.projectUrl,
-          Icon: LinkIcon,
-          label: "Visit Project",
-        }
-      : null,
-    project.githubUrl
-      ? {
-          href: project.githubUrl,
-          Icon: GithubIcon,
-          label: "View on GitHub",
-        }
-      : null,
-  ].filter((link) => link !== null);
+    ...(project.projectUrl
+      ? [
+          {
+            href: project.projectUrl,
+            Icon: LinkIcon,
+            label: "Project",
+          },
+        ]
+      : []),
+    {
+      href: project.githubUrl,
+      Icon: GithubIcon,
+      label: "Source",
+    },
+    ...(project.supplementalLinks?.map((link) => ({
+      href: link.href,
+      Icon: FileStackIcon,
+      label: link.label,
+    })) ?? []),
+  ];
 
   const landscapeImages =
     project.images?.filter((img) => {
@@ -135,7 +141,7 @@ export default async function ProjectPage({
 
       <section className="space-y-6 leading-relaxed">
         {projectLinks.length > 0 && (
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-1.5">
             {projectLinks.map((link) => (
               <LinkItem
                 className="w-fit"

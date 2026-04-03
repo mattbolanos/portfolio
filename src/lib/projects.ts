@@ -4,6 +4,11 @@ interface ProjectImage {
   height?: number;
 }
 
+interface ProjectSupplementalLink {
+  href: string;
+  label: string;
+}
+
 export interface Project {
   name: string;
   slug: string;
@@ -12,6 +17,7 @@ export interface Project {
   tags: string[];
   githubUrl: string;
   projectUrl?: string;
+  supplementalLinks?: ProjectSupplementalLink[];
   imageUrl: string;
   images?: ProjectImage[];
 }
@@ -35,6 +41,12 @@ export const projects: Project[] = [
     name: "CRISPR Seed Finder",
     projectUrl: "https://crispr-seed-finder.vercel.app",
     slug: "crispr-seed-finder",
+    supplementalLinks: [
+      {
+        href: "https://www.biorxiv.org/content/10.64898/2026.03.27.714658v2",
+        label: "Preprint",
+      },
+    ],
     tags: ["react", "typescript", "next.js"],
   },
   {

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -31,7 +30,7 @@ export const LinkItem = ({
   const iconRef = useRef<IconHandle>(null);
 
   return (
-    <Link
+    <a
       className={cn(
         "border-border bg-card flex items-center gap-2 rounded-full border px-3.5 py-2 transition-transform duration-150 [text-decoration:none] hover:scale-105 motion-reduce:transition-none",
         className,
@@ -49,6 +48,6 @@ export const LinkItem = ({
       >
         {label}
       </span>
-    </Link>
+    </a>
   );
 };

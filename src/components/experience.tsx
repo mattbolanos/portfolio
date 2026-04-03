@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -45,7 +46,7 @@ export const Experience = () => {
       <p className="text-sm sm:text-base">
         <Link
           className="text-link"
-          href="/matt-bolanos-resume.pdf"
+          href={"/matt-bolanos-resume.pdf" as Route}
           prefetch
           target="_blank"
         >
