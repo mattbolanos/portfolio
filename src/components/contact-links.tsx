@@ -36,7 +36,7 @@ const LINKS: ContactLink[] = [
     label: "LinkedIn",
   },
   {
-    href: "mailto:matthew.a.bolanos@gmail.com",
+    href: "mailto:maugbolanos@gmail.com",
     Icon: MailCheckIcon,
     label: "Email",
   },
