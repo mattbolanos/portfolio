@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { formatTagLabel, type Project } from "@/lib/projects";
+import { cn } from "@/lib/utils";
 
 interface ProjectTagProps {
   tag: Project["tags"][number];
@@ -23,7 +24,10 @@ export const ProjectTag = ({ tag, size = "md" }: ProjectTagProps) => {
 
   return (
     <div
-      className={`border-border bg-card flex items-center justify-center gap-x-1 rounded-full border ${styles.wrapper}`}
+      className={cn(
+        "border-border bg-card flex items-center justify-center gap-x-1 rounded-full border",
+        styles.wrapper,
+      )}
       title={label}
     >
       <Image

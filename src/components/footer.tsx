@@ -3,7 +3,10 @@ import { ThemeToggle } from "@/components/theme/toggle";
 
 export const Footer = () => {
   return (
-    <footer className="px-8 pt-6 pb-12 text-xs md:text-sm">
+    <footer
+      className="px-8 pt-6 pb-12 text-xs md:text-sm"
+      style={{ viewTransitionName: "site-footer" }}
+    >
       <div className="flex items-center justify-between">
         <p>
           <Link

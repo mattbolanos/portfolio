@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ContactLinks } from "@/components/contact-links";
+import { DirectionalPageTransition } from "@/components/directional-page-transition";
 import { Experience } from "@/components/experience";
 import { Heatmap } from "@/components/heatmap";
 import { HeatmapSkeleton } from "@/components/heatmap/heatmap-skeleton";
@@ -69,27 +70,30 @@ async function GithubContributions() {
 
 export default function Home() {
   return (
-    <div className="space-y-10">
-      <Intro />
-      <Experience />
-      <Projects />
-      <section className="space-y-3">
-        <h2>Coding</h2>
-        <div className="heatmap-container">
-          <Suspense fallback={<HeatmapSkeleton />}>
-            <GithubContributions />
-          </Suspense>
-        </div>
-      </section>
-      <section className="space-y-3">
-        <h2>Running</h2>
-        <div className="heatmap-container">
-          <Suspense fallback={<ActivitiesPreviewSkeleton />}>
-            <ActivitiesPreviewWrapper />
-          </Suspense>
-        </div>
-      </section>
-      <ContactLinks />
-    </div>
+    <DirectionalPageTransition>
+      <div className="space-y-10">
+        <Intro />
+        <Experience />
+        <Projects />
+        <section className="space-y-3">
+          <h2>Running</h2>
+          <div className="heatmap-container">
+            <Suspense fallback={<ActivitiesPreviewSkeleton />}>
+              <ActivitiesPreviewWrapper />
+            </Suspense>
+          </div>
+        </section>
+        <section className="space-y-3">
+          <h2>Coding</h2>
+          <div className="heatmap-container">
+            <Suspense fallback={<HeatmapSkeleton />}>
+              <GithubContributions />
+            </Suspense>
+          </div>
+        </section>
+
+        <ContactLinks />
+      </div>
+    </DirectionalPageTransition>
   );
 }
