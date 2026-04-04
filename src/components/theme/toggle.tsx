@@ -19,7 +19,7 @@ const springMask = {
 const springRay = {
   bounce: 0.2,
   type: "spring" as const,
-  visualDuration: 0.3,
+  visualDuration: 0.4,
 };
 
 export const ThemeToggle = () => {
