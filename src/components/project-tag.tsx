@@ -37,7 +37,7 @@ export const ProjectTag = ({ tag, size = "md" }: ProjectTagProps) => {
         src={`/stack/${tag}.svg`}
         width={16}
       />
-      <span className="text-xs">{label}</span>
+      <span className="text-[11px] sm:text-xs">{label}</span>
     </div>
   );
 };
