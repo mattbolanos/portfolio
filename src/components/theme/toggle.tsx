@@ -1,10 +1,9 @@
 "use client";
 
-import { DarkModeIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { domAnimation, LazyMotion, m, useReducedMotion } from "motion/react";
 import { useTheme } from "next-themes";
 import * as React from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const springBody = {
   bounce: 0.12,
@@ -32,14 +31,7 @@ export const ThemeToggle = () => {
   }, []);
 
   if (!mounted) {
-    return (
-      <span aria-hidden className="block size-9 shrink-0 rounded-full">
-        <HugeiconsIcon
-          className="text-theme-toggle size-6"
-          icon={DarkModeIcon}
-        />
-      </span>
-    );
+    return <Skeleton className="size-9 rounded-full" />;
   }
 
   const isDark = resolvedTheme === "dark";
