@@ -1,4 +1,3 @@
-import { cacheLife } from "next/cache";
 import {
   GithubContributionsQuerySchema,
   GithubRepoContributionsQuerySchema,
@@ -11,8 +10,6 @@ export type GithubContributionDay = {
 };
 
 const GITHUB_GRAPHQL_ENDPOINT = "https://api.github.com/graphql";
-const GITHUB_CACHE_REVALIDATE_SECONDS = 4 * 60 * 60;
-const GITHUB_CACHE_EXPIRE_SECONDS = 8 * 60 * 60;
 
 const CONTRIBUTIONS_QUERY = `
   query UserContributions($login: String!, $from: DateTime!, $to: DateTime!) {
@@ -122,13 +119,6 @@ const incrementContributionCount = (
 export async function getRepoPushedAt(
   githubUrl: string,
 ): Promise<string | null> {
-  "use cache";
-
-  cacheLife({
-    expire: GITHUB_CACHE_EXPIRE_SECONDS,
-    revalidate: GITHUB_CACHE_REVALIDATE_SECONDS,
-  });
-
   const repo = parseGithubRepo(githubUrl);
   if (!repo) return null;
 
@@ -147,13 +137,6 @@ export async function getRepoPushedAt(
 export async function getGithubContributions(): Promise<
   GithubContributionDay[] | null
 > {
-  "use cache";
-
-  cacheLife({
-    expire: GITHUB_CACHE_EXPIRE_SECONDS,
-    revalidate: GITHUB_CACHE_REVALIDATE_SECONDS,
-  });
-
   const { from, to } = getContributionWindow();
 
   const res = await fetch(GITHUB_GRAPHQL_ENDPOINT, {
@@ -199,13 +182,6 @@ export async function getGithubContributions(): Promise<
 export async function getGithubRepoContributions(
   githubUrl: string,
 ): Promise<GithubContributionDay[] | null> {
-  "use cache";
-
-  cacheLife({
-    expire: GITHUB_CACHE_EXPIRE_SECONDS,
-    revalidate: GITHUB_CACHE_REVALIDATE_SECONDS,
-  });
-
   const repoNameWithOwner = parseGithubRepo(githubUrl)?.toLowerCase();
 
   if (!repoNameWithOwner) {
