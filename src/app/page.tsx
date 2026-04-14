@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cacheLife } from "next/cache";
 import { Suspense } from "react";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
@@ -19,6 +20,10 @@ export const metadata: Metadata = {
 };
 
 async function ActivitiesPreviewWrapper() {
+  "use cache";
+
+  cacheLife("days");
+
   const activities = await getActivities();
 
   if (!activities) {
