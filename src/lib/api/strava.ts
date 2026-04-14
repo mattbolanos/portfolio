@@ -11,6 +11,8 @@ const MAX_RETRY_DELAY_MS = 8_000;
 const STRAVA_LOOKBACK_DAYS = 366;
 const STRAVA_MAX_PER_PAGE = 200;
 const DEFAULT_ACTIVITIES_PER_PAGE = STRAVA_MAX_PER_PAGE;
+const INITIAL_PARALLEL_ACTIVITY_PAGES = 2;
+const ACTIVITIES_CACHE_TTL_MS = 24 * 60 * 60 * 1_000;
 
 type GetActivitiesOptions = {
   maxPages?: number;
@@ -46,6 +48,11 @@ type StravaTokenState = {
   refreshToken: string | null;
 };
 
+type ActivitiesCacheEntry = {
+  expiresAt: number;
+  value: GetActivitiesResult;
+};
+
 export type GetActivitiesResult = {
   heatmap: HeatmapDay[];
   runActivities: StravaActivity[];
@@ -75,11 +82,24 @@ const tokenState: StravaTokenState = {
 };
 
 let tokenRefreshInFlight: Promise<string | null> | null = null;
+const activitiesCache = new Map<string, ActivitiesCacheEntry>();
+const activitiesInFlight = new Map<
+  string,
+  Promise<GetActivitiesResult | null>
+>();
 
 const roundTo = (value: number, digits: number): number => {
   const factor = 10 ** digits;
   return Math.round(value * factor) / factor;
 };
+
+const cloneActivitiesResult = (
+  result: GetActivitiesResult,
+): GetActivitiesResult => ({
+  heatmap: result.heatmap.map((day) => ({ ...day })),
+  runActivities: result.runActivities.map((activity) => ({ ...activity })),
+  totals: { ...result.totals },
+});
 
 const normalizeMaxPages = (maxPages?: number): number | null => {
   if (typeof maxPages !== "number") {
@@ -106,6 +126,13 @@ const normalizePerPage = (perPage?: number): number => {
 
 const toEpochSeconds = (date: Date): string =>
   Math.floor(date.getTime() / 1000).toString();
+
+const getLookbackStart = (): Date => {
+  const lookbackStart = new Date();
+  lookbackStart.setUTCHours(0, 0, 0, 0);
+  lookbackStart.setUTCDate(lookbackStart.getUTCDate() - STRAVA_LOOKBACK_DAYS);
+  return lookbackStart;
+};
 
 const sleep = async (ms: number): Promise<void> =>
   new Promise((resolve) => {
@@ -362,12 +389,115 @@ type FetchActivitiesOptions = {
   perPage: number;
 };
 
-const fetchActivitiesUncached = async ({
+type ActivitiesPageResponse = {
+  payload: unknown | null;
+};
+
+const getActivitiesCacheKey = ({
+  afterEpochSeconds,
+  maxPages,
+  perPage,
+}: FetchActivitiesOptions): string =>
+  [afterEpochSeconds, maxPages ?? "all", perPage].join(":");
+
+const getCachedActivities = (cacheKey: string): GetActivitiesResult | null => {
+  const cached = activitiesCache.get(cacheKey);
+
+  if (!cached) {
+    return null;
+  }
+
+  if (cached.expiresAt <= Date.now()) {
+    activitiesCache.delete(cacheKey);
+    return null;
+  }
+
+  return cached.value;
+};
+
+const setCachedActivities = (
+  cacheKey: string,
+  activities: GetActivitiesResult,
+): void => {
+  activitiesCache.set(cacheKey, {
+    expiresAt: Date.now() + ACTIVITIES_CACHE_TTL_MS,
+    value: cloneActivitiesResult(activities),
+  });
+};
+
+const getActivitiesUrl = ({
+  afterEpochSeconds,
+  page,
+  perPage,
+}: {
+  afterEpochSeconds: string;
+  page: number;
+  perPage: number;
+}): string => {
+  const searchParams = new URLSearchParams({
+    after: afterEpochSeconds,
+    page: page.toString(),
+    per_page: perPage.toString(),
+  });
+
+  return `https://www.strava.com/api/v3/athlete/activities?${searchParams.toString()}`;
+};
+
+const fetchActivitiesPageResponse = async ({
+  accessToken,
+  afterEpochSeconds,
+  page,
+  perPage,
+}: {
+  accessToken: string;
+  afterEpochSeconds: string;
+  page: number;
+  perPage: number;
+}): Promise<ActivitiesPageResponse> => {
+  const activitiesUrl = getActivitiesUrl({
+    afterEpochSeconds,
+    page,
+    perPage,
+  });
+
+  let response = await fetchJsonResponseWithRetry(
+    activitiesUrl,
+    {
+      cache: "no-store",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    },
+    3,
+  );
+
+  if (response?.status === 401) {
+    const refreshedAccessToken = await getAccessToken({ forceRefresh: true });
+
+    if (refreshedAccessToken) {
+      response = await fetchJsonResponseWithRetry(
+        activitiesUrl,
+        {
+          cache: "no-store",
+          headers: { Authorization: `Bearer ${refreshedAccessToken}` },
+        },
+        3,
+      );
+    }
+  }
+
+  return {
+    payload:
+      response && response.status >= 200 && response.status < 300
+        ? response.payload
+        : null,
+  };
+};
+
+const fetchActivities = async ({
   afterEpochSeconds,
   maxPages,
   perPage,
 }: FetchActivitiesOptions): Promise<GetActivitiesResult | null> => {
-  let accessToken = await getAccessToken();
+  const accessToken = await getAccessToken();
 
   if (!accessToken) {
     return null;
@@ -375,55 +505,24 @@ const fetchActivitiesUncached = async ({
 
   const runActivities: StravaActivity[] = [];
   const seenActivityIds = new Set<number>();
+  const initialPageCount =
+    maxPages === null
+      ? INITIAL_PARALLEL_ACTIVITY_PAGES
+      : Math.min(maxPages, INITIAL_PARALLEL_ACTIVITY_PAGES);
 
-  for (let page = 1; maxPages === null || page <= maxPages; page += 1) {
-    const searchParams = new URLSearchParams({
-      after: afterEpochSeconds,
-      page: page.toString(),
-      per_page: perPage.toString(),
-    });
-
-    const activitiesUrl = `https://www.strava.com/api/v3/athlete/activities?${searchParams.toString()}`;
-
-    let response = await fetchJsonResponseWithRetry(
-      activitiesUrl,
-      {
-        cache: "no-store",
-        headers: { Authorization: `Bearer ${accessToken}` },
-      },
-      3,
-    );
-
-    if (response?.status === 401) {
-      const refreshedAccessToken = await getAccessToken({ forceRefresh: true });
-
-      if (refreshedAccessToken) {
-        accessToken = refreshedAccessToken;
-        response = await fetchJsonResponseWithRetry(
-          activitiesUrl,
-          {
-            cache: "no-store",
-            headers: { Authorization: `Bearer ${accessToken}` },
-          },
-          3,
-        );
-      }
-    }
-
-    const payload =
-      response && response.status >= 200 && response.status < 300
-        ? response.payload
-        : null;
-
-    if (!Array.isArray(payload)) {
+  const appendPage = (
+    page: number,
+    response: ActivitiesPageResponse,
+  ): "continue" | "stop" | "abort" => {
+    if (!Array.isArray(response.payload)) {
       if (page === 1 && runActivities.length === 0) {
-        return null;
+        return "abort";
       }
 
-      break;
+      return "stop";
     }
 
-    const activities = parseActivitiesPage(payload);
+    const activities = parseActivitiesPage(response.payload);
     const runs = activities.filter((activity) => activity.type === "Run");
 
     for (const run of runs) {
@@ -435,8 +534,56 @@ const fetchActivitiesUncached = async ({
       runActivities.push(run);
     }
 
-    if (payload.length < perPage) {
+    return response.payload.length < perPage ? "stop" : "continue";
+  };
+
+  const initialResponses = await Promise.all(
+    Array.from({ length: initialPageCount }, (_, index) =>
+      fetchActivitiesPageResponse({
+        accessToken,
+        afterEpochSeconds,
+        page: index + 1,
+        perPage,
+      }),
+    ),
+  );
+
+  let shouldContinueSequentially = true;
+
+  for (let page = 1; page <= initialResponses.length; page += 1) {
+    const outcome = appendPage(page, initialResponses[page - 1]);
+
+    if (outcome === "abort") {
+      return null;
+    }
+
+    if (outcome === "stop") {
+      shouldContinueSequentially = false;
       break;
+    }
+  }
+
+  if (shouldContinueSequentially) {
+    for (
+      let page = initialPageCount + 1;
+      maxPages === null || page <= maxPages;
+      page += 1
+    ) {
+      const response = await fetchActivitiesPageResponse({
+        accessToken,
+        afterEpochSeconds,
+        page,
+        perPage,
+      });
+      const outcome = appendPage(page, response);
+
+      if (outcome === "abort") {
+        return null;
+      }
+
+      if (outcome === "stop") {
+        break;
+      }
     }
   }
 
@@ -494,15 +641,33 @@ export const getActivities = async ({
 }: GetActivitiesOptions = {}): Promise<GetActivitiesResult> => {
   const normalizedMaxPages = normalizeMaxPages(maxPages);
   const normalizedPerPage = normalizePerPage(perPage);
-  const lookbackStart = new Date();
-  lookbackStart.setDate(lookbackStart.getDate() - STRAVA_LOOKBACK_DAYS);
+  const lookbackStart = getLookbackStart();
   const afterEpochSeconds = toEpochSeconds(lookbackStart);
-
-  const activities = await fetchActivitiesUncached({
+  const options = {
     afterEpochSeconds,
     maxPages: normalizedMaxPages,
     perPage: normalizedPerPage,
-  });
+  };
+  const cacheKey = getActivitiesCacheKey(options);
+  const cachedActivities = getCachedActivities(cacheKey);
 
-  return activities ?? EMPTY_ACTIVITIES_RESULT;
+  if (cachedActivities) {
+    return cloneActivitiesResult(cachedActivities);
+  }
+
+  const inFlight =
+    activitiesInFlight.get(cacheKey) ??
+    fetchActivities(options).finally(() => {
+      activitiesInFlight.delete(cacheKey);
+    });
+
+  activitiesInFlight.set(cacheKey, inFlight);
+
+  const activities = await inFlight;
+
+  if (activities) {
+    setCachedActivities(cacheKey, activities);
+  }
+
+  return cloneActivitiesResult(activities ?? EMPTY_ACTIVITIES_RESULT);
 };
