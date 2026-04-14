@@ -9,8 +9,6 @@ const METERS_PER_MILE = 1609.344;
 const DEFAULT_RETRIES = 2;
 const REQUEST_TIMEOUT_MS = 10_000;
 const MAX_RETRY_DELAY_MS = 8_000;
-const STRAVA_CACHE_REVALIDATE_SECONDS = 24 * 60 * 60;
-const STRAVA_CACHE_EXPIRE_SECONDS = 48 * 60 * 60;
 const STRAVA_LOOKBACK_DAYS = 366;
 const STRAVA_MAX_PER_PAGE = 200;
 const DEFAULT_ACTIVITIES_PER_PAGE = STRAVA_MAX_PER_PAGE;
@@ -497,10 +495,7 @@ export const getActivities = async ({
 }: GetActivitiesOptions = {}): Promise<GetActivitiesResult> => {
   "use cache";
 
-  cacheLife({
-    expire: STRAVA_CACHE_EXPIRE_SECONDS,
-    revalidate: STRAVA_CACHE_REVALIDATE_SECONDS,
-  });
+  cacheLife("days");
 
   const normalizedMaxPages = normalizeMaxPages(maxPages);
   const normalizedPerPage = normalizePerPage(perPage);
