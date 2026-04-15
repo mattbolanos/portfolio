@@ -4,7 +4,6 @@ import { Link } from "next-view-transitions";
 import { ProjectTag } from "@/components/project-tag";
 import { getProjects, type Project } from "@/lib/projects";
 import {
-  getProjectDescriptionViewTransitionName,
   getProjectImageViewTransitionName,
   getProjectTagViewTransitionName,
   getProjectTitleViewTransitionName,
@@ -60,14 +59,7 @@ function ProjectItem({ project }: { project: Project }) {
             </span>
           </Link>
         </h3>
-        <p
-          className="pt-1 text-xs sm:text-sm"
-          style={{
-            viewTransitionName: getProjectDescriptionViewTransitionName(
-              project.slug,
-            ),
-          }}
-        >
+        <p className="text-muted-foreground pt-1 text-sm sm:text-base">
           {project.description}
         </p>
         <div className="flex flex-wrap items-center gap-1">

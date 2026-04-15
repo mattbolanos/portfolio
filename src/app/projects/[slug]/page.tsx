@@ -17,7 +17,6 @@ import { getGithubRepoContributions, getRepoPushedAt } from "@/lib/api/github";
 import { toGithubHeatmapEntries } from "@/lib/heatmap/github";
 import { getProjectBySlug, getProjects } from "@/lib/projects";
 import {
-  getProjectDescriptionViewTransitionName,
   getProjectImageViewTransitionName,
   getProjectTagViewTransitionName,
 } from "@/lib/view-transitions";
@@ -141,14 +140,7 @@ export default async function ProjectPage({
               }}
               width={80}
             />
-            <p
-              className="text-sm sm:text-base"
-              style={{
-                viewTransitionName: getProjectDescriptionViewTransitionName(
-                  project.slug,
-                ),
-              }}
-            >
+            <p className="animate-project-description text-sm sm:text-base">
               {project.description}
             </p>
           </div>
