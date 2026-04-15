@@ -70,8 +70,8 @@ export default function Home() {
       <Header />
       <div className="space-y-10">
         <Intro />
-        <Experience />
         <Projects />
+        <Experience />
         <section className="space-y-3">
           <h2>Coding</h2>
           <div className="heatmap-container">
