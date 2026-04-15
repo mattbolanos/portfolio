@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 interface ProjectTagProps {
   tag: Project["tags"][number];
   size?: "sm" | "md";
+  transitionName?: string;
 }
 
 const SIZE_STYLES = {
@@ -18,7 +19,11 @@ const SIZE_STYLES = {
   },
 } as const;
 
-export const ProjectTag = ({ tag, size = "md" }: ProjectTagProps) => {
+export const ProjectTag = ({
+  tag,
+  size = "md",
+  transitionName,
+}: ProjectTagProps) => {
   const label = formatTagLabel(tag);
   const styles = SIZE_STYLES[size];
 
@@ -28,6 +33,9 @@ export const ProjectTag = ({ tag, size = "md" }: ProjectTagProps) => {
         "border-border bg-card flex items-center justify-center gap-x-1 rounded-full border",
         styles.wrapper,
       )}
+      style={
+        transitionName ? { viewTransitionName: transitionName } : undefined
+      }
       title={label}
     >
       <Image

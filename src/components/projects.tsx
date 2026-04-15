@@ -1,11 +1,17 @@
 import type { Route } from "next";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 import { ProjectTag } from "@/components/project-tag";
-import type { Project } from "@/lib/projects";
-import { projects } from "@/lib/projects";
+import { getProjects, type Project } from "@/lib/projects";
+import {
+  getProjectImageViewTransitionName,
+  getProjectTagViewTransitionName,
+  getProjectTitleViewTransitionName,
+} from "@/lib/view-transitions";
 
-export const Projects = () => {
+export const Projects = async () => {
+  const projects = await getProjects();
+
   return (
     <div className="space-y-3">
       <h2>Projects</h2>
@@ -29,6 +35,9 @@ function ProjectItem({ project }: { project: Project }) {
         className="image-card"
         height={52}
         src={`/projects/${project.imageUrl}`}
+        style={{
+          viewTransitionName: getProjectImageViewTransitionName(project.slug),
+        }}
         width={52}
       />
       <div className="flex flex-1 flex-col items-start gap-y-1">
@@ -38,13 +47,30 @@ function ProjectItem({ project }: { project: Project }) {
             href={`/projects/${project.slug}` as Route}
             prefetch
           >
-            <span>{project.name}</span>
+            <span
+              className="text-link inline-block"
+              style={{
+                viewTransitionName: getProjectTitleViewTransitionName(
+                  project.slug,
+                ),
+              }}
+            >
+              {project.name}
+            </span>
           </Link>
         </h3>
         <p className="pt-1 text-xs sm:text-sm">{project.description}</p>
         <div className="flex flex-wrap items-center gap-1">
           {project.tags.map((tag) => (
-            <ProjectTag key={tag} size="sm" tag={tag} />
+            <ProjectTag
+              key={tag}
+              size="sm"
+              tag={tag}
+              transitionName={getProjectTagViewTransitionName(
+                project.slug,
+                tag,
+              )}
+            />
           ))}
         </div>
       </div>

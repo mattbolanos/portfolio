@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
+import { Header } from "@/components/header";
 import { Heatmap } from "@/components/heatmap";
 import { HeatmapSkeleton } from "@/components/heatmap/heatmap-skeleton";
 import { Intro } from "@/components/intro";
@@ -12,11 +12,6 @@ import { getGithubContributions } from "@/lib/api/github";
 import { getActivities } from "@/lib/api/strava";
 import { toGithubHeatmapEntries } from "@/lib/heatmap/github";
 import { toStravaHeatmapEntries } from "@/lib/heatmap/strava";
-
-export const metadata: Metadata = {
-  description: "Matt Bolaños' personal website",
-  title: "Matt Bolaños",
-};
 
 async function ActivitiesPreviewWrapper() {
   const activities = await getActivities();
@@ -54,7 +49,9 @@ async function GithubContributions() {
   if (!githubContributions) {
     return (
       <article className="bg-card rounded-lg p-3 sm:p-4">
-        Unable to load Github contributions.
+        <p className="text-muted-foreground text-sm sm:text-base">
+          Unable to load Github contributions.
+        </p>
       </article>
     );
   }
@@ -69,27 +66,30 @@ async function GithubContributions() {
 
 export default function Home() {
   return (
-    <div className="space-y-10">
-      <Intro />
-      <Experience />
-      <Projects />
-      <section className="space-y-3">
-        <h2>Coding</h2>
-        <div className="heatmap-container">
-          <Suspense fallback={<HeatmapSkeleton />}>
-            <GithubContributions />
-          </Suspense>
-        </div>
-      </section>
-      <section className="space-y-3">
-        <h2>Running</h2>
-        <div className="heatmap-container">
-          <Suspense fallback={<ActivitiesPreviewSkeleton />}>
-            <ActivitiesPreviewWrapper />
-          </Suspense>
-        </div>
-      </section>
-      <ContactLinks />
+    <div>
+      <Header />
+      <div className="space-y-10">
+        <Intro />
+        <Experience />
+        <Projects />
+        <section className="space-y-3">
+          <h2>Coding</h2>
+          <div className="heatmap-container">
+            <Suspense fallback={<HeatmapSkeleton />}>
+              <GithubContributions />
+            </Suspense>
+          </div>
+        </section>
+        <section className="space-y-3">
+          <h2>Running</h2>
+          <div className="heatmap-container">
+            <Suspense fallback={<ActivitiesPreviewSkeleton />}>
+              <ActivitiesPreviewWrapper />
+            </Suspense>
+          </div>
+        </section>
+        <ContactLinks />
+      </div>
     </div>
   );
 }
