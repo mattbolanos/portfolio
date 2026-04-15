@@ -1,3 +1,9 @@
+import fs from "node:fs/promises";
+import path from "node:path";
+import matter from "gray-matter";
+import { cache } from "react";
+import { z } from "zod";
+
 interface ProjectImage {
   src: string;
   width: number;
@@ -12,14 +18,15 @@ interface ProjectSupplementalLink {
 export interface Project {
   name: string;
   slug: string;
+  order: number;
   description: string;
-  longDescription: string[];
   tags: string[];
   githubUrl: string;
   projectUrl?: string;
   supplementalLinks?: ProjectSupplementalLink[];
   imageUrl: string;
   images?: ProjectImage[];
+  content: string;
 }
 
 interface TagLabelOverrides {
@@ -27,50 +34,35 @@ interface TagLabelOverrides {
   label: string;
 }
 
-export const projects: Project[] = [
-  {
-    description:
-      "CRISPRi seed off-target search app backed by a Python pre-computation pipeline that shards genomic k-mer indexes for fast lookup.",
-    githubUrl: "https://github.com/mattbolanos/crispr-seed-finder",
+const projectFrontmatterSchema = z.object({
+  description: z.string(),
+  githubUrl: z.url(),
+  images: z
+    .array(
+      z.object({
+        height: z.number().int().positive().optional(),
+        src: z.string(),
+        width: z.number().int().positive(),
+      }),
+    )
+    .optional(),
+  imageUrl: z.string(),
+  name: z.string(),
+  order: z.number().int().nonnegative(),
+  projectUrl: z.url().optional(),
+  slug: z.string(),
+  supplementalLinks: z
+    .array(
+      z.object({
+        href: z.url(),
+        label: z.string(),
+      }),
+    )
+    .optional(),
+  tags: z.array(z.string()).min(1),
+});
 
-    imageUrl: "crispr-seed-finder/crispr-seed.png",
-    longDescription: [
-      "I built this for a friend completing a PhD in genetics at Stanford University, to check whether a 20 bp CRISPRi guide—or a preloaded Dolcetto guide alias—has PAM-proximal seed matches near annotated transcription start sites in hg38. The app manages guide lookup, sequence validation, and CSV export, enabling researchers to quickly inspect likely off-target hits.",
-      "The performance optimization occurs upstream in a Python pre-computation pipeline. It converts large pickle k-mer indexes into gzip-compressed JSON shards, grouped by 5-base prefixes for each supported seed length, and then publishes those shards to Cloudflare R2. At query time, the app fetches only the small set of shard files required for the guide's seed and reverse complement, rather than scanning the entire dataset.",
-    ],
-    name: "CRISPR Seed Finder",
-    projectUrl: "https://crispr-seed-finder.vercel.app",
-    slug: "crispr-seed-finder",
-    supplementalLinks: [
-      {
-        href: "https://www.biorxiv.org/content/10.64898/2026.03.27.714658v2",
-        label: "Preprint",
-      },
-    ],
-    tags: ["react", "typescript", "next.js"],
-  },
-  {
-    description:
-      "iOS widget that displays a GitHub-style heatmap of your Strava activities.",
-    githubUrl: "https://github.com/mattbolanos/stratiles",
-    images: [
-      { height: 1260, src: "/projects/stratiles/app-1.png", width: 581 },
-      { height: 1260, src: "/projects/stratiles/phone-1.png", width: 581 },
-      { height: 1260, src: "/projects/stratiles/app-2.png", width: 581 },
-      { height: 1260, src: "/projects/stratiles/app-3.png", width: 581 },
-      { height: 1260, src: "/projects/stratiles/app-4.png", width: 581 },
-      { height: 1260, src: "/projects/stratiles/phone-2.png", width: 581 },
-    ],
-    imageUrl: "stratiles/stratiles.png",
-    longDescription: [
-      "Inspired by GitHub's contribution graphs, I built this iOS app to visualize my Strava activity consistency as a widget on my iPhone. The project uses SwiftUI and WidgetKit, with a backend powered by Cloudflare Workers to manage authentication and data caching.",
-      "The companion app offers fun insights, including visualizations of activity patterns by time and day.  Users can customize their charts by filtering which activity types are included or excluded from the heatmaps.",
-    ],
-    name: "Stratiles",
-    slug: "stratiles",
-    tags: ["swift", "cloudflare-workers"],
-  },
-];
+const PROJECTS_DIRECTORY = path.join(process.cwd(), "src/content/projects");
 
 const PROJECT_TAG_LABEL_OVERRIDES: TagLabelOverrides[] = [
   { label: "Next.js", tag: "next.js" },
@@ -79,6 +71,39 @@ const PROJECT_TAG_LABEL_OVERRIDES: TagLabelOverrides[] = [
     tag: "typescript",
   },
 ];
+
+const loadProjects = cache(async (): Promise<Project[]> => {
+  const filenames = (await fs.readdir(PROJECTS_DIRECTORY))
+    .filter((filename) => filename.endsWith(".md"))
+    .sort();
+
+  const projects = await Promise.all(
+    filenames.map(async (filename) => {
+      const source = await fs.readFile(
+        path.join(PROJECTS_DIRECTORY, filename),
+        "utf8",
+      );
+      const { content, data } = matter(source);
+      const frontmatter = projectFrontmatterSchema.parse(data);
+
+      return {
+        ...frontmatter,
+        content: content.trim(),
+      };
+    }),
+  );
+
+  return projects.sort((projectA, projectB) => projectA.order - projectB.order);
+});
+
+export async function getProjects() {
+  return loadProjects();
+}
+
+export async function getProjectBySlug(slug: string) {
+  const projects = await loadProjects();
+  return projects.find((project) => project.slug === slug);
+}
 
 export function formatTagLabel(tag: string): string {
   const overrideLabel = PROJECT_TAG_LABEL_OVERRIDES.find(

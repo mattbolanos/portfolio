@@ -2,10 +2,11 @@ import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ProjectTag } from "@/components/project-tag";
-import type { Project } from "@/lib/projects";
-import { projects } from "@/lib/projects";
+import { getProjects, type Project } from "@/lib/projects";
 
-export const Projects = () => {
+export const Projects = async () => {
+  const projects = await getProjects();
+
   return (
     <div className="space-y-3">
       <h2>Projects</h2>

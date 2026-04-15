@@ -229,6 +229,69 @@ html *::-webkit-scrollbar-thumb {
   @apply bg-muted rounded-xl p-2;
 }
 
+.project-markdown {
+  @apply text-sm sm:text-base;
+  font-weight: 300;
+}
+
+.project-markdown > * + * {
+  margin-top: 1rem;
+}
+
+.project-markdown :where(h2, h3, h4) {
+  color: var(--foreground);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.project-markdown :where(ul, ol) {
+  padding-left: 1.25rem;
+}
+
+.project-markdown :where(ul) {
+  list-style: disc;
+}
+
+.project-markdown :where(ol) {
+  list-style: decimal;
+}
+
+.project-markdown :where(li + li) {
+  margin-top: 0.35rem;
+}
+
+.project-markdown :where(a) {
+  text-decoration-line: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: color-mix(in oklch, currentColor 25%, transparent);
+  text-decoration-thickness: 2px;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.project-markdown :where(a:hover) {
+  text-decoration-color: var(--primary);
+}
+
+.project-markdown :where(code) {
+  background: color-mix(in oklch, var(--muted) 90%, transparent);
+  border-radius: 0.4rem;
+  padding: 0.1rem 0.35rem;
+}
+
+.project-markdown :where(pre) {
+  background: color-mix(in oklch, var(--muted) 90%, transparent);
+  border-radius: 0.8rem;
+  overflow-x: auto;
+  padding: 0.875rem 1rem;
+}
+
+.project-markdown :where(pre code) {
+  background: transparent;
+  padding: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-card-in {
     animation: none;

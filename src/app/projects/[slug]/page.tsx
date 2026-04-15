@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Heatmap } from "@/components/heatmap";
 import { HeatmapSkeleton } from "@/components/heatmap/heatmap-skeleton";
 import { LinkItem } from "@/components/link-item";
@@ -12,9 +14,11 @@ import { LinkIcon } from "@/components/ui/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getGithubRepoContributions, getRepoPushedAt } from "@/lib/api/github";
 import { toGithubHeatmapEntries } from "@/lib/heatmap/github";
-import { projects } from "@/lib/projects";
+import { getProjectBySlug, getProjects } from "@/lib/projects";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const projects = await getProjects();
+
   return projects.map((project) => ({ slug: project.slug }));
 }
 
@@ -24,7 +28,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
+  const project = await getProjectBySlug(slug);
   if (!project) return {};
   return {
     description: project.description,
@@ -73,7 +77,7 @@ export default async function ProjectPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
+  const project = await getProjectBySlug(slug);
   if (!project) notFound();
 
   const projectLinks = [
@@ -153,9 +157,11 @@ export default async function ProjectPage({
             ))}
           </div>
         )}
-        {project.longDescription.map((paragraph) => (
-          <p key={paragraph}>{paragraph}</p>
-        ))}
+        <div className="project-markdown space-y-6 leading-relaxed">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {project.content}
+          </ReactMarkdown>
+        </div>
       </section>
 
       {project.images && (
