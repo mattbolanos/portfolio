@@ -2,11 +2,11 @@
 name: "CRISPR Seed Finder"
 slug: "crispr-seed-finder"
 order: 1
-description: "CRISPRi seed off-target search app backed by a Python pre-computation pipeline that shards genomic k-mer indexes for fast lookup."
+description: "CRISPRi seed off-target search app."
 tags:
   - "react"
   - "typescript"
-  - "next.js"
+  - "python"
 githubUrl: "https://github.com/mattbolanos/crispr-seed-finder"
 projectUrl: "https://crispr-seed-finder.vercel.app"
 imageUrl: "crispr-seed-finder/crispr-seed.png"
