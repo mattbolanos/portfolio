@@ -2,7 +2,7 @@
 name: "Stratiles"
 slug: "stratiles"
 order: 2
-description: "iOS widget that displays a GitHub-style heatmap of your Strava activities."
+description: "iOS widget that displays a GitHub-style heatmap of Strava activities."
 tags:
   - "swift"
   - "cloudflare-workers"
