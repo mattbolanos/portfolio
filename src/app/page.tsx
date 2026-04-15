@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
@@ -13,11 +12,6 @@ import { getGithubContributions } from "@/lib/api/github";
 import { getActivities } from "@/lib/api/strava";
 import { toGithubHeatmapEntries } from "@/lib/heatmap/github";
 import { toStravaHeatmapEntries } from "@/lib/heatmap/strava";
-
-export const metadata: Metadata = {
-  description: "Matt Bolaños' personal website",
-  title: "Matt Bolaños",
-};
 
 async function ActivitiesPreviewWrapper() {
   const activities = await getActivities();
