@@ -35,6 +35,7 @@ function ProjectItem({ project }: { project: Project }) {
         alt={project.name}
         className="image-card"
         height={52}
+        priority
         src={`/projects/${project.imageUrl}`}
         style={{
           viewTransitionName: getProjectImageViewTransitionName(project.slug),

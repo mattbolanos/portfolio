@@ -64,6 +64,7 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
         alt={entry.company}
         className={cn("image-card", entry.hasDarkImage && "dark:hidden")}
         height={52}
+        priority
         src={entry.imageUrl}
         width={52}
       />
@@ -72,6 +73,7 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
           alt={entry.company}
           className="image-card hidden dark:block"
           height={52}
+          priority
           src={`${entry.imageUrl.replace(".svg", "-dark.svg")}`}
           width={52}
         />
