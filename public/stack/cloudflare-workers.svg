@@ -1,1 +1,57 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><linearGradient id="a" x1="-.556" x2="-.628" y1="128.705" y2="128.977" gradientTransform="matrix(155.9359 0 0 -364.3 119.128 47001.098)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#eb6f07"/><stop offset="1" stop-color="#fab743"/></linearGradient><path fill="url(#a)" d="M33.882 9.694 48.491 36.05 35.075 60.199a7.75 7.75 0 0 0 0 7.543l13.416 24.209-14.609 26.356a15.501 15.501 0 0 1-6.559-6.172L4.068 71.737a15.563 15.563 0 0 1 0-15.503l23.255-40.398a15.501 15.501 0 0 1 6.559-6.142z"/><linearGradient id="b" x1="-.594" x2="-.715" y1="129.358" y2="129.519" gradientTransform="matrix(149.7049 0 0 -194.8 131.59 25305.098)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#d96504"/><stop offset="1" stop-color="#d96504" stop-opacity="0"/></linearGradient><path fill="url(#b)" d="M35.075 60.229a7.75 7.75 0 0 0 0 7.513l13.416 24.209-14.609 26.356a15.501 15.501 0 0 1-6.559-6.172L4.068 71.737c-1.848-3.19 8.497-7.006 31.007-11.478v-.03z" opacity=".7"/><linearGradient id="c" x1="-2.234" x2="-2.109" y1="128.901" y2="128.689" gradientTransform="matrix(95.8 0 0 -101.1 239.4 13048.3)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#eb6f07"/><stop offset="1" stop-color="#eb720a" stop-opacity="0"/></linearGradient><path fill="url(#c)" d="m35.373 12.347 13.118 23.702-2.176 3.786-11.568-19.587c-3.339-5.456-8.437-2.624-14.818 8.408l.954-1.64 6.44-11.18a15.51 15.51 0 0 1 6.499-6.142l1.521 2.653h.03z" opacity=".5"/><linearGradient id="d" x1="-.847" x2="-.919" y1="128.688" y2="128.96" gradientTransform="matrix(207.975 0 0 -375 275.025 48376)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ee6f05"/><stop offset="1" stop-color="#fab743"/></linearGradient><path fill="url(#d)" d="m100.665 15.835 23.255 40.398a15.485 15.485 0 0 1 0 15.503l-23.255 40.398a15.504 15.504 0 0 1-13.416 7.752H63.994l28.92-52.145a7.75 7.75 0 0 0 0-7.513L63.994 8.084h23.255a15.502 15.502 0 0 1 13.416 7.751z"/><linearGradient id="e" x1="-2.602" x2="-2.229" y1="128.679" y2="128.977" gradientTransform="matrix(118.9101 0 0 -375.1 361.09 48388.902)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#d96504" stop-opacity=".8"/><stop offset=".498" stop-color="#d96504" stop-opacity=".2"/><stop offset="1" stop-color="#d96504" stop-opacity="0"/></linearGradient><path fill="url(#e)" d="m86.057 119.708-22.957.208 27.787-52.413a8.053 8.053 0 0 0 0-7.573L63.1 8.084h5.247l29.158 51.608a8.048 8.048 0 0 1-.03 7.99 4670.283 4670.283 0 0 0-18.693 32.796c-5.665 9.957-3.22 16.367 7.275 19.23z"/><linearGradient id="f" x1="-.561" x2="-.634" y1="128.688" y2="128.96" gradientTransform="matrix(201.2571 0 0 -375 180.743 48376)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffa95f"/><stop offset="1" stop-color="#ffebc8"/></linearGradient><path fill="url(#f)" d="M40.739 119.886c-2.385 0-4.77-.566-6.857-1.58l28.681-51.727a5.353 5.353 0 0 0 0-5.188L33.882 9.694a15.492 15.492 0 0 1 6.857-1.61h23.255l28.92 52.145a7.75 7.75 0 0 1 0 7.513l-28.92 52.145H40.739z"/><linearGradient id="g" x1="-2.816" x2="-2.552" y1="128.861" y2="128.719" gradientTransform="matrix(109.2571 0 0 -375 364.743 48376)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient><path fill="url(#g)" d="M90.886 61.391 61.311 8.084h2.683l28.92 52.145a7.75 7.75 0 0 1 0 7.513l-28.92 52.145h-2.683l29.576-53.308a5.35 5.35 0 0 0-.001-5.188z" opacity=".6"/><linearGradient id="h" x1="-2.34" x2="-2.001" y1="128.779" y2="128.952" gradientTransform="matrix(107.2571 0 0 -371.4 274.743 47913.2)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient><path fill="url(#h)" d="M62.563 61.391 33.882 9.694c.894-.477 1.968-.835 2.981-1.133 6.321 11.359 15.652 28.592 28.025 51.668a7.75 7.75 0 0 1 0 7.513L36.416 119.29c-1.014-.298-1.55-.507-2.504-.954l28.622-51.727a5.353 5.353 0 0 0 0-5.188l.029-.03z" opacity=".6"/></svg>
+<svg viewBox="0 0 256 231" xmlns="http://www.w3.org/2000/svg" width="256" height="231" preserveAspectRatio="xMidYMid">
+    <defs>
+        <linearGradient id="cloudflare_workers-a" x1="50%" x2="25.7%" y1="100%" y2="8.7%">
+            <stop offset="0%" stop-color="#EB6F07" />
+            <stop offset="100%" stop-color="#FAB743" />
+        </linearGradient>
+        <linearGradient id="cloudflare_workers-b" x1="81%" x2="40.5%" y1="83.7%" y2="29.5%">
+            <stop offset="0%" stop-color="#D96504" />
+            <stop offset="100%" stop-color="#D96504" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="cloudflare_workers-c" x1="42%" x2="84%" y1="8.7%" y2="79.9%">
+            <stop offset="0%" stop-color="#EB6F07" />
+            <stop offset="100%" stop-color="#EB720A" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="cloudflare_workers-d" x1="50%" x2="25.7%" y1="100%" y2="8.7%">
+            <stop offset="0%" stop-color="#EE6F05" />
+            <stop offset="100%" stop-color="#FAB743" />
+        </linearGradient>
+        <linearGradient id="cloudflare_workers-e" x1="-33.2%" x2="91.7%" y1="100%" y2="0%">
+            <stop offset="0%" stop-color="#D96504" stop-opacity=".8" />
+            <stop offset="49.8%" stop-color="#D96504" stop-opacity=".2" />
+            <stop offset="100%" stop-color="#D96504" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="cloudflare_workers-f" x1="50%" x2="25.7%" y1="100%" y2="8.7%">
+            <stop offset="0%" stop-color="#FFA95F" />
+            <stop offset="100%" stop-color="#FFEBC8" />
+        </linearGradient>
+        <linearGradient id="cloudflare_workers-g" x1="8.1%" x2="96.5%" y1="1.1%" y2="48.8%">
+            <stop offset="0%" stop-color="#FFF" stop-opacity=".5" />
+            <stop offset="100%" stop-color="#FFF" stop-opacity=".1" />
+        </linearGradient>
+        <linearGradient id="cloudflare_workers-h" x1="-13.7%" x2="100%" y1="104.2%" y2="46.2%">
+            <stop offset="0%" stop-color="#FFF" stop-opacity=".5" />
+            <stop offset="100%" stop-color="#FFF" stop-opacity=".1" />
+        </linearGradient>
+    </defs>
+    <path fill="url(#cloudflare_workers-a)"
+        d="m65.82 3.324 30.161 54.411-27.698 49.857a16.003 16.003 0 0 0 0 15.573l27.698 49.98-30.16 54.411a32.007 32.007 0 0 1-13.542-12.74L4.27 131.412a32.13 32.13 0 0 1 0-32.007l48.01-83.403a32.007 32.007 0 0 1 13.542-12.68Z" />
+    <path fill="url(#cloudflare_workers-b)"
+        d="M68.283 107.654a16.003 16.003 0 0 0 0 15.51l27.698 49.98-30.16 54.412a32.007 32.007 0 0 1-13.542-12.74L4.27 131.412c-3.816-6.586 17.542-14.465 64.014-23.698v-.061Z"
+        opacity=".7" />
+    <path fill="url(#cloudflare_workers-c)"
+        d="m68.898 8.802 27.083 48.933-4.493 7.818-23.882-40.44c-6.894-11.264-17.42-5.416-30.591 17.358l1.97-3.386 13.294-23.082a32.007 32.007 0 0 1 13.419-12.68l3.139 5.479h.061Z"
+        opacity=".5" />
+    <path fill="url(#cloudflare_workers-d)"
+        d="m203.696 16.003 48.01 83.403c5.725 9.848 5.725 22.159 0 32.007l-48.01 83.402a32.007 32.007 0 0 1-27.698 16.004h-48.01l59.705-107.654a16.003 16.003 0 0 0 0-15.511L127.988 0h48.01a32.007 32.007 0 0 1 27.698 16.003Z" />
+    <path fill="url(#cloudflare_workers-e)"
+        d="m173.536 230.45-47.395.43 57.367-108.208a16.619 16.619 0 0 0 0-15.634L126.14 0h10.834l60.197 106.546a16.619 16.619 0 0 1-.062 16.496 9616.838 9616.838 0 0 0-38.592 67.707c-11.695 20.558-6.648 33.791 15.018 39.7Z" />
+    <path fill="url(#cloudflare_workers-f)"
+        d="M79.978 230.819c-4.924 0-9.849-1.17-14.157-3.263l59.212-106.792a11.045 11.045 0 0 0 0-10.71L65.821 3.324A32.007 32.007 0 0 1 79.978 0h48.01l59.705 107.654a16.003 16.003 0 0 1 0 15.51L127.988 230.82h-48.01Z" />
+    <path fill="url(#cloudflare_workers-g)"
+        d="M183.508 110.054 122.448 0h5.54l59.705 107.654a16.003 16.003 0 0 1 0 15.51L127.988 230.82h-5.54l61.06-110.055a11.045 11.045 0 0 0 0-10.71Z"
+        opacity=".6" />
+    <path fill="url(#cloudflare_workers-h)"
+        d="M125.033 110.054 65.821 3.324c1.846-.985 4.062-1.724 6.155-2.34 13.049 23.452 32.315 59.029 57.859 106.67a16.003 16.003 0 0 1 0 15.51L71.053 229.589c-2.093-.616-3.201-1.047-5.17-1.97l59.089-106.792a11.045 11.045 0 0 0 0-10.71l.061-.062Z"
+        opacity=".6" />
+</svg>
