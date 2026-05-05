@@ -44,7 +44,7 @@ const HEATMAP_CONFIGS = {
       return `${cell.value.toFixed(2)} miles on ${formattedDate}`;
     },
     formatSummary: (total, rangeLabel) =>
-      `${total.toFixed(1)} miles ran in the ${rangeLabel}`,
+      `${total.toFixed(1)} miles run in the ${rangeLabel}`,
     range: [0, 8],
   },
 } satisfies Record<string, HeatmapConfig>;
