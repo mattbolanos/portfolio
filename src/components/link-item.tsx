@@ -8,9 +8,10 @@ interface IconHandle {
   stopAnimation: () => void;
 }
 
-type IconComponent = React.ForwardRefExoticComponent<
-  { size?: number } & React.RefAttributes<IconHandle>
->;
+type IconComponent = React.ComponentType<{
+  ref?: React.Ref<IconHandle>;
+  size?: number;
+}>;
 
 interface LinkItemProps {
   href: string;

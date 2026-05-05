@@ -1,18 +1,24 @@
 "use client";
 
-import type { Variants } from "motion/react";
-import { motion, useAnimation } from "motion/react";
-import type { HTMLAttributes } from "react";
-import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
+import {
+  domAnimation,
+  LazyMotion,
+  m,
+  useAnimation,
+  type Variants,
+} from "motion/react";
+import type { HTMLAttributes, Ref } from "react";
+import { useCallback, useImperativeHandle, useRef } from "react";
 
 import { cn } from "@/lib/utils";
 
-export interface LinkIconHandle {
+interface LinkIconHandle {
   startAnimation: () => void;
   stopAnimation: () => void;
 }
 
 interface LinkIconProps extends HTMLAttributes<HTMLDivElement> {
+  ref?: Ref<LinkIconHandle>;
   size?: number;
 }
 
@@ -33,42 +39,49 @@ const PATH_VARIANTS: Variants = {
   initial: { pathLength: 1, pathOffset: 0, rotate: 0 },
 };
 
-const LinkIcon = forwardRef<LinkIconHandle, LinkIconProps>(
-  ({ onMouseEnter, onMouseLeave, className, size = 28, ...props }, ref) => {
-    const controls = useAnimation();
-    const isControlledRef = useRef(false);
+function LinkIcon({
+  ref,
+  onMouseEnter,
+  onMouseLeave,
+  className,
+  size = 28,
+  ...props
+}: LinkIconProps) {
+  const controls = useAnimation();
+  const isControlledRef = useRef(false);
 
-    useImperativeHandle(ref, () => {
-      isControlledRef.current = true;
+  useImperativeHandle(ref, () => {
+    isControlledRef.current = true;
 
-      return {
-        startAnimation: () => controls.start("animate"),
-        stopAnimation: () => controls.start("normal"),
-      };
-    });
+    return {
+      startAnimation: () => controls.start("animate"),
+      stopAnimation: () => controls.start("normal"),
+    };
+  });
 
-    const handleMouseEnter = useCallback(
-      (e: React.MouseEvent<HTMLDivElement>) => {
-        if (isControlledRef.current) {
-          onMouseEnter?.(e);
-        } else {
-          controls.start("animate");
-        }
-      },
-      [controls, onMouseEnter],
-    );
+  const handleMouseEnter = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (isControlledRef.current) {
+        onMouseEnter?.(e);
+      } else {
+        controls.start("animate");
+      }
+    },
+    [controls, onMouseEnter],
+  );
 
-    const handleMouseLeave = useCallback(
-      (e: React.MouseEvent<HTMLDivElement>) => {
-        if (isControlledRef.current) {
-          onMouseLeave?.(e);
-        } else {
-          controls.start("normal");
-        }
-      },
-      [controls, onMouseLeave],
-    );
-    return (
+  const handleMouseLeave = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (isControlledRef.current) {
+        onMouseLeave?.(e);
+      } else {
+        controls.start("normal");
+      }
+    },
+    [controls, onMouseLeave],
+  );
+  return (
+    <LazyMotion features={domAnimation}>
       <div
         className={cn(className)}
         onMouseEnter={handleMouseEnter}
@@ -87,22 +100,20 @@ const LinkIcon = forwardRef<LinkIconHandle, LinkIconProps>(
           xmlns="http://www.w3.org/2000/svg"
         >
           <title>Link</title>
-          <motion.path
+          <m.path
             animate={controls}
             d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
             variants={PATH_VARIANTS}
           />
-          <motion.path
+          <m.path
             animate={controls}
             d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
             variants={PATH_VARIANTS}
           />
         </svg>
       </div>
-    );
-  },
-);
-
-LinkIcon.displayName = "LinkIcon";
+    </LazyMotion>
+  );
+}
 
 export { LinkIcon };

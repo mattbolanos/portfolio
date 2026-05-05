@@ -49,7 +49,7 @@ async function RepoLastUpdated({ githubUrl }: { githubUrl: string }) {
   if (!pushedAt) return null;
 
   return (
-    <p className="text-muted-foreground text-xs">
+    <p className="text-muted-foreground text-xs" suppressHydrationWarning>
       Updated{" "}
       {new Date(pushedAt).toLocaleDateString("en-US", {
         day: "numeric",

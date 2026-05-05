@@ -58,6 +58,7 @@ export const ActivityCard = ({
         <time
           className="text-muted-foreground text-[10px] tabular-nums sm:text-xs"
           dateTime={run.start_date_local}
+          suppressHydrationWarning
         >
           {ACTIVITY_DATE_FORMATTER.format(new Date(run.start_date_local))}
         </time>

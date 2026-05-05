@@ -3,7 +3,7 @@ export type HeatmapEntry = {
   value: number;
 };
 
-export type HeatmapCell = {
+type HeatmapCell = {
   date: Date;
   value: number;
 };
