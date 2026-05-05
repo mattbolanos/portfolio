@@ -28,8 +28,8 @@ const HEATMAP_CONFIGS = {
 
       return `${cell.value.toLocaleString("en-US")} ${contributionLabel} on ${formattedDate}`;
     },
-    formatSummary: (total) =>
-      `${Math.round(total).toLocaleString("en-US")} contributions in the last year`,
+    formatSummary: (total, rangeLabel) =>
+      `${Math.round(total).toLocaleString("en-US")} contributions in the ${rangeLabel}`,
     range: [0, 40],
   },
   strava: {
@@ -43,7 +43,8 @@ const HEATMAP_CONFIGS = {
 
       return `${cell.value.toFixed(2)} miles on ${formattedDate}`;
     },
-    formatSummary: (total) => `${total.toFixed(1)} miles ran in the last year`,
+    formatSummary: (total, rangeLabel) =>
+      `${total.toFixed(1)} miles run in the ${rangeLabel}`,
     range: [0, 8],
   },
 } satisfies Record<string, HeatmapConfig>;

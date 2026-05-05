@@ -9,9 +9,10 @@ interface IconHandle {
   stopAnimation: () => void;
 }
 
-type ContactIconComponent = React.ForwardRefExoticComponent<
-  { size?: number } & React.RefAttributes<IconHandle>
->;
+type ContactIconComponent = React.ComponentType<{
+  ref?: React.Ref<IconHandle>;
+  size?: number;
+}>;
 
 interface ContactLink {
   href: string;

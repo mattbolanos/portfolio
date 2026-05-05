@@ -22,6 +22,8 @@ import { cn } from "@/lib/utils";
 interface HeatmapProps {
   configId: HeatmapConfigId;
   data: HeatmapEntry[];
+  summaryRangeLabel?: string;
+  weeksToShow?: number;
 }
 
 const tileColor = (config: HeatmapConfig, level: number): string =>
@@ -29,9 +31,17 @@ const tileColor = (config: HeatmapConfig, level: number): string =>
     ? `var(${config.colorsByLevel[level]})`
     : `color-mix(in oklch, var(${config.colorVar}) ${COLOR_MIX_BY_LEVEL[level]}%, var(--empty))`;
 
-export const Heatmap = ({ configId, data }: HeatmapProps) => {
+export const Heatmap = ({
+  configId,
+  data,
+  summaryRangeLabel,
+  weeksToShow,
+}: HeatmapProps) => {
   const config = getHeatmapConfig(configId);
-  const view = React.useMemo(() => buildHeatmapView(data), [data]);
+  const view = React.useMemo(
+    () => buildHeatmapView(data, weeksToShow),
+    [data, weeksToShow],
+  );
   const monthLabels = React.useMemo(
     () => buildMonthLabels(view.weeks),
     [view.weeks],
@@ -64,8 +74,8 @@ export const Heatmap = ({ configId, data }: HeatmapProps) => {
 
   return (
     <article className="bg-card rounded-lg p-3 sm:p-4">
-      <div className="flex justify-between gap-2">
-        <div className="text-muted-foreground mt-6 hidden shrink-0 grid-rows-7 text-xs sm:grid">
+      <div className="flex items-start gap-2">
+        <div className="text-muted-foreground mt-6 hidden shrink-0 pr-3 text-right grid-rows-7 text-xs sm:grid">
           {DAY_LABELS.map((dayLabel) => (
             <span className="h-tile leading-tile" key={dayLabel.key}>
               {dayLabel.label}
@@ -74,10 +84,10 @@ export const Heatmap = ({ configId, data }: HeatmapProps) => {
         </div>
 
         <div
-          className="overflow-x-auto overflow-y-hidden"
+          className="overflow-x-auto overflow-y-visible"
           onScroll={handleHeatmapScroll}
         >
-          <div className="inline-block min-w-max pb-1">
+          <div className="inline-block min-w-max pb-1 pr-6">
             <div className="text-muted-foreground mb-2 grid h-4 auto-cols-(--heatmap-tile-step) grid-flow-col text-xs">
               {monthLabelsByWeek.map((monthLabelByWeek) => (
                 <span
@@ -138,7 +148,10 @@ export const Heatmap = ({ configId, data }: HeatmapProps) => {
       <div className="text-muted-foreground mt-2 space-y-2 text-xs sm:mt-1">
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
           <span className="tabular-nums">
-            {config.formatSummary(view.totalValue)}
+            {config.formatSummary(
+              view.totalValue,
+              summaryRangeLabel ?? view.rangeLabel,
+            )}
           </span>
           <div className="flex items-center gap-1">
             <span>Less</span>

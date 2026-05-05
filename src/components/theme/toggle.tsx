@@ -2,8 +2,6 @@
 
 import { domAnimation, LazyMotion, m, useReducedMotion } from "motion/react";
 import { useTheme } from "next-themes";
-import * as React from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const springBody = {
   bounce: 0.12,
@@ -23,16 +21,7 @@ const springRay = {
 
 export const ThemeToggle = () => {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
   const shouldReduceMotion = useReducedMotion();
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return <Skeleton className="size-9 rounded-full" />;
-  }
 
   const isDark = resolvedTheme === "dark";
   const noMotion = shouldReduceMotion ?? false;
@@ -43,6 +32,7 @@ export const ThemeToggle = () => {
         aria-label="Toggle theme"
         className="focus-visible:ring-ring hover:bg-accent/60 dark:hover:bg-accent relative flex size-9 cursor-pointer items-center justify-center rounded-full transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:cursor-default"
         onClick={() => setTheme(isDark ? "light" : "dark")}
+        suppressHydrationWarning={true}
         type="button"
       >
         <m.svg

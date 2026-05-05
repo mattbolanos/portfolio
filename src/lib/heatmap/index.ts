@@ -3,7 +3,7 @@ export type HeatmapEntry = {
   value: number;
 };
 
-export type HeatmapCell = {
+type HeatmapCell = {
   date: Date;
   value: number;
 };
@@ -14,6 +14,7 @@ type HeatmapWeek = {
 };
 
 type HeatmapView = {
+  rangeLabel: string;
   today: Date;
   totalValue: number;
   weeks: HeatmapWeek[];
@@ -23,7 +24,7 @@ export type HeatmapConfig = {
   colorVar: string;
   colorsByLevel?: readonly [string, string, string, string, string];
   formatDayTitle: (cell: HeatmapCell) => string;
-  formatSummary: (total: number) => string;
+  formatSummary: (total: number, rangeLabel: string) => string;
   range: [min: number, max: number];
 };
 
@@ -127,10 +128,11 @@ export const buildHeatmapView = (
     const values = Array.from({ length: 7 }, (_, dayOffset) => {
       const date = addDays(weekStart, dayOffset);
       const entry = entriesByDate.get(toDateKey(date));
+      const isInRequestedWindow = date >= windowStart && date <= today;
 
       return {
         date,
-        value: entry?.value ?? 0,
+        value: isInRequestedWindow ? (entry?.value ?? 0) : 0,
       };
     });
 
@@ -140,6 +142,8 @@ export const buildHeatmapView = (
   const days = weeks.flatMap((week) => week.values);
 
   return {
+    rangeLabel:
+      weeksToShow === WEEKS_TO_SHOW ? "last year" : `last ${weeksToShow} weeks`,
     today,
     totalValue: days.reduce((sum, day) => sum + day.value, 0),
     weeks,
