@@ -128,10 +128,11 @@ export const buildHeatmapView = (
     const values = Array.from({ length: 7 }, (_, dayOffset) => {
       const date = addDays(weekStart, dayOffset);
       const entry = entriesByDate.get(toDateKey(date));
+      const isInRequestedWindow = date >= windowStart && date <= today;
 
       return {
         date,
-        value: entry?.value ?? 0,
+        value: isInRequestedWindow ? (entry?.value ?? 0) : 0,
       };
     });
 
