@@ -192,7 +192,16 @@ export default async function ProjectPage({
             </div>
           )}
           <div className="project-markdown space-y-6 leading-relaxed">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            <ReactMarkdown
+              components={{
+                a: ({ children, ...props }) => (
+                  <a className="text-link" {...props} target="_blank">
+                    {children}
+                  </a>
+                ),
+              }}
+              remarkPlugins={[remarkGfm]}
+            >
               {project.content}
             </ReactMarkdown>
           </div>
@@ -214,6 +223,7 @@ export default async function ProjectPage({
                         alt={`${project.name} screenshot`}
                         className="h-auto w-full"
                         height={imageHeight}
+                        loading="eager"
                         src={image.src}
                         width={image.width}
                       />

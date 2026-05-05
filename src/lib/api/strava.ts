@@ -13,6 +13,7 @@ const STRAVA_MAX_PER_PAGE = 200;
 const DEFAULT_ACTIVITIES_PER_PAGE = STRAVA_MAX_PER_PAGE;
 const INITIAL_PARALLEL_ACTIVITY_PAGES = 2;
 const ACTIVITIES_CACHE_TTL_MS = 24 * 60 * 60 * 1_000;
+const STRAVA_CACHE_REVALIDATE_SECONDS = 24 * 60 * 60;
 
 type GetActivitiesOptions = {
   maxPages?: number;
@@ -463,8 +464,8 @@ const fetchActivitiesPageResponse = async ({
   let response = await fetchJsonResponseWithRetry(
     activitiesUrl,
     {
-      cache: "no-store",
       headers: { Authorization: `Bearer ${accessToken}` },
+      next: { revalidate: STRAVA_CACHE_REVALIDATE_SECONDS },
     },
     3,
   );
@@ -476,8 +477,8 @@ const fetchActivitiesPageResponse = async ({
       response = await fetchJsonResponseWithRetry(
         activitiesUrl,
         {
-          cache: "no-store",
           headers: { Authorization: `Bearer ${refreshedAccessToken}` },
+          next: { revalidate: STRAVA_CACHE_REVALIDATE_SECONDS },
         },
         3,
       );

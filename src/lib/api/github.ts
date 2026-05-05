@@ -10,6 +10,7 @@ export type GithubContributionDay = {
 };
 
 const GITHUB_GRAPHQL_ENDPOINT = "https://api.github.com/graphql";
+const GITHUB_CACHE_REVALIDATE_SECONDS = 24 * 60 * 60;
 
 const CONTRIBUTIONS_QUERY = `
   query UserContributions($login: String!, $from: DateTime!, $to: DateTime!) {
@@ -124,6 +125,7 @@ export async function getRepoPushedAt(
 
   const res = await fetch(`https://api.github.com/repos/${repo}`, {
     headers: getGithubHeaders(),
+    next: { revalidate: GITHUB_CACHE_REVALIDATE_SECONDS },
   });
 
   if (!res.ok) return null;
@@ -150,6 +152,7 @@ export async function getGithubContributions(): Promise<
     }),
     headers: getGithubHeaders(),
     method: "POST",
+    next: { revalidate: GITHUB_CACHE_REVALIDATE_SECONDS },
   });
 
   if (!res.ok) {
@@ -200,6 +203,7 @@ export async function getGithubRepoContributions(
     }),
     headers: getGithubHeaders(),
     method: "POST",
+    next: { revalidate: GITHUB_CACHE_REVALIDATE_SECONDS },
   });
 
   if (!res.ok) {

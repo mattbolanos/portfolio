@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { unstable_cache } from "next/cache";
 import { Suspense } from "react";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
@@ -19,8 +20,22 @@ export const metadata: Metadata = {
   title: "Matt Bolaños",
 };
 
+const HOME_DATA_REVALIDATE_SECONDS = 24 * 60 * 60;
+
+const getCachedActivities = unstable_cache(
+  () => getActivities(),
+  ["home-strava-activities"],
+  { revalidate: HOME_DATA_REVALIDATE_SECONDS },
+);
+
+const getCachedGithubContributions = unstable_cache(
+  () => getGithubContributions(),
+  ["home-github-contributions"],
+  { revalidate: HOME_DATA_REVALIDATE_SECONDS },
+);
+
 async function ActivitiesPreviewWrapper() {
-  const activities = await getActivities();
+  const activities = await getCachedActivities();
 
   if (!activities) {
     return (
@@ -50,7 +65,7 @@ async function ActivitiesPreviewWrapper() {
 }
 
 async function GithubContributions() {
-  const githubContributions = await getGithubContributions();
+  const githubContributions = await getCachedGithubContributions();
 
   if (!githubContributions) {
     return (
