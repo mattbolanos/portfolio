@@ -14,6 +14,7 @@ type HeatmapWeek = {
 };
 
 type HeatmapView = {
+  rangeLabel: string;
   today: Date;
   totalValue: number;
   weeks: HeatmapWeek[];
@@ -23,7 +24,7 @@ export type HeatmapConfig = {
   colorVar: string;
   colorsByLevel?: readonly [string, string, string, string, string];
   formatDayTitle: (cell: HeatmapCell) => string;
-  formatSummary: (total: number) => string;
+  formatSummary: (total: number, rangeLabel: string) => string;
   range: [min: number, max: number];
 };
 
@@ -140,6 +141,8 @@ export const buildHeatmapView = (
   const days = weeks.flatMap((week) => week.values);
 
   return {
+    rangeLabel:
+      weeksToShow === WEEKS_TO_SHOW ? "last year" : `last ${weeksToShow} weeks`,
     today,
     totalValue: days.reduce((sum, day) => sum + day.value, 0),
     weeks,

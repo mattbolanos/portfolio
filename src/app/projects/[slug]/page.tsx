@@ -22,6 +22,8 @@ import {
   getProjectTagViewTransitionName,
 } from "@/lib/view-transitions";
 
+const WEEKS_TO_SHOW = 36;
+
 export async function generateStaticParams() {
   const projects = await getProjects();
 
@@ -75,6 +77,8 @@ async function GithubContributions({ githubUrl }: { githubUrl: string }) {
     <Heatmap
       configId="github"
       data={toGithubHeatmapEntries(githubContributions)}
+      summaryRangeLabel={`past ${Math.round(WEEKS_TO_SHOW / 4)} months`}
+      weeksToShow={WEEKS_TO_SHOW}
     />
   );
 }
@@ -245,7 +249,9 @@ export default async function ProjectPage({
           <section className="space-y-3">
             <h2>Contributions</h2>
             <div className="heatmap-container">
-              <Suspense fallback={<HeatmapSkeleton />}>
+              <Suspense
+                fallback={<HeatmapSkeleton weeksToShow={WEEKS_TO_SHOW} />}
+              >
                 <GithubContributions githubUrl={project.githubUrl} />
               </Suspense>
             </div>

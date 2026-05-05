@@ -1,11 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { DAY_LABELS } from "@/lib/heatmap";
 
-const HEATMAP_TILE_KEYS = Array.from({ length: 7 * 52 }, (_, index) => {
-  return `heatmap-tile-${index + 1}`;
-});
-const HEATMAP_WEEK_KEYS = Array.from({ length: 52 }, (_, index) => index);
-
 const LEGEND_TILE_KEYS = [
   "legend-tile-1",
   "legend-tile-2",
@@ -13,14 +8,30 @@ const LEGEND_TILE_KEYS = [
   "legend-tile-4",
   "legend-tile-5",
 ];
-const MONTH_LABEL_POSITIONS = [0, 4, 9, 13, 17, 22, 26, 30, 35, 39, 43, 48];
-const MONTH_LABEL_POSITION_SET = new Set(MONTH_LABEL_POSITIONS);
 
-export const HeatmapSkeleton = () => {
+interface HeatmapSkeletonProps {
+  weeksToShow?: number;
+}
+
+export const HeatmapSkeleton = ({ weeksToShow = 52 }: HeatmapSkeletonProps) => {
+  const heatmapTileKeys = Array.from(
+    { length: 7 * weeksToShow },
+    (_, index) => `heatmap-tile-${index + 1}`,
+  );
+  const heatmapWeekKeys = Array.from(
+    { length: weeksToShow },
+    (_, index) => index,
+  );
+  const monthLabelPositionSet = new Set(
+    heatmapWeekKeys.filter(
+      (weekIndex) => weekIndex === 0 || weekIndex % 4 === 0,
+    ),
+  );
+
   return (
     <article className="bg-card rounded-lg p-3 sm:p-4">
-      <div className="flex justify-between gap-2">
-        <div className="text-muted-foreground mt-6 hidden shrink-0 grid-rows-7 text-xs sm:grid">
+      <div className="flex items-start gap-2">
+        <div className="text-muted-foreground mt-6 hidden shrink-0 pr-3 text-right grid-rows-7 text-xs sm:grid">
           {DAY_LABELS.map((dayLabel) => (
             <span className="h-tile leading-tile" key={dayLabel.key}>
               {dayLabel.label}
@@ -28,12 +39,12 @@ export const HeatmapSkeleton = () => {
           ))}
         </div>
 
-        <div className="overflow-x-hidden">
-          <div className="inline-block min-w-max pb-1">
+        <div className="overflow-x-auto overflow-y-visible">
+          <div className="inline-block min-w-max pb-1 pr-6">
             <div className="text-muted-foreground mb-2 grid h-4 auto-cols-(--heatmap-tile-step) grid-flow-col text-xs">
-              {HEATMAP_WEEK_KEYS.map((weekIndex) => (
+              {heatmapWeekKeys.map((weekIndex) => (
                 <div className="w-tile-step" key={`month-${weekIndex}`}>
-                  {MONTH_LABEL_POSITION_SET.has(weekIndex) ? (
+                  {monthLabelPositionSet.has(weekIndex) ? (
                     <Skeleton className="h-3 w-5" />
                   ) : null}
                 </div>
@@ -41,7 +52,7 @@ export const HeatmapSkeleton = () => {
             </div>
 
             <div className="gap-tile grid grid-flow-col grid-rows-7">
-              {HEATMAP_TILE_KEYS.map((tileKey) => (
+              {heatmapTileKeys.map((tileKey) => (
                 <Skeleton className="rounded-tile size-tile" key={tileKey} />
               ))}
             </div>
