@@ -1,3 +1,5 @@
+import { ArrowRight02Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,6 +11,7 @@ interface ExperienceEntry {
   startDate: string;
   endDate: string;
   imageUrl: string;
+  role: string;
   hasDarkImage?: boolean;
 }
 
@@ -19,15 +22,17 @@ const experienceEntries: ExperienceEntry[] = [
       "Building internal software to influence front office decisions.",
     endDate: "Present",
     imageUrl: "/gsw.svg",
+    role: "Full Stack Development",
     startDate: "Oct 2023",
   },
   {
     company: "Sports Info Solutions",
     description:
-      "Worked on the Basketball Research team. Created end-to-end data pipelines and client-facing web applications.",
+      "Created end-to-end pipelines and client-facing web applications.",
     endDate: "Oct 2023",
     hasDarkImage: true,
     imageUrl: "/sis.svg",
+    role: "Basketball Research",
     startDate: "Oct 2021",
   },
 ];
@@ -79,12 +84,18 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
         />
       )}
 
-      <div className="flex flex-1 flex-col items-start gap-y-1">
+      <div className="flex flex-1 flex-col items-start gap-0.5 sm:gap-1">
         <h3 className="text-sm leading-none font-normal sm:text-base">
           {entry.company}
         </h3>
-        <p className="text-muted-foreground text-[10px] tracking-widest uppercase sm:text-xs">
-          {entry.startDate} — {entry.endDate}
+        <p className="text-muted-foreground inline-flex items-center text-[11px] tracking-widest sm:text-xs">
+          {entry.role} • {entry.startDate}
+          <HugeiconsIcon
+            className="size-3 w-4.5"
+            icon={ArrowRight02Icon}
+            strokeWidth={2}
+          />
+          {entry.endDate}
         </p>
         <p className="text-xs sm:text-sm">{entry.description}</p>
       </div>
