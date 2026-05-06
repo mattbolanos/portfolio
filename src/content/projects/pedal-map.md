@@ -5,7 +5,7 @@ order: 0
 description: "Live Citi Bike map with historical station availability views."
 tags:
   - "react"
-  - "tanstack"
+  - "tanstack-start"
   - "typescript"
 githubUrl: "https://github.com/mattbolanos/pedal-map"
 projectUrl: "https://pedal-map.vercel.app"
