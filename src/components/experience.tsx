@@ -88,7 +88,7 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
         <h3 className="text-sm leading-none font-normal sm:text-base">
           {entry.company}
         </h3>
-        <p className="text-muted-foreground inline-flex items-center text-[11px] tracking-widest sm:text-xs">
+        <p className="text-muted-foreground inline-flex flex-wrap items-center text-xs tracking-wide">
           {entry.role} • {entry.startDate}
           <HugeiconsIcon
             className="size-3 w-4.5"
