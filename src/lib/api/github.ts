@@ -165,19 +165,27 @@ export async function getGithubContributions(): Promise<
     return null;
   }
 
-  const contributionDays =
-    parsed.data.data.user?.contributionsCollection.contributionCalendar.weeks
-      .flatMap((week) => week.contributionDays)
-      .map((contributionDay) => ({
-        contributionCount: contributionDay.contributionCount,
-        date: contributionDay.date,
-      }));
+  const weeks =
+    parsed.data.data.user?.contributionsCollection.contributionCalendar.weeks;
+  const contributionDays = weeks?.reduce<GithubContributionDay[]>(
+    (days, week) => {
+      for (const contributionDay of week.contributionDays) {
+        days.push({
+          contributionCount: contributionDay.contributionCount,
+          date: contributionDay.date,
+        });
+      }
+
+      return days;
+    },
+    [],
+  );
 
   if (!contributionDays?.length) {
     return null;
   }
 
-  return contributionDays.sort((dayA, dayB) =>
+  return contributionDays.toSorted((dayA, dayB) =>
     dayA.date.localeCompare(dayB.date),
   );
 }

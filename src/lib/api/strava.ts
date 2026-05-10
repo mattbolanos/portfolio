@@ -182,7 +182,9 @@ const fetchJsonResponseWithRetry = async (
   init: RequestInit,
   retries = DEFAULT_RETRIES,
 ): Promise<JsonResponse | null> => {
-  for (let attempt = 0; attempt <= retries; attempt += 1) {
+  const attemptFetch = async (
+    attempt: number,
+  ): Promise<JsonResponse | null> => {
     try {
       const res = await withTimeout(url, init, REQUEST_TIMEOUT_MS);
       let payload: unknown | null = null;
@@ -212,16 +214,18 @@ const fetchJsonResponseWithRetry = async (
         getBackoffDelayMs(attempt);
 
       await sleep(retryAfterMs);
+      return attemptFetch(attempt + 1);
     } catch {
       if (attempt >= retries) {
         return null;
       }
 
       await sleep(getBackoffDelayMs(attempt));
+      return attemptFetch(attempt + 1);
     }
-  }
+  };
 
-  return null;
+  return attemptFetch(0);
 };
 
 const fetchJsonWithRetry = async (
@@ -322,21 +326,25 @@ const refreshAccessToken = async (
   clientSecret: string,
   envRefreshToken: string,
 ): Promise<string | null> => {
-  const candidateRefreshTokens = [tokenState.refreshToken, envRefreshToken]
-    .filter((token, index, all) => token && all.indexOf(token) === index)
-    .map((token) => token as string);
-
-  for (const refreshToken of candidateRefreshTokens) {
-    const refreshed = await requestRefreshedToken(
-      clientId,
-      clientSecret,
-      refreshToken,
-    );
-
-    if (!refreshed) {
-      continue;
+  const candidateRefreshTokens = [
+    tokenState.refreshToken,
+    envRefreshToken,
+  ].reduce<string[]>((tokens, token) => {
+    if (token && !tokens.includes(token)) {
+      tokens.push(token);
     }
 
+    return tokens;
+  }, []);
+
+  const refreshedTokens = await Promise.all(
+    candidateRefreshTokens.map((refreshToken) =>
+      requestRefreshedToken(clientId, clientSecret, refreshToken),
+    ),
+  );
+  const refreshed = refreshedTokens.find((token) => token !== null);
+
+  if (refreshed) {
     tokenState.accessToken = refreshed.accessToken;
     tokenState.expiresAt = refreshed.expiresAt;
     tokenState.refreshToken = refreshed.refreshToken;
@@ -611,8 +619,8 @@ const fetchActivities = async ({
     byDay.set(date, day);
   }
 
-  const heatmap = [...byDay.entries()]
-    .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
+  const heatmap = Array.from(byDay.entries())
+    .toSorted(([dateA], [dateB]) => dateA.localeCompare(dateB))
     .map(([date, day]) => ({
       ...day,
       date,
