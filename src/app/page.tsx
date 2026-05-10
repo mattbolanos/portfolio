@@ -131,6 +131,16 @@ export default function Home() {
           </div>
         </section>
         <section className="space-y-3">
+          <h2>Coffee</h2>
+          <p className="text-muted-foreground text-sm sm:text-base">
+            Keeping notes on what I&apos;m brewing{" "}
+            <a className="text-link" href="/coffee">
+              over here
+            </a>
+            .
+          </p>
+        </section>
+        <section className="space-y-3">
           <h2>Coding</h2>
           <div className="heatmap-container">
             <Suspense fallback={<HeatmapSkeleton />}>
