@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { unstable_cache } from "next/cache";
+import { cacheLife } from "next/cache";
 import { Suspense } from "react";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
@@ -10,6 +10,7 @@ import { Intro } from "@/components/intro";
 import { Projects } from "@/components/projects";
 import { ActivitiesPreviewSkeleton } from "@/components/strava/activities-preview-skeleton";
 import { RecentRuns } from "@/components/strava/recent-runs";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getGithubContributions } from "@/lib/api/github";
 import { getActivities } from "@/lib/api/strava";
 import { toGithubHeatmapEntries } from "@/lib/heatmap/github";
@@ -21,18 +22,21 @@ export const metadata: Metadata = {
 };
 
 const HOME_DATA_REVALIDATE_SECONDS = 24 * 60 * 60;
+const PROJECT_SKELETON_ITEMS = ["project-1", "project-2", "project-3"];
 
-const getCachedActivities = unstable_cache(
-  () => getActivities(),
-  ["home-strava-activities"],
-  { revalidate: HOME_DATA_REVALIDATE_SECONDS },
-);
+async function getCachedActivities() {
+  "use cache";
 
-const getCachedGithubContributions = unstable_cache(
-  () => getGithubContributions(),
-  ["home-github-contributions"],
-  { revalidate: HOME_DATA_REVALIDATE_SECONDS },
-);
+  cacheLife({ revalidate: HOME_DATA_REVALIDATE_SECONDS });
+  return getActivities();
+}
+
+async function getCachedGithubContributions() {
+  "use cache";
+
+  cacheLife({ revalidate: HOME_DATA_REVALIDATE_SECONDS });
+  return getGithubContributions();
+}
 
 async function ActivitiesPreviewWrapper() {
   const activities = await getCachedActivities();
@@ -85,13 +89,38 @@ async function GithubContributions() {
   );
 }
 
+function ProjectsSkeleton() {
+  return (
+    <div className="space-y-3">
+      <h2>Projects</h2>
+      <ul className="flex flex-col gap-y-4">
+        {PROJECT_SKELETON_ITEMS.map((item) => (
+          <li className="flex gap-x-3 py-3 first:pt-0 last:pb-0" key={item}>
+            <Skeleton className="size-13 shrink-0" />
+            <div className="flex flex-1 flex-col gap-y-2">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-3 w-full max-w-md" />
+              <div className="flex gap-1">
+                <Skeleton className="h-5 w-16" />
+                <Skeleton className="h-5 w-20" />
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <div>
       <Header />
       <div className="space-y-10">
         <Intro />
-        <Projects />
+        <Suspense fallback={<ProjectsSkeleton />}>
+          <Projects />
+        </Suspense>
         <Experience />
         <section className="space-y-3">
           <h2>Running</h2>
