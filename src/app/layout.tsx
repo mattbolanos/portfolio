@@ -3,6 +3,7 @@ import { Geist_Mono, Sora } from "next/font/google";
 import { ViewTransitions } from "next-view-transitions";
 import { Providers } from "./providers";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { Footer } from "@/components/footer";
 
 const SITE_NAME = "Matt Bolaños";
@@ -72,6 +73,7 @@ export default function RootLayout({
             <Providers>
               <main className="min-h-screen overscroll-y-contain px-5 pt-8 pb-8 md:px-6 md:pt-12">
                 {children}
+                <Analytics />
               </main>
               <Footer />
             </Providers>
