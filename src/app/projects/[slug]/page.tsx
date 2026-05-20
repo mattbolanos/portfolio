@@ -138,9 +138,9 @@ export default async function ProjectPage({
       <div className="space-y-10">
         <section className="space-y-3">
           <h1 className="sr-only">{project.name}</h1>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <h3
-              className="text-xl leading-none font-normal sm:text-2xl"
+              className="text-lg leading-none font-medium sm:text-xl"
               style={{
                 viewTransitionName: getProjectTitleViewTransitionName(
                   project.slug,

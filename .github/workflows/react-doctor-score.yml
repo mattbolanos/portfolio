@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   react-doctor-score:
@@ -18,27 +19,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: Run React Doctor and extract score
+      - name: Run React Doctor
         id: react_doctor
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          OUTPUT_FILE="$(mktemp)"
-          bunx react-doctor@latest . --yes --score | tee "$OUTPUT_FILE"
-
-          SCORE="$(tail -1 "$OUTPUT_FILE" | tr -d '[:space:]')"
-
-          if [[ -z "$SCORE" ]] || ! [[ "$SCORE" =~ ^[0-9]+$ ]]; then
-            echo "Unable to extract React Doctor score from output."
-            exit 1
-          fi
-
-          echo "score=$SCORE" >> "$GITHUB_OUTPUT"
-          echo "Extracted React Doctor score: $SCORE"
+        uses: millionco/react-doctor@main
+        with:
+          project: portfolio
+          fail-on: none
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update README score
         shell: bash
@@ -46,6 +33,11 @@ jobs:
           SCORE: ${{ steps.react_doctor.outputs.score }}
         run: |
           set -euo pipefail
+
+          if [[ -z "$SCORE" ]] || ! [[ "$SCORE" =~ ^[0-9]+$ ]]; then
+            echo "React Doctor did not return a numeric score."
+            exit 1
+          fi
 
           perl -0pi -e 's#(https://www\.react\.doctor/share(?:/badge)?\?[^)\s]*\bs=)\d+#$1$ENV{SCORE}#g' README.md
 

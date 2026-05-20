@@ -164,7 +164,8 @@ p {
   font-weight: 300;
 }
 
-.text-link {
+.text-link,
+.project-markdown :where(a) {
   text-decoration-line: underline;
   text-underline-offset: 6px;
   text-decoration-color: color-mix(in oklch, var(--primary) 45%, transparent);
@@ -172,7 +173,8 @@ p {
   transition: text-decoration-color 0.2s ease;
 }
 
-.text-link:hover {
+.text-link:hover,
+.project-markdown :where(a:hover) {
   text-decoration-color: var(--primary);
 }
 
@@ -215,17 +217,6 @@ html *::-webkit-scrollbar-thumb {
   }
 }
 
-@keyframes project-description-in {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .image-card {
   @apply size-10 sm:size-13;
 }
@@ -237,12 +228,41 @@ html *::-webkit-scrollbar-thumb {
   will-change: opacity, transform;
 }
 
-.animate-project-description {
-  opacity: 0;
-  transform: translateY(4px);
-  animation: project-description-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) 0.06s
-    forwards;
-  will-change: opacity, transform;
+.project-transition-title,
+.project-transition-description {
+  transform-origin: left top;
+  will-change: transform;
+}
+
+.project-transition-title {
+  contain: layout;
+  line-height: 1.35;
+}
+
+.project-transition-description {
+  contain: layout paint;
+  will-change: transform;
+}
+
+::view-transition-group(.project-title) {
+  animation-duration: 240ms;
+  animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+::view-transition-group(.project-description) {
+  animation-duration: 285ms;
+  animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+::view-transition-old(.project-title),
+::view-transition-new(.project-title),
+::view-transition-old(.project-description),
+::view-transition-new(.project-description) {
+  animation-duration: inherit;
+  animation-timing-function: inherit;
+  height: 100%;
+  object-fit: contain;
+  transform-origin: left top;
 }
 
 .heatmap-container {
@@ -282,18 +302,6 @@ html *::-webkit-scrollbar-thumb {
   margin-top: 0.35rem;
 }
 
-.project-markdown :where(a) {
-  text-decoration-line: underline;
-  text-underline-offset: 4px;
-  text-decoration-color: color-mix(in oklch, currentColor 25%, transparent);
-  text-decoration-thickness: 2px;
-  transition: text-decoration-color 0.2s ease;
-}
-
-.project-markdown :where(a:hover) {
-  text-decoration-color: var(--primary);
-}
-
 .project-markdown :where(code) {
   background: color-mix(in oklch, var(--muted) 90%, transparent);
   border-radius: 0.4rem;
@@ -317,6 +325,15 @@ html *::-webkit-scrollbar-thumb {
     animation: none;
     opacity: 1;
     transform: translateY(0);
+  }
+
+  ::view-transition-group(.project-title),
+  ::view-transition-group(.project-description),
+  ::view-transition-old(.project-title),
+  ::view-transition-new(.project-title),
+  ::view-transition-old(.project-description),
+  ::view-transition-new(.project-description) {
+    animation-duration: 1ms;
   }
 
   .route-preview svg animate,
