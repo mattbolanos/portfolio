@@ -5,7 +5,6 @@ import { ProjectTag } from "@/components/project-tag";
 import { getProjects, type Project } from "@/lib/projects";
 import {
   getProjectDescriptionViewTransitionName,
-  getProjectImageViewTransitionName,
   getProjectTagViewTransitionName,
   getProjectTitleViewTransitionName,
 } from "@/lib/view-transitions";
@@ -37,28 +36,21 @@ function ProjectItem({ project }: { project: Project }) {
         height={52}
         priority
         src={`/projects/${project.imageUrl}`}
-        style={{
-          viewTransitionName: getProjectImageViewTransitionName(project.slug),
-        }}
         width={52}
       />
       <div className="flex flex-1 flex-col items-start gap-y-1">
-        <h3 className="text-sm leading-none font-normal sm:text-base">
+        <h3
+          className="text-sm leading-none font-normal sm:text-base"
+          style={{
+            viewTransitionName: getProjectTitleViewTransitionName(project.slug),
+          }}
+        >
           <Link
             className="text-link"
             href={`/projects/${project.slug}` as Route}
             prefetch
           >
-            <span
-              className="text-link inline-block"
-              style={{
-                viewTransitionName: getProjectTitleViewTransitionName(
-                  project.slug,
-                ),
-              }}
-            >
-              {project.name}
-            </span>
+            {project.name}
           </Link>
         </h3>
         <p

@@ -3,7 +3,6 @@ import { cacheLife } from "next/cache";
 import { Suspense } from "react";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
-import { Header } from "@/components/header";
 import { Heatmap } from "@/components/heatmap";
 import { HeatmapSkeleton } from "@/components/heatmap/heatmap-skeleton";
 import { Intro } from "@/components/intro";
@@ -114,32 +113,29 @@ function ProjectsSkeleton() {
 
 export default function Home() {
   return (
-    <div>
-      <Header />
-      <div className="space-y-10">
-        <Intro />
-        <Suspense fallback={<ProjectsSkeleton />}>
-          <Projects />
-        </Suspense>
-        <Experience />
-        <section className="space-y-3">
-          <h2>Running</h2>
-          <div className="heatmap-container">
-            <Suspense fallback={<ActivitiesPreviewSkeleton />}>
-              <ActivitiesPreviewWrapper />
-            </Suspense>
-          </div>
-        </section>
-        <section className="space-y-3">
-          <h2>Coding</h2>
-          <div className="heatmap-container">
-            <Suspense fallback={<HeatmapSkeleton />}>
-              <GithubContributions />
-            </Suspense>
-          </div>
-        </section>
-        <ContactLinks />
-      </div>
+    <div className="space-y-10">
+      <Intro />
+      <Suspense fallback={<ProjectsSkeleton />}>
+        <Projects />
+      </Suspense>
+      <Experience />
+      <section className="space-y-3">
+        <h2>Running</h2>
+        <div className="heatmap-container">
+          <Suspense fallback={<ActivitiesPreviewSkeleton />}>
+            <ActivitiesPreviewWrapper />
+          </Suspense>
+        </div>
+      </section>
+      <section className="space-y-3">
+        <h2>Coding</h2>
+        <div className="heatmap-container">
+          <Suspense fallback={<HeatmapSkeleton />}>
+            <GithubContributions />
+          </Suspense>
+        </div>
+      </section>
+      <ContactLinks />
     </div>
   );
 }

@@ -8,7 +8,6 @@ import remarkGfm from "remark-gfm";
 import { Heatmap } from "@/components/heatmap";
 import { HeatmapSkeleton } from "@/components/heatmap/heatmap-skeleton";
 import { LinkItem } from "@/components/link-item";
-import { ProjectBreadcrumb } from "@/components/project-breadcrumb";
 import { ProjectTag } from "@/components/project-tag";
 import { FileStackIcon } from "@/components/ui/file-stack";
 import { GithubIcon } from "@/components/ui/github";
@@ -19,8 +18,8 @@ import { toGithubHeatmapEntries } from "@/lib/heatmap/github";
 import { getProjectBySlug, getProjects } from "@/lib/projects";
 import {
   getProjectDescriptionViewTransitionName,
-  getProjectImageViewTransitionName,
   getProjectTagViewTransitionName,
+  getProjectTitleViewTransitionName,
 } from "@/lib/view-transitions";
 
 const WEEKS_TO_SHOW = 36;
@@ -136,24 +135,27 @@ export default async function ProjectPage({
 
   return (
     <div>
-      <ProjectBreadcrumb projectName={project.name} slug={project.slug} />
-
       <div className="space-y-10">
         <section className="space-y-3">
           <h1 className="sr-only">{project.name}</h1>
-          <div className="flex items-center gap-x-3">
-            <Image
-              alt={project.name}
-              className="size-16 sm:size-20"
-              height={80}
-              src={`/projects/${project.imageUrl}`}
+          <div className="space-y-2">
+            <h3
+              className="text-xl leading-none font-normal sm:text-2xl"
               style={{
-                viewTransitionName: getProjectImageViewTransitionName(
+                viewTransitionName: getProjectTitleViewTransitionName(
                   project.slug,
                 ),
               }}
-              width={80}
-            />
+            >
+              {project.name}
+            </h3>
+
+            {project.githubUrl && (
+              <Suspense fallback={<Skeleton className="h-4 w-32" />}>
+                <RepoLastUpdated githubUrl={project.githubUrl} />
+              </Suspense>
+            )}
+
             <p
               className="animate-project-description text-sm sm:text-base"
               style={{
@@ -178,29 +180,10 @@ export default async function ProjectPage({
               />
             ))}
           </div>
-
-          {project.githubUrl && (
-            <Suspense fallback={<Skeleton className="h-4 w-32" />}>
-              <RepoLastUpdated githubUrl={project.githubUrl} />
-            </Suspense>
-          )}
         </section>
 
         <section className="space-y-6 leading-relaxed">
-          {projectLinks.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {projectLinks.map((link) => (
-                <LinkItem
-                  className="w-fit"
-                  href={link.href}
-                  Icon={link.Icon}
-                  key={link.href}
-                  label={link.label}
-                />
-              ))}
-            </div>
-          )}
-          <div className="project-markdown space-y-6 leading-relaxed">
+          <div className="project-markdown space-y-6">
             <ReactMarkdown
               components={{
                 a: ({ children, ...props }) => (
@@ -214,6 +197,19 @@ export default async function ProjectPage({
               {project.content}
             </ReactMarkdown>
           </div>
+          {projectLinks.length > 0 && (
+            <ul className="flex flex-wrap items-center gap-1.5">
+              {projectLinks.map((link) => (
+                <li className="cursor-pointer" key={link.href}>
+                  <LinkItem
+                    href={link.href}
+                    Icon={link.Icon}
+                    label={link.label}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
         {project.images && (

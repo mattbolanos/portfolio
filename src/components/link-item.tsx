@@ -33,7 +33,7 @@ export const LinkItem = ({
   return (
     <a
       className={cn(
-        "border-border bg-card flex items-center gap-2 rounded-full border px-3.5 py-2 transition-transform duration-150 [text-decoration:none] hover:scale-105 motion-reduce:transition-none",
+        "border-border bg-card flex items-center gap-2 rounded-full border px-3.5 py-2 transition-transform duration-150 [text-decoration:none] hover:scale-105 active:scale-[0.96] motion-reduce:transition-none",
         className,
       )}
       href={href}

@@ -166,8 +166,8 @@ p {
 
 .text-link {
   text-decoration-line: underline;
-  text-underline-offset: 4px;
-  text-decoration-color: color-mix(in oklch, currentColor 25%, transparent);
+  text-underline-offset: 6px;
+  text-decoration-color: color-mix(in oklch, var(--primary) 45%, transparent);
   text-decoration-thickness: 2px;
   transition: text-decoration-color 0.2s ease;
 }
@@ -175,6 +175,7 @@ p {
 .text-link:hover {
   text-decoration-color: var(--primary);
 }
+
 html {
   --scrollbar-thumb: color-mix(
     in oklch,

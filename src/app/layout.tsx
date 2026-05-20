@@ -5,6 +5,7 @@ import { Providers } from "./providers";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
 
 const SITE_NAME = "Matt Bolaños";
 const SITE_DESCRIPTION = "Matt Bolaños' personal website";
@@ -72,6 +73,7 @@ export default function RootLayout({
           <div className="m-auto max-w-2xl">
             <Providers>
               <main className="min-h-screen overscroll-y-contain px-5 pt-8 pb-8 md:px-6 md:pt-12">
+                <Header />
                 {children}
                 <Analytics />
               </main>
