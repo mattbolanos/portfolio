@@ -8,8 +8,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
       defaultTheme="system"
       disableTransitionOnChange
       enableSystem
-      key="theme-provider"
-      storageKey="theme"
     >
       <TooltipProvider>{children}</TooltipProvider>
     </ThemeProvider>
