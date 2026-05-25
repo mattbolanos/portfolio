@@ -75,7 +75,7 @@ export const Heatmap = ({
   return (
     <article className="bg-card rounded-lg p-3 sm:p-4">
       <div className="flex items-start gap-2">
-        <div className="text-muted-foreground mt-6 hidden shrink-0 pr-3 text-right grid-rows-7 text-xs sm:grid">
+        <div className="text-muted-foreground hidden shrink-0 grid-rows-7 gap-[3px] pt-6 pr-3 text-right text-xs sm:grid">
           {DAY_LABELS.map((dayLabel) => (
             <span className="h-tile leading-tile" key={dayLabel.key}>
               {dayLabel.label}
@@ -87,7 +87,7 @@ export const Heatmap = ({
           className="overflow-x-auto overflow-y-visible"
           onScroll={handleHeatmapScroll}
         >
-          <div className="inline-block min-w-max pb-1 pr-6">
+          <div className="inline-block min-w-max pr-6 pb-1">
             <div className="text-muted-foreground mb-2 grid h-4 auto-cols-(--heatmap-tile-step) grid-flow-col text-xs">
               {monthLabelsByWeek.map((monthLabelByWeek) => (
                 <span
