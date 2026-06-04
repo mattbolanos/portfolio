@@ -84,16 +84,18 @@ const loadProjects = cache(async (): Promise<Project[]> => {
         "utf8",
       );
 
-      return projects.sort(
-        (projectA, projectB) => projectA.order - projectB.order,
-      );
-    },
-    ["projects"],
-    {
-      revalidate: PROJECTS_REVALIDATE_SECONDS,
-    },
-  ),
-);
+      const { content, data } = matter(source);
+      const frontmatter = projectFrontmatterSchema.parse(data);
+
+      return {
+        ...frontmatter,
+        content,
+      };
+    }),
+  );
+
+  return projects.sort((projectA, projectB) => projectA.order - projectB.order);
+});
 
 export async function getProjects() {
   return loadProjects();
