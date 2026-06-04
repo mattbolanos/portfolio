@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import type { GetActivitiesResult } from "@/lib/api/strava";
 
 type RecentRun = GetActivitiesResult["runActivities"][number];
+
 interface RecentRunsProps {
   runs: RecentRun[];
 }

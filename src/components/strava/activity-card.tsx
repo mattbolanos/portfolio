@@ -1,3 +1,5 @@
+"use client";
+
 import { MountainIcon, RunningShoesIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { RoutePreview } from "@/components/strava/route-preview";
@@ -36,16 +38,13 @@ export const ActivityCard = ({
   replayNonce,
   run,
 }: ActivityCardProps) => {
-  const delay = index * 0.1;
-
   return (
     <article
-      className="animate-card-in bg-card ring-foreground/6 hover:ring-foreground/10 relative flex items-center gap-1.5 rounded-lg px-2 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3 sm:px-2.5"
+      className="bg-card ring-foreground/6 hover:ring-foreground/10 relative flex items-center gap-1.5 rounded-lg px-2 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3 sm:px-2.5"
       key={run.id}
-      style={{ animationDelay: `${delay}s` }}
     >
       <RoutePreview
-        animationDelay={delay}
+        animationDelay={index * 0.1}
         replayNonce={replayNonce}
         runName={run.name}
         summaryPolyline={run.map?.summary_polyline}
