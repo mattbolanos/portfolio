@@ -311,7 +311,6 @@ const requestRefreshedToken = async (
         grant_type: "refresh_token",
         refresh_token: refreshToken,
       }),
-      cache: "no-store",
       headers: { "Content-Type": "application/json" },
       method: "POST",
     },

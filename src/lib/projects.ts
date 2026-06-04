@@ -1,7 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
-import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import { z } from "zod";
 
@@ -64,7 +63,6 @@ const projectFrontmatterSchema = z.object({
 });
 
 const PROJECTS_DIRECTORY = path.join(process.cwd(), "src/content/projects");
-const PROJECTS_REVALIDATE_SECONDS = 24 * 60 * 60;
 
 const PROJECT_TAG_LABEL_OVERRIDES: TagLabelOverrides[] = [
   { label: "Next.js", tag: "next.js" },
@@ -74,39 +72,30 @@ const PROJECT_TAG_LABEL_OVERRIDES: TagLabelOverrides[] = [
   },
 ];
 
-const loadProjects = cache(
-  unstable_cache(
-    async (): Promise<Project[]> => {
-      const filenames = (await fs.readdir(PROJECTS_DIRECTORY))
-        .filter((filename) => filename.endsWith(".md"))
-        .sort();
+const loadProjects = cache(async (): Promise<Project[]> => {
+  const filenames = (await fs.readdir(PROJECTS_DIRECTORY))
+    .filter((filename) => filename.endsWith(".md"))
+    .sort();
 
-      const projects = await Promise.all(
-        filenames.map(async (filename) => {
-          const source = await fs.readFile(
-            path.join(PROJECTS_DIRECTORY, filename),
-            "utf8",
-          );
-          const { content, data } = matter(source);
-          const frontmatter = projectFrontmatterSchema.parse(data);
-
-          return {
-            ...frontmatter,
-            content: content.trim(),
-          };
-        }),
+  const projects = await Promise.all(
+    filenames.map(async (filename) => {
+      const source = await fs.readFile(
+        path.join(PROJECTS_DIRECTORY, filename),
+        "utf8",
       );
 
-      return projects.sort(
-        (projectA, projectB) => projectA.order - projectB.order,
-      );
-    },
-    ["projects"],
-    {
-      revalidate: PROJECTS_REVALIDATE_SECONDS,
-    },
-  ),
-);
+      const { content, data } = matter(source);
+      const frontmatter = projectFrontmatterSchema.parse(data);
+
+      return {
+        ...frontmatter,
+        content,
+      };
+    }),
+  );
+
+  return projects.sort((projectA, projectB) => projectA.order - projectB.order);
+});
 
 export async function getProjects() {
   return loadProjects();
