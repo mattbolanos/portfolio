@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cacheLife } from "next/cache";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -23,14 +22,8 @@ import {
 } from "@/lib/view-transitions";
 
 const WEEKS_TO_SHOW = 36;
-const PROJECT_DATA_REVALIDATE_SECONDS = 24 * 60 * 60;
 
-async function getCachedGithubRepoContributions(githubUrl: string) {
-  "use cache";
-
-  cacheLife({ revalidate: PROJECT_DATA_REVALIDATE_SECONDS });
-  return getGithubRepoContributions(githubUrl);
-}
+export const revalidate = 86_400;
 
 export async function generateStaticParams() {
   const projects = await getProjects();
@@ -69,7 +62,7 @@ async function RepoLastUpdated({ githubUrl }: { githubUrl: string }) {
 }
 
 async function GithubContributions({ githubUrl }: { githubUrl: string }) {
-  const githubContributions = await getCachedGithubRepoContributions(githubUrl);
+  const githubContributions = await getGithubRepoContributions(githubUrl);
 
   if (!githubContributions) {
     return (

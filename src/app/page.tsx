@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cacheLife } from "next/cache";
 import { Suspense } from "react";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
@@ -20,25 +19,12 @@ export const metadata: Metadata = {
   title: "Matt Bolaños",
 };
 
-const HOME_DATA_REVALIDATE_SECONDS = 24 * 60 * 60;
 const PROJECT_SKELETON_ITEMS = ["project-1", "project-2", "project-3"];
 
-async function getCachedActivities() {
-  "use cache";
-
-  cacheLife({ revalidate: HOME_DATA_REVALIDATE_SECONDS });
-  return getActivities();
-}
-
-async function getCachedGithubContributions() {
-  "use cache";
-
-  cacheLife({ revalidate: HOME_DATA_REVALIDATE_SECONDS });
-  return getGithubContributions();
-}
+export const revalidate = 86_400;
 
 async function ActivitiesPreviewWrapper() {
-  const activities = await getCachedActivities();
+  const activities = await getActivities();
 
   if (!activities) {
     return (
@@ -68,7 +54,7 @@ async function ActivitiesPreviewWrapper() {
 }
 
 async function GithubContributions() {
-  const githubContributions = await getCachedGithubContributions();
+  const githubContributions = await getGithubContributions();
 
   if (!githubContributions) {
     return (
