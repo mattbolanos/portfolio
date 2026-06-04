@@ -30,18 +30,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
 });
 
-const themeBootstrapScript = `
-(() => {
-  const root = document.documentElement;
-  const storedTheme = localStorage.getItem("theme");
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const isDark = storedTheme === "dark" || (!storedTheme && prefersDark) || (storedTheme === "system" && prefersDark);
-
-  root.classList.toggle("dark", isDark);
-  root.style.colorScheme = isDark ? "dark" : "light";
-})();
-`;
-
 export const metadata: Metadata = {
   alternates: {
     canonical: "/",
@@ -80,11 +68,6 @@ export default function RootLayout({
       >
         <head>
           <meta content="mattbolanos" name="apple-mobile-web-app-title" />
-          <script
-            // biome-ignore lint/security/noDangerouslySetInnerHtml: Inline theme bootstrap must run before hydration to avoid a first-paint theme flash.
-            dangerouslySetInnerHTML={{ __html: themeBootstrapScript }}
-            suppressHydrationWarning={true}
-          />
         </head>
         <body className="leading-relaxed">
           <div className="m-auto max-w-2xl">

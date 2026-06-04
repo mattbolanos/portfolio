@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { cacheLife } from "next/cache";
+import { unstable_cache } from "next/cache";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -25,12 +25,13 @@ import {
 const WEEKS_TO_SHOW = 36;
 const PROJECT_DATA_REVALIDATE_SECONDS = 24 * 60 * 60;
 
-async function getCachedGithubRepoContributions(githubUrl: string) {
-  "use cache";
-
-  cacheLife({ revalidate: PROJECT_DATA_REVALIDATE_SECONDS });
-  return getGithubRepoContributions(githubUrl);
-}
+const getCachedGithubRepoContributions = unstable_cache(
+  getGithubRepoContributions,
+  ["project-github-contributions"],
+  {
+    revalidate: PROJECT_DATA_REVALIDATE_SECONDS,
+  },
+);
 
 export async function generateStaticParams() {
   const projects = await getProjects();

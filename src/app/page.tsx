@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { cacheLife } from "next/cache";
+import { unstable_cache } from "next/cache";
 import { Suspense } from "react";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
@@ -23,19 +23,17 @@ export const metadata: Metadata = {
 const HOME_DATA_REVALIDATE_SECONDS = 24 * 60 * 60;
 const PROJECT_SKELETON_ITEMS = ["project-1", "project-2", "project-3"];
 
-async function getCachedActivities() {
-  "use cache";
+const getCachedActivities = unstable_cache(getActivities, ["home-activities"], {
+  revalidate: HOME_DATA_REVALIDATE_SECONDS,
+});
 
-  cacheLife({ revalidate: HOME_DATA_REVALIDATE_SECONDS });
-  return getActivities();
-}
-
-async function getCachedGithubContributions() {
-  "use cache";
-
-  cacheLife({ revalidate: HOME_DATA_REVALIDATE_SECONDS });
-  return getGithubContributions();
-}
+const getCachedGithubContributions = unstable_cache(
+  getGithubContributions,
+  ["home-github-contributions"],
+  {
+    revalidate: HOME_DATA_REVALIDATE_SECONDS,
+  },
+);
 
 async function ActivitiesPreviewWrapper() {
   const activities = await getCachedActivities();
