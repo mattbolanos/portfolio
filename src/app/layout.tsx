@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Sora } from "next/font/google";
 import { ViewTransitions } from "next-view-transitions";
-import { Providers } from "./providers";
+import { ThemeProvider } from "@/components/theme/provider";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const SITE_NAME = "Matt Bolaños";
 const SITE_DESCRIPTION = "Matt Bolaños' personal website";
@@ -64,22 +65,29 @@ export default function RootLayout({
       <html
         className={`${sora.variable} ${geistMono.variable} antialiased`}
         lang="en"
-        suppressHydrationWarning={true}
+        suppressHydrationWarning
       >
         <head>
           <meta content="mattbolanos" name="apple-mobile-web-app-title" />
         </head>
-        <body className="leading-relaxed">
-          <div className="m-auto max-w-2xl">
-            <Providers>
-              <main className="min-h-screen overscroll-y-contain px-5 pt-8 pb-8 md:px-6 md:pt-12">
-                <Header />
-                {children}
-                <Analytics />
-              </main>
-              <Footer />
-            </Providers>
-          </div>
+        <body>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            disableTransitionOnChange
+            enableSystem
+          >
+            <TooltipProvider>
+              <div className="m-auto max-w-2xl leading-relaxed">
+                <main className="min-h-screen overscroll-y-contain px-5 pt-8 pb-8 md:px-6 md:pt-12">
+                  <Header />
+                  {children}
+                  <Analytics />
+                </main>
+                <Footer />
+              </div>
+            </TooltipProvider>
+          </ThemeProvider>
         </body>
       </html>
     </ViewTransitions>
