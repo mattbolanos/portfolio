@@ -206,6 +206,18 @@ html *::-webkit-scrollbar-thumb {
   border-radius: 9999px;
 }
 
+/* biome-ignore lint/correctness/noUnknownTypeSelector: View Transition pseudo-elements use named snapshots. */
+::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* biome-ignore lint/correctness/noUnknownTypeSelector: View Transition pseudo-elements use named snapshots. */
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 .image-card {
   @apply size-10 sm:size-13;
 }
