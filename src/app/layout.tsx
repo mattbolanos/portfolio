@@ -62,11 +62,15 @@ export default function RootLayout({
 }>) {
   return (
     <ViewTransitions>
-      <html lang="en" suppressHydrationWarning>
+      <html
+        className={`${sora.variable} ${geistMono.variable} antialiased`}
+        lang="en"
+        suppressHydrationWarning
+      >
         <head>
           <meta content="mattbolanos" name="apple-mobile-web-app-title" />
         </head>
-        <body className={`${sora.variable} ${geistMono.variable} antialiased`}>
+        <body>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
