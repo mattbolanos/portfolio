@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { ContactLinks } from "@/components/contact-links";
 import { Experience } from "@/components/experience";
@@ -20,8 +21,6 @@ export const metadata: Metadata = {
 };
 
 const PROJECT_SKELETON_ITEMS = ["project-1", "project-2", "project-3"];
-
-export const revalidate = 86_400;
 
 async function ActivitiesPreviewWrapper() {
   const activities = await getActivities();
@@ -97,7 +96,7 @@ function ProjectsSkeleton() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
   return (
     <div className="space-y-10">
       <Intro />
