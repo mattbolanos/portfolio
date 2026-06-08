@@ -1,126 +1,65 @@
-import type { Metadata } from "next";
-import { connection } from "next/server";
-import { Suspense } from "react";
-import { ContactLinks } from "@/components/contact-links";
-import { Experience } from "@/components/experience";
-import { Heatmap } from "@/components/heatmap";
-import { HeatmapSkeleton } from "@/components/heatmap/heatmap-skeleton";
-import { Intro } from "@/components/intro";
-import { Projects } from "@/components/projects";
-import { ActivitiesPreviewSkeleton } from "@/components/strava/activities-preview-skeleton";
-import { RecentRuns } from "@/components/strava/recent-runs";
-import { Skeleton } from "@/components/ui/skeleton";
-import { getGithubContributions } from "@/lib/api/github";
-import { getActivities } from "@/lib/api/strava";
-import { toGithubHeatmapEntries } from "@/lib/heatmap/github";
-import { toStravaHeatmapEntries } from "@/lib/heatmap/strava";
+import Image from "next/image";
 
-export const metadata: Metadata = {
-  description: "Matt Bolaños' personal website",
-  title: "Matt Bolaños",
-};
-
-const PROJECT_SKELETON_ITEMS = ["project-1", "project-2", "project-3"];
-
-async function ActivitiesPreviewWrapper() {
-  const activities = await getActivities();
-
-  if (!activities) {
-    return (
-      <article className="bg-card rounded-lg p-3 sm:p-4">
-        Unable to load Strava activities.
-      </article>
-    );
-  }
-
-  const latestRuns = activities.runActivities
-    .sort(
-      (runA, runB) =>
-        new Date(runB.start_date_local).getTime() -
-        new Date(runA.start_date_local).getTime(),
-    )
-    .slice(0, 4);
-
+export default function Home() {
   return (
-    <>
-      <Heatmap
-        configId="strava"
-        data={toStravaHeatmapEntries(activities.heatmap)}
-      />
-      <RecentRuns runs={latestRuns} />
-    </>
-  );
-}
-
-async function GithubContributions() {
-  const githubContributions = await getGithubContributions();
-
-  if (!githubContributions) {
-    return (
-      <article className="bg-card rounded-lg p-3 sm:p-4">
-        <p className="text-muted-foreground text-sm sm:text-base">
-          Unable to load Github contributions.
-        </p>
-      </article>
-    );
-  }
-
-  return (
-    <Heatmap
-      configId="github"
-      data={toGithubHeatmapEntries(githubContributions)}
-    />
-  );
-}
-
-function ProjectsSkeleton() {
-  return (
-    <div className="space-y-3">
-      <h2>Projects</h2>
-      <ul className="flex flex-col gap-y-4">
-        {PROJECT_SKELETON_ITEMS.map((item) => (
-          <li className="flex gap-x-3 py-3 first:pt-0 last:pb-0" key={item}>
-            <Skeleton className="size-13 shrink-0" />
-            <div className="flex flex-1 flex-col gap-y-2">
-              <Skeleton className="h-4 w-32" />
-              <Skeleton className="h-3 w-full max-w-md" />
-              <div className="flex gap-1">
-                <Skeleton className="h-5 w-16" />
-                <Skeleton className="h-5 w-20" />
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export default async function Home() {
-  return (
-    <div className="space-y-10">
-      <Intro />
-      <Suspense fallback={<ProjectsSkeleton />}>
-        <Projects />
-      </Suspense>
-      <Experience />
-      <section className="space-y-3">
-        <h2>Running</h2>
-        <div className="heatmap-container">
-          <Suspense fallback={<ActivitiesPreviewSkeleton />}>
-            <ActivitiesPreviewWrapper />
-          </Suspense>
+    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+        <Image
+          className="dark:invert"
+          src="/next.svg"
+          alt="Next.js logo"
+          width={100}
+          height={20}
+          priority
+        />
+        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
+          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
+            To get started, edit the page.tsx file.
+          </h1>
+          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
+            Looking for a starting point or more instructions? Head over to{" "}
+            <a
+              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+              className="font-medium text-zinc-950 dark:text-zinc-50"
+            >
+              Templates
+            </a>{" "}
+            or the{" "}
+            <a
+              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+              className="font-medium text-zinc-950 dark:text-zinc-50"
+            >
+              Learning
+            </a>{" "}
+            center.
+          </p>
         </div>
-      </section>
-      <section className="space-y-3">
-        <h2>Coding</h2>
-        <div className="heatmap-container">
-          <Suspense fallback={<HeatmapSkeleton />}>
-            <GithubContributions />
-          </Suspense>
+        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+          <a
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
+            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              className="dark:invert"
+              src="/vercel.svg"
+              alt="Vercel logomark"
+              width={16}
+              height={16}
+            />
+            Deploy Now
+          </a>
+          <a
+            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
+            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Documentation
+          </a>
         </div>
-      </section>
-      <ContactLinks />
+      </main>
     </div>
   );
 }
