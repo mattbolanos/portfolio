@@ -73,9 +73,8 @@ export default function RootLayout({
         <body>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="dark"
             disableTransitionOnChange
-            enableSystem
           >
             <TooltipProvider>
               <div className="m-auto max-w-2xl leading-relaxed">
