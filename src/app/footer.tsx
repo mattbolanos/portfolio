@@ -3,7 +3,7 @@ import { ThemeToggle } from "./theme-toggle";
 
 export const Footer = () => {
   return (
-    <footer className="px-8 pt-6 pb-12 text-xs md:text-sm">
+    <footer className="md:px-6 px-5 pt-6 pb-12 text-sm md:text-base">
       <div className="flex items-center justify-between">
         <p>
           <Link
