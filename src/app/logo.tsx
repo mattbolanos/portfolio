@@ -1,7 +1,7 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Link } from "next-view-transitions";
 
 export function Logo() {
   const pathname = usePathname();
@@ -11,7 +11,7 @@ export function Logo() {
       {pathname === "/" ? (
         <h1 className="cursor-default">Matt Bolaños</h1>
       ) : (
-        <Link href="/" prefetch>
+        <Link href="/" prefetch transitionTypes={["nav-back"]}>
           <h1>Matt Bolaños</h1>
         </Link>
       )}

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ViewTransition } from "react";
 import { cn } from "@/lib/utils";
 
 interface ProjectTagProps {
@@ -31,15 +32,12 @@ export const ProjectTag = ({
   const label = formatTagLabel(tag);
   const styles = SIZE_STYLES[size];
 
-  return (
+  const tagPill = (
     <div
       className={cn(
         "border-border bg-card flex items-center justify-center gap-x-1 rounded-full border",
         styles.wrapper,
       )}
-      style={
-        transitionName ? { viewTransitionName: transitionName } : undefined
-      }
       title={label}
     >
       <Image
@@ -51,6 +49,16 @@ export const ProjectTag = ({
       />
       <span className="text-[11px] sm:text-xs">{label}</span>
     </div>
+  );
+
+  if (!transitionName) {
+    return tagPill;
+  }
+
+  return (
+    <ViewTransition default="none" name={transitionName} share="morph">
+      {tagPill}
+    </ViewTransition>
   );
 };
 

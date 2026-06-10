@@ -1,6 +1,8 @@
 import type { Route } from "next";
 import Image from "next/image";
-import { Link } from "next-view-transitions";
+import Link from "next/link";
+import { ViewTransition } from "react";
+import { projectTransitionName } from "@/app/project-transitions";
 import { ProjectTag } from "@/components/project-tag";
 import { getProjects } from "@/lib/projects";
 
@@ -21,28 +23,56 @@ export async function Projects() {
             id={`project-${project.slug}`}
             key={project.slug}
           >
-            <Image
-              alt={project.name}
-              className="image-card"
-              height={52}
-              priority
-              src={`/projects/${project.imageUrl}`}
-              width={52}
-            />
+            <ViewTransition
+              default="none"
+              name={projectTransitionName(project.slug, "image")}
+              share="morph"
+            >
+              <Image
+                alt={project.name}
+                className="image-card shrink-0"
+                height={52}
+                priority
+                src={`/projects/${project.imageUrl}`}
+                width={52}
+              />
+            </ViewTransition>
             <div className="flex flex-1 flex-col items-start gap-y-1">
-              <h3 className="text-sm leading-none font-normal sm:text-base">
-                <Link
-                  className="text-link"
-                  href={`/projects/${project.slug}` as Route}
-                  prefetch
-                >
-                  {project.name}
-                </Link>
-              </h3>
-              <p className="pt-1 text-xs sm:text-sm">{project.description}</p>
+              <ViewTransition
+                default="none"
+                name={projectTransitionName(project.slug, "title")}
+                share="text-morph"
+              >
+                <h3 className="text-sm leading-none font-normal sm:text-base">
+                  <Link
+                    className="text-link"
+                    href={`/projects/${project.slug}` as Route}
+                    prefetch
+                    transitionTypes={["nav-forward"]}
+                  >
+                    {project.name}
+                  </Link>
+                </h3>
+              </ViewTransition>
+              <ViewTransition
+                default="none"
+                name={projectTransitionName(project.slug, "description")}
+                share="text-morph"
+              >
+                <p className="pt-1 text-xs sm:text-sm">{project.description}</p>
+              </ViewTransition>
               <div className="flex flex-wrap items-center gap-1">
                 {project.tags.map((tag) => (
-                  <ProjectTag key={tag} size="sm" tag={tag} />
+                  <ProjectTag
+                    key={tag}
+                    size="sm"
+                    tag={tag}
+                    transitionName={projectTransitionName(
+                      project.slug,
+                      "tag",
+                      tag,
+                    )}
+                  />
                 ))}
               </div>
             </div>

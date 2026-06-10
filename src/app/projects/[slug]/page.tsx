@@ -5,6 +5,7 @@ import { Heatmap } from "@/components/heatmap";
 import { HeatmapSkeleton } from "@/components/heatmap/skeleton";
 import { getGithubRepoContributions } from "@/lib/api/github";
 import { getProjects } from "@/lib/projects";
+import { ProjectPageTransition } from "../../project-transitions";
 import { ProjectContent } from "./project-content";
 import { ProjectHeader } from "./project-header";
 import { ProjectMedia } from "./project-media";
@@ -37,23 +38,25 @@ export default async function ProjectPage({
   }
 
   return (
-    <div className="space-y-10">
-      <ProjectHeader project={project} />
-      <ProjectContent project={project} />
-      <ProjectMedia project={project} />
-      {project.githubUrl ? (
-        <section className="space-y-3">
-          <h2>Contributions</h2>
-          <div className="heatmap-container">
-            <Suspense
-              fallback={<HeatmapSkeleton weeksToShow={WEEKS_TO_SHOW} />}
-            >
-              <GithubContributions githubUrl={project.githubUrl} />
-            </Suspense>
-          </div>
-        </section>
-      ) : null}
-    </div>
+    <ProjectPageTransition>
+      <div className="space-y-10">
+        <ProjectHeader project={project} />
+        <ProjectContent project={project} />
+        <ProjectMedia project={project} />
+        {project.githubUrl ? (
+          <section className="space-y-3">
+            <h2>Contributions</h2>
+            <div className="heatmap-container">
+              <Suspense
+                fallback={<HeatmapSkeleton weeksToShow={WEEKS_TO_SHOW} />}
+              >
+                <GithubContributions githubUrl={project.githubUrl} />
+              </Suspense>
+            </div>
+          </section>
+        ) : null}
+      </div>
+    </ProjectPageTransition>
   );
 }
 

@@ -9,6 +9,7 @@ import { getGithubContributions } from "@/lib/api/github";
 import { getActivities } from "@/lib/api/strava";
 import { Contact } from "./contact";
 import { Experience } from "./experience";
+import { ProjectPageTransition } from "./project-transitions";
 import { Projects } from "./projects";
 
 export const metadata: Metadata = {
@@ -18,29 +19,31 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="space-y-10">
-      <Intro />
-      <Projects />
-      <Experience />
-      <section className="space-y-3">
-        <h2>Running</h2>
-        <div className="heatmap-container">
-          <Suspense fallback={<StravaSkeleton />}>
-            <StravaWrapper />
-          </Suspense>
-        </div>
-      </section>
-      <section className="space-y-3">
-        <h2>Coding</h2>
-        <div className="heatmap-container">
-          <Suspense fallback={<HeatmapSkeleton />}>
-            <GitHubWrapper />
-          </Suspense>
-        </div>
-      </section>
+    <ProjectPageTransition>
+      <div className="space-y-10">
+        <Intro />
+        <Projects />
+        <Experience />
+        <section className="space-y-3">
+          <h2>Running</h2>
+          <div className="heatmap-container">
+            <Suspense fallback={<StravaSkeleton />}>
+              <StravaWrapper />
+            </Suspense>
+          </div>
+        </section>
+        <section className="space-y-3">
+          <h2>Coding</h2>
+          <div className="heatmap-container">
+            <Suspense fallback={<HeatmapSkeleton />}>
+              <GitHubWrapper />
+            </Suspense>
+          </div>
+        </section>
 
-      <Contact />
-    </div>
+        <Contact />
+      </div>
+    </ProjectPageTransition>
   );
 }
 
