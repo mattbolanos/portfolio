@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Intro } from "@/app/intro";
 import { Heatmap } from "@/components/heatmap";
+import { HeatmapSkeleton } from "@/components/heatmap/skeleton";
 import { RecentRuns } from "@/components/strava/recent-runs";
 import { StravaSkeleton } from "@/components/strava/skeleton";
+import { getGithubContributions } from "@/lib/api/github";
 import { getActivities } from "@/lib/api/strava";
+import { Contact } from "./contact";
 import { Experience } from "./experience";
 import { Projects } from "./projects";
 
@@ -27,8 +30,32 @@ export default function Home() {
           </Suspense>
         </div>
       </section>
+      <section className="space-y-3">
+        <h2>Coding</h2>
+        <div className="heatmap-container">
+          <Suspense fallback={<HeatmapSkeleton />}>
+            <GitHubWrapper />
+          </Suspense>
+        </div>
+      </section>
+
+      <Contact />
     </div>
   );
+}
+
+async function GitHubWrapper() {
+  const contributions = await getGithubContributions();
+
+  if (!contributions) {
+    return (
+      <article className="bg-card rounded-lg p-3 sm:p-4">
+        Unable to load GitHub contributions.
+      </article>
+    );
+  }
+
+  return <Heatmap configId="github" data={contributions} />;
 }
 
 async function StravaWrapper() {

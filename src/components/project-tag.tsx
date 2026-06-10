@@ -2,7 +2,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface ProjectTagProps {
-  tag: string[];
+  tag: string;
   size?: "sm" | "md";
   transitionName?: string;
 }

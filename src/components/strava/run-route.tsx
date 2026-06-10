@@ -2,6 +2,9 @@ type LatLng = readonly [number, number];
 
 const ROUTE_PREVIEW_SIZE = 52;
 const ROUTE_PREVIEW_PADDING = 5;
+const ROUTE_COORD_PRECISION = 1;
+const ROUTE_MIN_POINT_DISTANCE = 0.35;
+const MAX_ROUTE_PATH_CACHE_ENTRIES = 100;
 
 const ROUTE_ANIM = {
   dotFadeOut: 0.5,
@@ -10,11 +13,25 @@ const ROUTE_ANIM = {
   spline: "0.22 1 0.36 1",
 };
 
-const decodePolyline = (encoded: string): LatLng[] => {
+interface DecodedRoute {
+  maxLat: number;
+  maxLng: number;
+  minLat: number;
+  minLng: number;
+  points: LatLng[];
+}
+
+const routePathCache = new Map<string, string | null>();
+
+const decodePolyline = (encoded: string): DecodedRoute | null => {
   const points: LatLng[] = [];
   let index = 0;
   let lat = 0;
   let lng = 0;
+  let minLat = Infinity;
+  let maxLat = -Infinity;
+  let minLng = Infinity;
+  let maxLng = -Infinity;
 
   while (index < encoded.length) {
     let result = 0;
@@ -41,33 +58,37 @@ const decodePolyline = (encoded: string): LatLng[] => {
     } while (byte >= 0x20);
 
     lng += (result & 1) !== 0 ? ~(result >> 1) : result >> 1;
-    points.push([lat / 1e5, lng / 1e5]);
+    const decodedLat = lat / 1e5;
+    const decodedLng = lng / 1e5;
+
+    if (!Number.isFinite(decodedLat) || !Number.isFinite(decodedLng)) {
+      return null;
+    }
+
+    minLat = Math.min(minLat, decodedLat);
+    maxLat = Math.max(maxLat, decodedLat);
+    minLng = Math.min(minLng, decodedLng);
+    maxLng = Math.max(maxLng, decodedLng);
+    points.push([decodedLat, decodedLng]);
   }
 
-  return points;
-};
-
-const toRoutePath = (points: LatLng[]): string | null => {
   if (points.length < 2) {
     return null;
   }
 
-  let minLat = Infinity;
-  let maxLat = -Infinity;
-  let minLng = Infinity;
-  let maxLng = -Infinity;
+  return { maxLat, maxLng, minLat, minLng, points };
+};
 
-  for (const [lat, lng] of points) {
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-      return null;
-    }
+const formatRouteCoord = (value: number) =>
+  value.toFixed(ROUTE_COORD_PRECISION);
 
-    minLat = Math.min(minLat, lat);
-    maxLat = Math.max(maxLat, lat);
-    minLng = Math.min(minLng, lng);
-    maxLng = Math.max(maxLng, lng);
-  }
-
+const toRoutePath = ({
+  maxLat,
+  maxLng,
+  minLat,
+  minLng,
+  points,
+}: DecodedRoute): string | null => {
   const inner = ROUTE_PREVIEW_SIZE - ROUTE_PREVIEW_PADDING * 2;
   const lngRange = Math.max(maxLng - minLng, Number.EPSILON);
   const latRange = Math.max(maxLat - minLat, Number.EPSILON);
@@ -77,14 +98,51 @@ const toRoutePath = (points: LatLng[]): string | null => {
   const xOffset = ROUTE_PREVIEW_PADDING + (inner - drawWidth) / 2;
   const yOffset = ROUTE_PREVIEW_PADDING + (inner - drawHeight) / 2;
 
-  return points
-    .map(([lat, lng], index) => {
-      const x = xOffset + (lng - minLng) * scale;
-      const y = yOffset + (maxLat - lat) * scale;
-      const command = index === 0 ? "M" : "L";
-      return `${command}${x.toFixed(2)} ${y.toFixed(2)}`;
-    })
-    .join(" ");
+  const commands: string[] = [];
+  let previousX = Number.NaN;
+  let previousY = Number.NaN;
+
+  points.forEach(([lat, lng], index) => {
+    const x = xOffset + (lng - minLng) * scale;
+    const y = yOffset + (maxLat - lat) * scale;
+    const isLast = index === points.length - 1;
+
+    if (index > 0 && !isLast) {
+      const dx = x - previousX;
+      const dy = y - previousY;
+
+      if (Math.hypot(dx, dy) < ROUTE_MIN_POINT_DISTANCE) {
+        return;
+      }
+    }
+
+    const command = commands.length === 0 ? "M" : "L";
+    commands.push(`${command}${formatRouteCoord(x)} ${formatRouteCoord(y)}`);
+    previousX = x;
+    previousY = y;
+  });
+
+  return commands.length < 2 ? null : commands.join(" ");
+};
+
+const getRoutePath = (summaryPolyline: string): string | null => {
+  if (routePathCache.has(summaryPolyline)) {
+    return routePathCache.get(summaryPolyline) ?? null;
+  }
+
+  const decodedRoute = decodePolyline(summaryPolyline);
+  const routePath = decodedRoute ? toRoutePath(decodedRoute) : null;
+
+  if (routePathCache.size >= MAX_ROUTE_PATH_CACHE_ENTRIES) {
+    const oldestKey = routePathCache.keys().next().value;
+
+    if (oldestKey !== undefined) {
+      routePathCache.delete(oldestKey);
+    }
+  }
+
+  routePathCache.set(summaryPolyline, routePath);
+  return routePath;
 };
 
 const TerrainDefs = ({ id }: { id: string }) => (
@@ -159,8 +217,7 @@ export const RunRoute = ({
 }: RunRouteProps) => {
   if (!summaryPolyline) return <EmptyPreview />;
 
-  const points = decodePolyline(summaryPolyline);
-  const routePath = toRoutePath(points);
+  const routePath = getRoutePath(summaryPolyline);
   if (!routePath) return <EmptyPreview />;
 
   const uid = runName.replace(/\s+/g, "-");
