@@ -6,6 +6,7 @@ interface ProjectTagProps {
   tag: string;
   size?: "sm" | "md";
   transitionName?: string;
+  transitionShare?: string;
 }
 
 interface TagLabelOverrides {
@@ -28,6 +29,7 @@ export const ProjectTag = ({
   tag,
   size = "md",
   transitionName,
+  transitionShare = "morph",
 }: ProjectTagProps) => {
   const label = formatTagLabel(tag);
   const styles = SIZE_STYLES[size];
@@ -56,7 +58,11 @@ export const ProjectTag = ({
   }
 
   return (
-    <ViewTransition default="none" name={transitionName} share="morph">
+    <ViewTransition
+      default="none"
+      name={transitionName}
+      share={transitionShare}
+    >
       {tagPill}
     </ViewTransition>
   );

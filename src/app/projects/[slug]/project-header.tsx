@@ -1,6 +1,9 @@
 import Image from "next/image";
 import { Suspense, ViewTransition } from "react";
-import { projectTransitionName } from "@/app/project-transitions";
+import {
+  PROJECT_TRANSITION_SHARE,
+  projectTransitionName,
+} from "@/app/project-transitions";
 import { ProjectTag } from "@/components/project-tag";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getRepoPushedAt } from "@/lib/api/github";
@@ -20,7 +23,7 @@ export function ProjectHeader({ project }: { project: Project }) {
         <ViewTransition
           default="none"
           name={projectTransitionName(project.slug, "image")}
-          share="morph"
+          share={PROJECT_TRANSITION_SHARE.image}
         >
           <Image
             alt={project.name}
@@ -36,7 +39,7 @@ export function ProjectHeader({ project }: { project: Project }) {
           <ViewTransition
             default="none"
             name={projectTransitionName(project.slug, "title")}
-            share="text-morph"
+            share={PROJECT_TRANSITION_SHARE.text}
           >
             <h3 className="text-lg leading-none font-medium sm:text-xl">
               {project.name}
@@ -44,8 +47,16 @@ export function ProjectHeader({ project }: { project: Project }) {
           </ViewTransition>
 
           {project.githubUrl ? (
-            <Suspense fallback={<Skeleton className="h-4 w-32" />}>
-              <RepoLastUpdated githubUrl={project.githubUrl} />
+            <Suspense
+              fallback={
+                <ViewTransition exit="fade-out">
+                  <Skeleton className="h-4 w-32" />
+                </ViewTransition>
+              }
+            >
+              <ViewTransition default="none" enter="fade-in">
+                <RepoLastUpdated githubUrl={project.githubUrl} />
+              </ViewTransition>
             </Suspense>
           ) : null}
 
@@ -53,7 +64,7 @@ export function ProjectHeader({ project }: { project: Project }) {
             <ViewTransition
               default="none"
               name={projectTransitionName(project.slug, "description")}
-              share="text-morph"
+              share={PROJECT_TRANSITION_SHARE.text}
             >
               <p className="text-sm sm:text-base">{project.description}</p>
             </ViewTransition>
@@ -68,6 +79,7 @@ export function ProjectHeader({ project }: { project: Project }) {
               key={tag}
               tag={tag}
               transitionName={projectTransitionName(project.slug, "tag", tag)}
+              transitionShare={PROJECT_TRANSITION_SHARE.tag}
             />
           ))}
         </div>

@@ -102,9 +102,16 @@
   --theme-toggle: oklch(77.194% 0.17376 64.545);
   --theme-toggle-glow: drop-shadow(0 0 3px oklch(0.9 0.18 75 / 0.6))
     drop-shadow(0 0 10px oklch(0.8 0.16 70 / 0.3));
-  --duration-exit: 140ms;
-  --duration-enter: 220ms;
-  --duration-move: 420ms;
+  --duration-exit: 150ms;
+  --duration-enter: 210ms;
+  --duration-move: 400ms;
+  --duration-nav-enter: 300ms;
+  --duration-nav-exit: 240ms;
+  --duration-nav-move: 680ms;
+  --duration-project-move: 480ms;
+  --ease-nav-move: cubic-bezier(0.33, 0, 0.2, 1);
+  --ease-project-morph: cubic-bezier(0.33, 0, 0.2, 1);
+  --nav-slide-y-offset: 8px;
 }
 
 .dark {
@@ -230,6 +237,17 @@ p {
   }
 }
 
+@keyframes nav-fade {
+  from {
+    filter: blur(1px);
+    opacity: 0;
+  }
+  to {
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
 @keyframes slide {
   from {
     translate: var(--slide-offset);
@@ -254,6 +272,34 @@ p {
   }
 }
 
+@keyframes project-via-blur {
+  40% {
+    filter: blur(1.5px);
+  }
+}
+
+@keyframes scale-down {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+@keyframes scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 ::view-transition-old(.fade-out) {
   animation: var(--duration-exit) ease-in fade reverse;
 }
@@ -275,31 +321,80 @@ p {
 }
 
 ::view-transition-old(.nav-forward) {
-  --slide-offset: -52px;
+  --slide-offset: 0 calc(var(--nav-slide-y-offset) * -1);
   animation:
-    var(--duration-exit) ease-in both fade reverse,
-    var(--duration-move) cubic-bezier(0.22, 1, 0.36, 1) both slide reverse;
+    var(--duration-nav-exit) ease-out both nav-fade reverse,
+    var(--duration-nav-move) var(--ease-nav-move) both slide reverse;
 }
 
 ::view-transition-new(.nav-forward) {
-  --slide-offset: 52px;
+  --slide-offset: 0 var(--nav-slide-y-offset);
   animation:
-    var(--duration-enter) ease-out var(--duration-exit) both fade,
-    var(--duration-move) cubic-bezier(0.22, 1, 0.36, 1) both slide;
+    var(--duration-nav-enter) ease-out var(--duration-nav-exit) both nav-fade,
+    var(--duration-nav-move) var(--ease-nav-move) both slide;
 }
 
 ::view-transition-old(.nav-back) {
-  --slide-offset: 52px;
+  --slide-offset: 0 var(--nav-slide-y-offset);
   animation:
-    var(--duration-exit) ease-in both fade reverse,
-    var(--duration-move) cubic-bezier(0.22, 1, 0.36, 1) both slide reverse;
+    var(--duration-nav-exit) ease-out both nav-fade reverse,
+    var(--duration-nav-move) var(--ease-nav-move) both slide reverse;
 }
 
 ::view-transition-new(.nav-back) {
-  --slide-offset: -52px;
+  --slide-offset: 0 calc(var(--nav-slide-y-offset) * -1);
   animation:
-    var(--duration-enter) ease-out var(--duration-exit) both fade,
-    var(--duration-move) cubic-bezier(0.22, 1, 0.36, 1) both slide;
+    var(--duration-nav-enter) ease-out var(--duration-nav-exit) both nav-fade,
+    var(--duration-nav-move) var(--ease-nav-move) both slide;
+}
+
+::view-transition-old(.scale-out) {
+  animation: var(--duration-exit) ease-in scale-down;
+}
+
+::view-transition-new(.scale-in) {
+  animation: var(--duration-enter) ease-out var(--duration-exit) both scale-up;
+}
+
+/* biome-ignore lint/correctness/noUnknownTypeSelector: root is the native View Transition snapshot name. */
+::view-transition-group(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* biome-ignore lint/correctness/noUnknownTypeSelector: root is the native View Transition snapshot name. */
+::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  opacity: 0;
+}
+
+/* biome-ignore lint/correctness/noUnknownTypeSelector: root is the native View Transition snapshot name. */
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-group(.project-image-morph),
+::view-transition-group(.project-text-morph),
+::view-transition-group(.project-chip-morph) {
+  animation-duration: var(--duration-project-move);
+  animation-timing-function: var(--ease-project-morph);
+}
+
+::view-transition-image-pair(.project-image-morph),
+::view-transition-image-pair(.project-chip-morph) {
+  animation-name: project-via-blur;
+}
+
+::view-transition-old(.project-text-morph) {
+  display: none;
+}
+
+::view-transition-new(.project-text-morph) {
+  animation: none;
+  object-fit: none;
+  object-position: left top;
 }
 
 ::view-transition-group(.morph) {
@@ -322,6 +417,19 @@ p {
   animation: none;
   object-fit: none;
   object-position: left top;
+}
+
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

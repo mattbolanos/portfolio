@@ -2,7 +2,10 @@ import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ViewTransition } from "react";
-import { projectTransitionName } from "@/app/project-transitions";
+import {
+  PROJECT_TRANSITION_SHARE,
+  projectTransitionName,
+} from "@/app/project-transitions";
 import { ProjectTag } from "@/components/project-tag";
 import { getProjects } from "@/lib/projects";
 
@@ -26,7 +29,7 @@ export async function Projects() {
             <ViewTransition
               default="none"
               name={projectTransitionName(project.slug, "image")}
-              share="morph"
+              share={PROJECT_TRANSITION_SHARE.image}
             >
               <Image
                 alt={project.name}
@@ -41,7 +44,7 @@ export async function Projects() {
               <ViewTransition
                 default="none"
                 name={projectTransitionName(project.slug, "title")}
-                share="text-morph"
+                share={PROJECT_TRANSITION_SHARE.text}
               >
                 <h3 className="text-sm leading-none font-normal sm:text-base">
                   <Link
@@ -57,7 +60,7 @@ export async function Projects() {
               <ViewTransition
                 default="none"
                 name={projectTransitionName(project.slug, "description")}
-                share="text-morph"
+                share={PROJECT_TRANSITION_SHARE.text}
               >
                 <p className="pt-1 text-xs sm:text-sm">{project.description}</p>
               </ViewTransition>
@@ -72,6 +75,7 @@ export async function Projects() {
                       "tag",
                       tag,
                     )}
+                    transitionShare={PROJECT_TRANSITION_SHARE.tag}
                   />
                 ))}
               </div>

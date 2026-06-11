@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
+import { Suspense, ViewTransition } from "react";
 import { Intro } from "@/app/intro";
 import { Heatmap } from "@/components/heatmap";
 import { HeatmapSkeleton } from "@/components/heatmap/skeleton";
@@ -27,16 +27,32 @@ export default function Home() {
         <section className="space-y-3">
           <h2>Running</h2>
           <div className="heatmap-container">
-            <Suspense fallback={<StravaSkeleton />}>
-              <StravaWrapper />
+            <Suspense
+              fallback={
+                <ViewTransition exit="slide-down">
+                  <StravaSkeleton />
+                </ViewTransition>
+              }
+            >
+              <ViewTransition default="none" enter="slide-up">
+                <StravaWrapper />
+              </ViewTransition>
             </Suspense>
           </div>
         </section>
         <section className="space-y-3">
           <h2>Coding</h2>
           <div className="heatmap-container">
-            <Suspense fallback={<HeatmapSkeleton />}>
-              <GitHubWrapper />
+            <Suspense
+              fallback={
+                <ViewTransition exit="slide-down">
+                  <HeatmapSkeleton />
+                </ViewTransition>
+              }
+            >
+              <ViewTransition default="none" enter="slide-up">
+                <GitHubWrapper />
+              </ViewTransition>
             </Suspense>
           </div>
         </section>
