@@ -1,10 +1,11 @@
 import Image from "next/image";
-import { Suspense, ViewTransition } from "react";
+import { Suspense } from "react";
 import {
   PROJECT_TRANSITION_SHARE,
   projectTransitionName,
 } from "@/app/project-transitions";
 import { ProjectTag } from "@/components/project-tag";
+import { ResponsiveViewTransition } from "@/components/responsive-view-transition";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getRepoPushedAt } from "@/lib/api/github";
 import type { Project } from "@/lib/projects";
@@ -20,7 +21,7 @@ export function ProjectHeader({ project }: { project: Project }) {
     <section className="space-y-3">
       <h1 className="sr-only">{project.name}</h1>
       <div className="flex items-start gap-3">
-        <ViewTransition
+        <ResponsiveViewTransition
           default="none"
           name={projectTransitionName(project.slug, "image")}
           share={PROJECT_TRANSITION_SHARE.image}
@@ -33,10 +34,10 @@ export function ProjectHeader({ project }: { project: Project }) {
             src={`/projects/${project.imageUrl}`}
             width={52}
           />
-        </ViewTransition>
+        </ResponsiveViewTransition>
 
         <div className="space-y-1.5">
-          <ViewTransition
+          <ResponsiveViewTransition
             default="none"
             name={projectTransitionName(project.slug, "title")}
             share={PROJECT_TRANSITION_SHARE.text}
@@ -44,30 +45,30 @@ export function ProjectHeader({ project }: { project: Project }) {
             <h3 className="text-lg leading-none font-medium sm:text-xl">
               {project.name}
             </h3>
-          </ViewTransition>
+          </ResponsiveViewTransition>
 
           {project.githubUrl ? (
             <Suspense
               fallback={
-                <ViewTransition exit="fade-out">
+                <ResponsiveViewTransition exit="fade-out">
                   <Skeleton className="h-4 w-32" />
-                </ViewTransition>
+                </ResponsiveViewTransition>
               }
             >
-              <ViewTransition default="none" enter="fade-in">
+              <ResponsiveViewTransition default="none" enter="fade-in">
                 <RepoLastUpdated githubUrl={project.githubUrl} />
-              </ViewTransition>
+              </ResponsiveViewTransition>
             </Suspense>
           ) : null}
 
           {project.description ? (
-            <ViewTransition
+            <ResponsiveViewTransition
               default="none"
               name={projectTransitionName(project.slug, "description")}
               share={PROJECT_TRANSITION_SHARE.text}
             >
               <p className="text-sm sm:text-base">{project.description}</p>
-            </ViewTransition>
+            </ResponsiveViewTransition>
           ) : null}
         </div>
       </div>

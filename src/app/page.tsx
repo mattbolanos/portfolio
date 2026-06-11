@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Suspense, ViewTransition } from "react";
+import { Suspense } from "react";
 import { Intro } from "@/app/intro";
 import { Heatmap } from "@/components/heatmap";
 import { HeatmapSkeleton } from "@/components/heatmap/skeleton";
+import { ResponsiveViewTransition } from "@/components/responsive-view-transition";
 import { RecentRuns } from "@/components/strava/recent-runs";
 import { StravaSkeleton } from "@/components/strava/skeleton";
 import { getGithubContributions } from "@/lib/api/github";
@@ -29,14 +30,14 @@ export default function Home() {
           <div className="heatmap-container">
             <Suspense
               fallback={
-                <ViewTransition exit="slide-down">
+                <ResponsiveViewTransition exit="slide-down">
                   <StravaSkeleton />
-                </ViewTransition>
+                </ResponsiveViewTransition>
               }
             >
-              <ViewTransition default="none" enter="slide-up">
+              <ResponsiveViewTransition default="none" enter="slide-up">
                 <StravaWrapper />
-              </ViewTransition>
+              </ResponsiveViewTransition>
             </Suspense>
           </div>
         </section>
@@ -45,14 +46,14 @@ export default function Home() {
           <div className="heatmap-container">
             <Suspense
               fallback={
-                <ViewTransition exit="slide-down">
+                <ResponsiveViewTransition exit="slide-down">
                   <HeatmapSkeleton />
-                </ViewTransition>
+                </ResponsiveViewTransition>
               }
             >
-              <ViewTransition default="none" enter="slide-up">
+              <ResponsiveViewTransition default="none" enter="slide-up">
                 <GitHubWrapper />
-              </ViewTransition>
+              </ResponsiveViewTransition>
             </Suspense>
           </div>
         </section>

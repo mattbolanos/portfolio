@@ -1,12 +1,12 @@
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ViewTransition } from "react";
 import {
   PROJECT_TRANSITION_SHARE,
   projectTransitionName,
 } from "@/app/project-transitions";
 import { ProjectTag } from "@/components/project-tag";
+import { ResponsiveViewTransition } from "@/components/responsive-view-transition";
 import { getProjects } from "@/lib/projects";
 
 export async function Projects() {
@@ -26,7 +26,7 @@ export async function Projects() {
             id={`project-${project.slug}`}
             key={project.slug}
           >
-            <ViewTransition
+            <ResponsiveViewTransition
               default="none"
               name={projectTransitionName(project.slug, "image")}
               share={PROJECT_TRANSITION_SHARE.image}
@@ -39,9 +39,9 @@ export async function Projects() {
                 src={`/projects/${project.imageUrl}`}
                 width={52}
               />
-            </ViewTransition>
+            </ResponsiveViewTransition>
             <div className="flex flex-1 flex-col items-start gap-y-1">
-              <ViewTransition
+              <ResponsiveViewTransition
                 default="none"
                 name={projectTransitionName(project.slug, "title")}
                 share={PROJECT_TRANSITION_SHARE.text}
@@ -56,14 +56,14 @@ export async function Projects() {
                     {project.name}
                   </Link>
                 </h3>
-              </ViewTransition>
-              <ViewTransition
+              </ResponsiveViewTransition>
+              <ResponsiveViewTransition
                 default="none"
                 name={projectTransitionName(project.slug, "description")}
                 share={PROJECT_TRANSITION_SHARE.text}
               >
                 <p className="pt-1 text-xs sm:text-sm">{project.description}</p>
-              </ViewTransition>
+              </ResponsiveViewTransition>
               <div className="flex flex-wrap items-center gap-1">
                 {project.tags.map((tag) => (
                   <ProjectTag
