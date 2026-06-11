@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense, ViewTransition } from "react";
+import { Suspense } from "react";
 import { Heatmap } from "@/components/heatmap";
 import { HeatmapSkeleton } from "@/components/heatmap/skeleton";
+import { ResponsiveViewTransition } from "@/components/responsive-view-transition";
 import { getGithubRepoContributions } from "@/lib/api/github";
 import { getProjects } from "@/lib/projects";
 import { ProjectPageTransition } from "../../project-transitions";
@@ -49,14 +50,14 @@ export default async function ProjectPage({
             <div className="heatmap-container">
               <Suspense
                 fallback={
-                  <ViewTransition exit="slide-down">
+                  <ResponsiveViewTransition exit="slide-down">
                     <HeatmapSkeleton weeksToShow={WEEKS_TO_SHOW} />
-                  </ViewTransition>
+                  </ResponsiveViewTransition>
                 }
               >
-                <ViewTransition default="none" enter="slide-up">
+                <ResponsiveViewTransition default="none" enter="slide-up">
                   <GithubContributions githubUrl={project.githubUrl} />
-                </ViewTransition>
+                </ResponsiveViewTransition>
               </Suspense>
             </div>
           </section>

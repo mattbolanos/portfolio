@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ViewTransition } from "react";
+import { ResponsiveViewTransition } from "@/components/responsive-view-transition";
 
 export const PROJECT_TRANSITION_SHARE = {
   image: "project-image-morph",
@@ -15,13 +15,13 @@ const PAGE_TRANSITION_CLASSES = {
 
 export function ProjectPageTransition({ children }: { children: ReactNode }) {
   return (
-    <ViewTransition
+    <ResponsiveViewTransition
       default="none"
       enter={PAGE_TRANSITION_CLASSES}
       exit={PAGE_TRANSITION_CLASSES}
     >
       {children}
-    </ViewTransition>
+    </ResponsiveViewTransition>
   );
 }
 

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ViewTransition } from "react";
+import { ResponsiveViewTransition } from "@/components/responsive-view-transition";
 import { cn } from "@/lib/utils";
 
 interface ProjectTagProps {
@@ -58,13 +58,13 @@ export const ProjectTag = ({
   }
 
   return (
-    <ViewTransition
+    <ResponsiveViewTransition
       default="none"
       name={transitionName}
       share={transitionShare}
     >
       {tagPill}
-    </ViewTransition>
+    </ResponsiveViewTransition>
   );
 };
 
