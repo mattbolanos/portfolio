@@ -1,8 +1,8 @@
-import { LinkItem } from "./link-item";
-import { GithubIcon } from "./ui/github";
-import { LinkedinIcon } from "./ui/linkedin";
-import { MailCheckIcon } from "./ui/mail-check";
-import { TwitterIcon } from "./ui/twitter";
+import { GithubIcon } from "@/components/ui/github";
+import { LinkedinIcon } from "@/components/ui/linkedin";
+import { MailboxIcon } from "@/components/ui/mailbox";
+import { TwitterIcon } from "@/components/ui/twitter";
+import { ItemLink } from "./item-link";
 
 interface IconHandle {
   startAnimation: () => void;
@@ -14,13 +14,13 @@ type ContactIconComponent = React.ComponentType<{
   size?: number;
 }>;
 
-interface ContactLink {
+interface ContactItem {
   href: string;
   label: string;
   Icon: ContactIconComponent;
 }
 
-const LINKS: ContactLink[] = [
+const ITEMS: ContactItem[] = [
   {
     href: "https://github.com/mattbolanos",
     Icon: GithubIcon,
@@ -38,22 +38,22 @@ const LINKS: ContactLink[] = [
   },
   {
     href: "mailto:maugbolanos@gmail.com",
-    Icon: MailCheckIcon,
+    Icon: MailboxIcon,
     label: "Email",
   },
 ];
 
-export const ContactLinks = () => {
+export const Contact = () => {
   return (
-    <div className="space-y-3">
+    <section className="space-y-3">
       <h2>Connect</h2>
       <ul className="flex flex-wrap items-center gap-1.5">
-        {LINKS.map((link) => (
-          <li className="cursor-pointer" key={link.href}>
-            <LinkItem href={link.href} Icon={link.Icon} label={link.label} />
+        {ITEMS.map((item) => (
+          <li className="cursor-pointer" key={item.href}>
+            <ItemLink href={item.href} Icon={item.Icon} label={item.label} />
           </li>
         ))}
       </ul>
-    </div>
+    </section>
   );
 };

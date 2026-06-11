@@ -49,7 +49,9 @@ const HEATMAP_CONFIGS = {
   },
 } satisfies Record<string, HeatmapConfig>;
 
-export type HeatmapConfigId = keyof typeof HEATMAP_CONFIGS;
+type HeatmapConfigId = keyof typeof HEATMAP_CONFIGS;
 
-export const getHeatmapConfig = (id: HeatmapConfigId): HeatmapConfig =>
+const getHeatmapConfig = (id: HeatmapConfigId): HeatmapConfig =>
   HEATMAP_CONFIGS[id];
+
+export { type HeatmapConfigId, getHeatmapConfig };

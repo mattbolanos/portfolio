@@ -1,28 +1,31 @@
 "use client";
 
-import {
-  domAnimation,
-  LazyMotion,
-  m,
-  useAnimation,
-  type Variants,
-} from "motion/react";
-import type { HTMLAttributes, Ref } from "react";
-import { useCallback, useImperativeHandle, useRef } from "react";
+import type { Variants } from "motion/react";
+import { motion, useAnimation } from "motion/react";
+import type { HTMLAttributes } from "react";
+import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 
 import { cn } from "@/lib/utils";
 
-interface TwitterIconHandle {
+export interface TwitterIconHandle {
   startAnimation: () => void;
   stopAnimation: () => void;
 }
 
 interface TwitterIconProps extends HTMLAttributes<HTMLDivElement> {
-  ref?: Ref<TwitterIconHandle>;
   size?: number;
 }
 
 const PATH_VARIANTS: Variants = {
+  normal: {
+    opacity: 1,
+    pathLength: 1,
+    pathOffset: 0,
+    transition: {
+      duration: 0.4,
+      opacity: { duration: 0.1 },
+    },
+  },
   animate: {
     opacity: [0, 1],
     pathLength: [0, 1],
@@ -33,61 +36,45 @@ const PATH_VARIANTS: Variants = {
       opacity: { duration: 0.1 },
     },
   },
-  normal: {
-    opacity: 1,
-    pathLength: 1,
-    pathOffset: 0,
-    transition: {
-      duration: 0.4,
-      opacity: { duration: 0.1 },
-    },
-  },
 };
 
-function TwitterIcon({
-  ref,
-  onMouseEnter,
-  onMouseLeave,
-  className,
-  size = 28,
-  ...props
-}: TwitterIconProps) {
-  const controls = useAnimation();
-  const isControlledRef = useRef(false);
+const TwitterIcon = forwardRef<TwitterIconHandle, TwitterIconProps>(
+  ({ onMouseEnter, onMouseLeave, className, size = 28, ...props }, ref) => {
+    const controls = useAnimation();
+    const isControlledRef = useRef(false);
 
-  useImperativeHandle(ref, () => {
-    isControlledRef.current = true;
+    useImperativeHandle(ref, () => {
+      isControlledRef.current = true;
 
-    return {
-      startAnimation: () => controls.start("animate"),
-      stopAnimation: () => controls.start("normal"),
-    };
-  });
+      return {
+        startAnimation: () => controls.start("animate"),
+        stopAnimation: () => controls.start("normal"),
+      };
+    });
 
-  const handleMouseEnter = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (isControlledRef.current) {
-        onMouseEnter?.(e);
-      } else {
-        controls.start("animate");
-      }
-    },
-    [controls, onMouseEnter],
-  );
+    const handleMouseEnter = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => {
+        if (isControlledRef.current) {
+          onMouseEnter?.(e);
+        } else {
+          controls.start("animate");
+        }
+      },
+      [controls, onMouseEnter],
+    );
 
-  const handleMouseLeave = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (isControlledRef.current) {
-        onMouseLeave?.(e);
-      } else {
-        controls.start("normal");
-      }
-    },
-    [controls, onMouseLeave],
-  );
+    const handleMouseLeave = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => {
+        if (isControlledRef.current) {
+          onMouseLeave?.(e);
+        } else {
+          controls.start("normal");
+        }
+      },
+      [controls, onMouseLeave],
+    );
 
-  return (
-    <LazyMotion features={domAnimation}>
+    return (
       <div
         className={cn(className)}
         onMouseEnter={handleMouseEnter}
@@ -105,8 +92,7 @@ function TwitterIcon({
           width={size}
           xmlns="http://www.w3.org/2000/svg"
         >
-          <title>Twitter</title>
-          <m.path
+          <motion.path
             animate={controls}
             d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"
             initial="normal"
@@ -114,8 +100,10 @@ function TwitterIcon({
           />
         </svg>
       </div>
-    </LazyMotion>
-  );
-}
+    );
+  },
+);
+
+TwitterIcon.displayName = "TwitterIcon";
 
 export { TwitterIcon };

@@ -75,7 +75,7 @@ export const Heatmap = ({
   return (
     <article className="bg-card rounded-lg p-3 sm:p-4">
       <div className="flex items-start gap-2">
-        <div className="text-muted-foreground hidden shrink-0 grid-rows-7 gap-[3px] pt-6 pr-3 text-right text-xs sm:grid">
+        <div className="text-muted-foreground hidden shrink-0 grid-rows-7 gap-0.75 pt-6 pr-3 text-right text-xs sm:grid">
           {DAY_LABELS.map((dayLabel) => (
             <span className="h-tile leading-tile" key={dayLabel.key}>
               {dayLabel.label}

@@ -1,3 +1,4 @@
+import type { HeatmapEntry } from "@/lib/heatmap";
 import {
   StravaActivitiesSchema,
   type StravaActivity,
@@ -11,21 +12,12 @@ const MAX_RETRY_DELAY_MS = 8_000;
 const STRAVA_LOOKBACK_DAYS = 366;
 const STRAVA_MAX_PER_PAGE = 200;
 const DEFAULT_ACTIVITIES_PER_PAGE = STRAVA_MAX_PER_PAGE;
-const INITIAL_PARALLEL_ACTIVITY_PAGES = 2;
-const ACTIVITIES_CACHE_TTL_MS = 24 * 60 * 60 * 1_000;
-const STRAVA_CACHE_REVALIDATE_SECONDS = 24 * 60 * 60;
+const PARALLEL_ACTIVITY_PAGES = 3;
+const STRAVA_REVALIDATE_SECONDS = 24 * 60 * 60;
 
 type GetActivitiesOptions = {
   maxPages?: number;
   perPage?: number;
-};
-
-type HeatmapDay = {
-  activityCount: number;
-  date: string;
-  distanceMeters: number;
-  miles: number;
-  runCount: number;
 };
 
 type JsonResponse = {
@@ -45,62 +37,33 @@ type RefreshedTokenPayload = {
 
 type StravaTokenState = {
   accessToken: string | null;
-  expiresAt: number | null;
   refreshToken: string | null;
 };
 
-type ActivitiesCacheEntry = {
-  expiresAt: number;
-  value: GetActivitiesResult;
-};
-
 export type GetActivitiesResult = {
-  heatmap: HeatmapDay[];
-  runActivities: StravaActivity[];
-  totals: {
-    activityCount: number;
-    runCount: number;
-    runDistanceMeters: number;
-    runMiles: number;
-  };
-};
-
-const EMPTY_ACTIVITIES_RESULT: GetActivitiesResult = {
-  heatmap: [],
-  runActivities: [],
-  totals: {
-    activityCount: 0,
-    runCount: 0,
-    runDistanceMeters: 0,
-    runMiles: 0,
-  },
+  heatmap: HeatmapEntry[];
+  latestRuns: StravaActivity[];
 };
 
 const tokenState: StravaTokenState = {
   accessToken: null,
-  expiresAt: null,
   refreshToken: process.env.STRAVA_REFRESH_TOKEN ?? null,
 };
 
 let tokenRefreshInFlight: Promise<string | null> | null = null;
-const activitiesCache = new Map<string, ActivitiesCacheEntry>();
-const activitiesInFlight = new Map<
-  string,
-  Promise<GetActivitiesResult | null>
->();
+
+const getEmptyActivitiesResult = (): GetActivitiesResult => ({
+  heatmap: [],
+  latestRuns: [],
+});
 
 const roundTo = (value: number, digits: number): number => {
   const factor = 10 ** digits;
   return Math.round(value * factor) / factor;
 };
 
-const cloneActivitiesResult = (
-  result: GetActivitiesResult,
-): GetActivitiesResult => ({
-  heatmap: result.heatmap.map((day) => ({ ...day })),
-  runActivities: result.runActivities.map((activity) => ({ ...activity })),
-  totals: { ...result.totals },
-});
+const metersToMiles = (meters: number): number =>
+  roundTo(meters / METERS_PER_MILE, 2);
 
 const normalizeMaxPages = (maxPages?: number): number | null => {
   if (typeof maxPages !== "number") {
@@ -171,6 +134,7 @@ const parseRetryAfterMs = (retryAfterHeader: string | null): number | null => {
   if (Number.isFinite(asSeconds) && asSeconds >= 0) {
     return Math.min(asSeconds * 1_000, MAX_RETRY_DELAY_MS);
   }
+
   return null;
 };
 
@@ -311,6 +275,7 @@ const requestRefreshedToken = async (
         grant_type: "refresh_token",
         refresh_token: refreshToken,
       }),
+      cache: "no-store",
       headers: { "Content-Type": "application/json" },
       method: "POST",
     },
@@ -345,7 +310,6 @@ const refreshAccessToken = async (
 
   if (refreshed) {
     tokenState.accessToken = refreshed.accessToken;
-    tokenState.expiresAt = refreshed.expiresAt;
     tokenState.refreshToken = refreshed.refreshToken;
     process.env.STRAVA_REFRESH_TOKEN = refreshed.refreshToken;
 
@@ -353,7 +317,6 @@ const refreshAccessToken = async (
   }
 
   tokenState.accessToken = null;
-  tokenState.expiresAt = null;
   return null;
 };
 
@@ -401,38 +364,6 @@ type ActivitiesPageResponse = {
   payload: unknown | null;
 };
 
-const getActivitiesCacheKey = ({
-  afterEpochSeconds,
-  maxPages,
-  perPage,
-}: FetchActivitiesOptions): string =>
-  [afterEpochSeconds, maxPages ?? "all", perPage].join(":");
-
-const getCachedActivities = (cacheKey: string): GetActivitiesResult | null => {
-  const cached = activitiesCache.get(cacheKey);
-
-  if (!cached) {
-    return null;
-  }
-
-  if (cached.expiresAt <= Date.now()) {
-    activitiesCache.delete(cacheKey);
-    return null;
-  }
-
-  return cached.value;
-};
-
-const setCachedActivities = (
-  cacheKey: string,
-  activities: GetActivitiesResult,
-): void => {
-  activitiesCache.set(cacheKey, {
-    expiresAt: Date.now() + ACTIVITIES_CACHE_TTL_MS,
-    value: cloneActivitiesResult(activities),
-  });
-};
-
 const getActivitiesUrl = ({
   afterEpochSeconds,
   page,
@@ -472,7 +403,7 @@ const fetchActivitiesPageResponse = async ({
     activitiesUrl,
     {
       headers: { Authorization: `Bearer ${accessToken}` },
-      next: { revalidate: STRAVA_CACHE_REVALIDATE_SECONDS },
+      next: { revalidate: STRAVA_REVALIDATE_SECONDS },
     },
     3,
   );
@@ -485,7 +416,7 @@ const fetchActivitiesPageResponse = async ({
         activitiesUrl,
         {
           headers: { Authorization: `Bearer ${refreshedAccessToken}` },
-          next: { revalidate: STRAVA_CACHE_REVALIDATE_SECONDS },
+          next: { revalidate: STRAVA_REVALIDATE_SECONDS },
         },
         3,
       );
@@ -513,11 +444,6 @@ const fetchActivities = async ({
 
   const runActivities: StravaActivity[] = [];
   const seenActivityIds = new Set<number>();
-  const initialPageCount =
-    maxPages === null
-      ? INITIAL_PARALLEL_ACTIVITY_PAGES
-      : Math.min(maxPages, INITIAL_PARALLEL_ACTIVITY_PAGES);
-
   const appendPage = (
     page: number,
     response: ActivitiesPageResponse,
@@ -545,101 +471,72 @@ const fetchActivities = async ({
     return response.payload.length < perPage ? "stop" : "continue";
   };
 
-  const initialResponses = await Promise.all(
-    Array.from({ length: initialPageCount }, (_, index) =>
-      fetchActivitiesPageResponse({
-        accessToken,
-        afterEpochSeconds,
-        page: index + 1,
-        perPage,
-      }),
-    ),
-  );
+  let nextPage = 1;
+  let shouldContinueFetching = true;
 
-  let shouldContinueSequentially = true;
+  while (
+    shouldContinueFetching &&
+    (maxPages === null || nextPage <= maxPages)
+  ) {
+    const pageCount =
+      maxPages === null
+        ? PARALLEL_ACTIVITY_PAGES
+        : Math.min(PARALLEL_ACTIVITY_PAGES, maxPages - nextPage + 1);
+    const responses = await Promise.all(
+      Array.from({ length: pageCount }, (_, index) =>
+        fetchActivitiesPageResponse({
+          accessToken,
+          afterEpochSeconds,
+          page: nextPage + index,
+          perPage,
+        }),
+      ),
+    );
 
-  for (let page = 1; page <= initialResponses.length; page += 1) {
-    const outcome = appendPage(page, initialResponses[page - 1]);
-
-    if (outcome === "abort") {
-      return null;
-    }
-
-    if (outcome === "stop") {
-      shouldContinueSequentially = false;
-      break;
-    }
-  }
-
-  if (shouldContinueSequentially) {
-    for (
-      let page = initialPageCount + 1;
-      maxPages === null || page <= maxPages;
-      page += 1
-    ) {
-      const response = await fetchActivitiesPageResponse({
-        accessToken,
-        afterEpochSeconds,
-        page,
-        perPage,
-      });
-      const outcome = appendPage(page, response);
+    for (let index = 0; index < responses.length; index += 1) {
+      const outcome = appendPage(nextPage + index, responses[index]);
 
       if (outcome === "abort") {
         return null;
       }
 
       if (outcome === "stop") {
+        shouldContinueFetching = false;
         break;
       }
     }
+
+    nextPage += pageCount;
   }
 
-  const byDay = new Map<
-    string,
-    {
-      activityCount: number;
-      distanceMeters: number;
-      runCount: number;
-    }
-  >();
+  const distanceByDate = new Map<string, number>();
 
   for (const activity of runActivities) {
     const date = activity.start_date_local.slice(0, 10);
-    const day = byDay.get(date) ?? {
-      activityCount: 0,
-      distanceMeters: 0,
-      runCount: 0,
-    };
-
-    day.activityCount += 1;
-    day.distanceMeters += activity.distance;
-    day.runCount += 1;
-    byDay.set(date, day);
+    distanceByDate.set(
+      date,
+      (distanceByDate.get(date) ?? 0) + activity.distance,
+    );
   }
 
-  const heatmap = Array.from(byDay.entries())
+  const heatmap = Array.from(distanceByDate.entries())
     .toSorted(([dateA], [dateB]) => dateA.localeCompare(dateB))
-    .map(([date, day]) => ({
-      ...day,
+    .map(([date, distanceMeters]) => ({
       date,
-      miles: roundTo(day.distanceMeters / METERS_PER_MILE, 2),
+      value: metersToMiles(distanceMeters),
     }));
 
-  const runDistanceMeters = runActivities.reduce(
-    (sum, activity) => sum + activity.distance,
-    0,
-  );
+  const latestRuns = [...runActivities]
+    .sort(
+      (runA, runB) =>
+        new Date(runB.start_date_local).getTime() -
+        new Date(runA.start_date_local).getTime(),
+    )
+    .slice(0, 4);
 
   return {
     heatmap,
-    runActivities,
-    totals: {
-      activityCount: runActivities.length,
-      runCount: runActivities.length,
-      runDistanceMeters,
-      runMiles: roundTo(runDistanceMeters / METERS_PER_MILE, 2),
-    },
+    latestRuns,
   };
 };
 
@@ -651,31 +548,11 @@ export const getActivities = async ({
   const normalizedPerPage = normalizePerPage(perPage);
   const lookbackStart = getLookbackStart();
   const afterEpochSeconds = toEpochSeconds(lookbackStart);
-  const options = {
+  const activities = await fetchActivities({
     afterEpochSeconds,
     maxPages: normalizedMaxPages,
     perPage: normalizedPerPage,
-  };
-  const cacheKey = getActivitiesCacheKey(options);
-  const cachedActivities = getCachedActivities(cacheKey);
+  });
 
-  if (cachedActivities) {
-    return cloneActivitiesResult(cachedActivities);
-  }
-
-  const inFlight =
-    activitiesInFlight.get(cacheKey) ??
-    fetchActivities(options).finally(() => {
-      activitiesInFlight.delete(cacheKey);
-    });
-
-  activitiesInFlight.set(cacheKey, inFlight);
-
-  const activities = await inFlight;
-
-  if (activities) {
-    setCachedActivities(cacheKey, activities);
-  }
-
-  return cloneActivitiesResult(activities ?? EMPTY_ACTIVITIES_RESULT);
+  return activities ?? getEmptyActivitiesResult();
 };

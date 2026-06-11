@@ -1,11 +1,17 @@
 import Image from "next/image";
-import { formatTagLabel, type Project } from "@/lib/projects";
+import { ViewTransition } from "react";
 import { cn } from "@/lib/utils";
 
 interface ProjectTagProps {
-  tag: Project["tags"][number];
+  tag: string;
   size?: "sm" | "md";
   transitionName?: string;
+  transitionShare?: string;
+}
+
+interface TagLabelOverrides {
+  tag: string;
+  label: string;
 }
 
 const SIZE_STYLES = {
@@ -23,19 +29,17 @@ export const ProjectTag = ({
   tag,
   size = "md",
   transitionName,
+  transitionShare = "morph",
 }: ProjectTagProps) => {
   const label = formatTagLabel(tag);
   const styles = SIZE_STYLES[size];
 
-  return (
+  const tagPill = (
     <div
       className={cn(
         "border-border bg-card flex items-center justify-center gap-x-1 rounded-full border",
         styles.wrapper,
       )}
-      style={
-        transitionName ? { viewTransitionName: transitionName } : undefined
-      }
       title={label}
     >
       <Image
@@ -48,4 +52,35 @@ export const ProjectTag = ({
       <span className="text-[11px] sm:text-xs">{label}</span>
     </div>
   );
+
+  if (!transitionName) {
+    return tagPill;
+  }
+
+  return (
+    <ViewTransition
+      default="none"
+      name={transitionName}
+      share={transitionShare}
+    >
+      {tagPill}
+    </ViewTransition>
+  );
 };
+
+function formatTagLabel(tag: string): string {
+  const overrideLabel = PROJECT_TAG_LABEL_OVERRIDES.find(
+    (labels) => labels.tag === tag,
+  );
+
+  if (overrideLabel) return overrideLabel.label;
+  return tag.replace(/[-_]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+const PROJECT_TAG_LABEL_OVERRIDES: TagLabelOverrides[] = [
+  { label: "Next.js", tag: "next.js" },
+  {
+    label: "TypeScript",
+    tag: "typescript",
+  },
+];

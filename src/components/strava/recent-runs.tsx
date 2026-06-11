@@ -2,19 +2,19 @@
 
 import { ReplayIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useState } from "react";
-import { ActivityCard } from "@/components/strava/activity-card";
+import * as React from "react";
+import { RunCard } from "@/components/strava/run-card";
 import { Button } from "@/components/ui/button";
 import type { GetActivitiesResult } from "@/lib/api/strava";
 
-type RecentRun = GetActivitiesResult["runActivities"][number];
+type RecentRun = GetActivitiesResult["latestRuns"][number];
 
 interface RecentRunsProps {
   runs: RecentRun[];
 }
 
 export const RecentRuns = ({ runs }: RecentRunsProps) => {
-  const [replayNonce, setReplayNonce] = useState(0);
+  const [replayNonce, setReplayNonce] = React.useState(0);
 
   if (runs.length === 0) {
     return null;
@@ -35,7 +35,7 @@ export const RecentRuns = ({ runs }: RecentRunsProps) => {
         </Button>
       )}
       {runs.map((run, index) => (
-        <ActivityCard
+        <RunCard
           index={index}
           key={run.id}
           replayNonce={replayNonce}

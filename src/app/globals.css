@@ -1,13 +1,15 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sora);
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-heading);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -100,6 +102,16 @@
   --theme-toggle: oklch(77.194% 0.17376 64.545);
   --theme-toggle-glow: drop-shadow(0 0 3px oklch(0.9 0.18 75 / 0.6))
     drop-shadow(0 0 10px oklch(0.8 0.16 70 / 0.3));
+  --duration-exit: 150ms;
+  --duration-enter: 210ms;
+  --duration-move: 400ms;
+  --duration-nav-enter: 300ms;
+  --duration-nav-exit: 240ms;
+  --duration-nav-move: 680ms;
+  --duration-project-move: 480ms;
+  --ease-nav-move: cubic-bezier(0.33, 0, 0.2, 1);
+  --ease-project-morph: cubic-bezier(0.33, 0, 0.2, 1);
+  --nav-slide-y-offset: 8px;
 }
 
 .dark {
@@ -147,21 +159,8 @@
     drop-shadow(0 0 10px oklch(0.8 0.16 70 / 0.3));
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-h2 {
-  @apply text-muted-foreground text-xs font-medium tracking-widest uppercase;
-}
-
-p {
-  font-weight: 300;
+.image-card {
+  @apply size-10 sm:size-13;
 }
 
 .text-link,
@@ -178,85 +177,268 @@ p {
   text-decoration-color: var(--primary);
 }
 
-html {
-  --scrollbar-thumb: color-mix(
-    in oklch,
-    var(--primary) 25%,
-    var(--muted-foreground)
-  );
-  --scrollbar-track: transparent;
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-  scrollbar-width: thin;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  html {
+    @apply font-sans;
+    --scrollbar-thumb: color-mix(
+      in oklch,
+      var(--primary) 25%,
+      var(--muted-foreground)
+    );
+    --scrollbar-track: transparent;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    scrollbar-width: thin;
+  }
+
+  html::-webkit-scrollbar,
+  html *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  html::-webkit-scrollbar-track,
+  html *::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+
+  html::-webkit-scrollbar-thumb,
+  html *::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 9999px;
+  }
 }
 
-html::-webkit-scrollbar,
-html *::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+h2 {
+  @apply text-muted-foreground text-xs font-medium tracking-widest uppercase;
 }
 
-html::-webkit-scrollbar-track,
-html *::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
+p {
+  font-weight: 300;
 }
 
-html::-webkit-scrollbar-thumb,
-html *::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 9999px;
+@keyframes fade {
+  from {
+    filter: blur(3px);
+    opacity: 0;
+  }
+  to {
+    filter: blur(0);
+    opacity: 1;
+  }
 }
 
-/* biome-ignore lint/correctness/noUnknownTypeSelector: View Transition pseudo-elements use named snapshots. */
-::view-transition-old(root) {
+@keyframes nav-fade {
+  from {
+    filter: blur(1px);
+    opacity: 0;
+  }
+  to {
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide {
+  from {
+    translate: var(--slide-offset);
+  }
+  to {
+    translate: 0;
+  }
+}
+
+@keyframes slide-y {
+  from {
+    transform: translateY(var(--slide-y-offset, 10px));
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes via-blur {
+  30% {
+    filter: blur(3px);
+  }
+}
+
+@keyframes project-via-blur {
+  40% {
+    filter: blur(1.5px);
+  }
+}
+
+@keyframes scale-down {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+@keyframes scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+::view-transition-old(.fade-out) {
+  animation: var(--duration-exit) ease-in fade reverse;
+}
+
+::view-transition-new(.fade-in) {
+  animation: var(--duration-enter) ease-out var(--duration-exit) both fade;
+}
+
+::view-transition-old(.slide-down) {
+  animation:
+    var(--duration-exit) ease-out both fade reverse,
+    var(--duration-exit) ease-out both slide-y reverse;
+}
+
+::view-transition-new(.slide-up) {
+  animation:
+    var(--duration-enter) ease-in var(--duration-exit) both fade,
+    var(--duration-move) ease-in both slide-y;
+}
+
+::view-transition-old(.nav-forward) {
+  --slide-offset: 0 calc(var(--nav-slide-y-offset) * -1);
+  animation:
+    var(--duration-nav-exit) ease-out both nav-fade reverse,
+    var(--duration-nav-move) var(--ease-nav-move) both slide reverse;
+}
+
+::view-transition-new(.nav-forward) {
+  --slide-offset: 0 var(--nav-slide-y-offset);
+  animation:
+    var(--duration-nav-enter) ease-out var(--duration-nav-exit) both nav-fade,
+    var(--duration-nav-move) var(--ease-nav-move) both slide;
+}
+
+::view-transition-old(.nav-back) {
+  --slide-offset: 0 var(--nav-slide-y-offset);
+  animation:
+    var(--duration-nav-exit) ease-out both nav-fade reverse,
+    var(--duration-nav-move) var(--ease-nav-move) both slide reverse;
+}
+
+::view-transition-new(.nav-back) {
+  --slide-offset: 0 calc(var(--nav-slide-y-offset) * -1);
+  animation:
+    var(--duration-nav-enter) ease-out var(--duration-nav-exit) both nav-fade,
+    var(--duration-nav-move) var(--ease-nav-move) both slide;
+}
+
+::view-transition-old(.scale-out) {
+  animation: var(--duration-exit) ease-in scale-down;
+}
+
+::view-transition-new(.scale-in) {
+  animation: var(--duration-enter) ease-out var(--duration-exit) both scale-up;
+}
+
+/* biome-ignore lint/correctness/noUnknownTypeSelector: root is the native View Transition snapshot name. */
+::view-transition-group(root) {
   animation: none;
   mix-blend-mode: normal;
 }
 
-/* biome-ignore lint/correctness/noUnknownTypeSelector: View Transition pseudo-elements use named snapshots. */
+/* biome-ignore lint/correctness/noUnknownTypeSelector: root is the native View Transition snapshot name. */
+::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  opacity: 0;
+}
+
+/* biome-ignore lint/correctness/noUnknownTypeSelector: root is the native View Transition snapshot name. */
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
 }
 
-.image-card {
-  @apply size-10 sm:size-13;
+::view-transition-group(.project-image-morph),
+::view-transition-group(.project-text-morph),
+::view-transition-group(.project-chip-morph) {
+  animation-duration: var(--duration-project-move);
+  animation-timing-function: var(--ease-project-morph);
 }
 
-.project-transition-title,
-.project-transition-description {
-  transform-origin: left top;
-  will-change: transform;
+::view-transition-image-pair(.project-image-morph),
+::view-transition-image-pair(.project-chip-morph) {
+  animation-name: project-via-blur;
 }
 
-.project-transition-title {
-  contain: layout;
-  line-height: 1.35;
+::view-transition-old(.project-text-morph) {
+  display: none;
 }
 
-.project-transition-description {
-  contain: layout paint;
-  will-change: transform;
+::view-transition-new(.project-text-morph) {
+  animation: none;
+  object-fit: none;
+  object-position: left top;
 }
 
-::view-transition-group(.project-title) {
-  animation-duration: 240ms;
-  animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+::view-transition-group(.morph) {
+  animation-duration: var(--duration-move);
 }
 
-::view-transition-group(.project-description) {
-  animation-duration: 285ms;
-  animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
 }
 
-::view-transition-old(.project-title),
-::view-transition-new(.project-title),
-::view-transition-old(.project-description),
-::view-transition-new(.project-description) {
-  animation-duration: inherit;
-  animation-timing-function: inherit;
-  height: 100%;
-  object-fit: contain;
-  transform-origin: left top;
+::view-transition-group(.text-morph) {
+  animation-duration: var(--duration-move);
+}
+
+::view-transition-old(.text-morph) {
+  display: none;
+}
+
+::view-transition-new(.text-morph) {
+  animation: none;
+  object-fit: none;
+  object-position: left top;
+}
+
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-delay: 0s;
+    animation-duration: 0s;
+  }
 }
 
 .heatmap-container {
@@ -312,20 +494,4 @@ html *::-webkit-scrollbar-thumb {
 .project-markdown :where(pre code) {
   background: transparent;
   padding: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(.project-title),
-  ::view-transition-group(.project-description),
-  ::view-transition-old(.project-title),
-  ::view-transition-new(.project-title),
-  ::view-transition-old(.project-description),
-  ::view-transition-new(.project-description) {
-    animation-duration: 1ms;
-  }
-
-  .route-preview svg animate,
-  .route-preview svg animateMotion {
-    display: none;
-  }
 }

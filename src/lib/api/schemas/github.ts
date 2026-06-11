@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const GithubRepoSchema = z.object({
+const GithubRepoSchema = z.object({
   pushed_at: z.iso.datetime({ offset: true }),
 });
 
@@ -13,7 +13,7 @@ const GithubContributionWeekSchema = z.object({
   contributionDays: z.array(GithubContributionDaySchema),
 });
 
-export const GithubContributionsQuerySchema = z.object({
+const GithubContributionsQuerySchema = z.object({
   data: z.object({
     user: z
       .object({
@@ -61,7 +61,7 @@ const GithubRepoTimedContributionSchema = z.object({
   repository: GithubRepositoryRefSchema,
 });
 
-export const GithubRepoContributionsQuerySchema = z.object({
+const GithubRepoContributionsQuerySchema = z.object({
   data: z.object({
     viewer: z.object({
       contributionsCollection: z.object({
@@ -88,3 +88,9 @@ export const GithubRepoContributionsQuerySchema = z.object({
     )
     .optional(),
 });
+
+export {
+  GithubRepoSchema,
+  GithubContributionsQuerySchema,
+  GithubRepoContributionsQuerySchema,
+};

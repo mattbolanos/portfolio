@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import * as React from "react";
 import { cn } from "@/lib/utils";
 
 interface IconHandle {
@@ -13,7 +13,7 @@ type IconComponent = React.ComponentType<{
   size?: number;
 }>;
 
-interface LinkItemProps {
+interface ItemLinkProps {
   href: string;
   label: string;
   Icon: IconComponent;
@@ -21,14 +21,14 @@ interface LinkItemProps {
   className?: string;
 }
 
-export const LinkItem = ({
+export const ItemLink = ({
   href,
   label,
   Icon,
   size = 18,
   className,
-}: LinkItemProps) => {
-  const iconRef = useRef<IconHandle>(null);
+}: ItemLinkProps) => {
+  const iconRef = React.useRef<IconHandle>(null);
 
   return (
     <a

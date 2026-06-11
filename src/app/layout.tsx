@@ -1,29 +1,15 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Sora } from "next/font/google";
-import { ViewTransitions } from "next-view-transitions";
-import { ThemeProvider } from "@/components/theme/provider";
 import "./globals.css";
-import { Analytics } from "@vercel/analytics/next";
-import { Footer } from "@/components/footer";
-import { Header } from "@/components/header";
+import { ThemeProvider } from "@/app/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { Footer } from "./footer";
+import { Header } from "./header";
 
-const SITE_NAME = "Matt Bolaños";
-const SITE_DESCRIPTION = "Matt Bolaños' personal website";
-
-function getSiteUrl() {
-  const value =
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    process.env.VERCEL_PROJECT_PRODUCTION_URL ??
-    process.env.VERCEL_URL ??
-    "http://localhost:3000";
-
-  return value.startsWith("http") ? value : `https://${value}`;
-}
-
-const sora = Sora({
+const soraSans = Sora({
   subsets: ["latin"],
-  variable: "--font-sora",
+  variable: "--font-sans",
 });
 
 const geistMono = Geist_Mono({
@@ -32,26 +18,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  alternates: {
-    canonical: "/",
-  },
-  description: SITE_DESCRIPTION,
-  metadataBase: new URL(getSiteUrl()),
+  description: "Matt Bolaños' personal website",
+  metadataBase: new URL("https://mattbolanos.com"),
   openGraph: {
-    description: SITE_DESCRIPTION,
-    locale: "en_US",
-    siteName: SITE_NAME,
-    title: SITE_NAME,
+    description: "Matt Bolaños' personal website",
+    siteName: "Matt Bolaños' personal website",
+    title: "Matt Bolaños",
     type: "website",
-    url: "/",
+    url: "https://mattbolanos.com",
   },
-  title: SITE_NAME,
+  title: "Matt Bolaños",
   twitter: {
     card: "summary_large_image",
     creator: "@mattabolanos",
-    description: SITE_DESCRIPTION,
+    description: "Matt Bolaños' personal website",
     images: ["/opengraph-image.png"],
-    title: SITE_NAME,
+    title: "Matt Bolaños",
   },
 };
 
@@ -61,34 +43,32 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ViewTransitions>
-      <html
-        className={`${sora.variable} ${geistMono.variable} antialiased`}
-        lang="en"
-        suppressHydrationWarning
-      >
-        <head>
-          <meta content="mattbolanos" name="apple-mobile-web-app-title" />
-        </head>
-        <body>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            disableTransitionOnChange
-          >
-            <TooltipProvider>
-              <div className="m-auto max-w-2xl leading-relaxed">
-                <main className="min-h-screen overscroll-y-contain px-5 pt-8 pb-8 md:px-6 md:pt-12">
-                  <Header />
-                  {children}
-                  <Analytics />
-                </main>
-                <Footer />
-              </div>
-            </TooltipProvider>
-          </ThemeProvider>
-        </body>
-      </html>
-    </ViewTransitions>
+    <html
+      className={cn(
+        "antialiased",
+        soraSans.variable,
+        geistMono.variable,
+        "font-sans",
+      )}
+      lang="en"
+      suppressHydrationWarning
+    >
+      <body className="max-w-2xl m-auto leading-relaxed">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          disableTransitionOnChange
+          enableSystem
+        >
+          <TooltipProvider>
+            <main className="min-h-screen overscroll-y-contain px-5 pt-8 pb-8 md:px-6 md:pt-12">
+              <Header />
+              {children}
+            </main>
+            <Footer />
+          </TooltipProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }

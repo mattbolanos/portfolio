@@ -1,4 +1,4 @@
-export type HeatmapEntry = {
+type HeatmapEntry = {
   date: string;
   value: number;
 };
@@ -20,7 +20,7 @@ type HeatmapView = {
   weeks: HeatmapWeek[];
 };
 
-export type HeatmapConfig = {
+type HeatmapConfig = {
   colorVar: string;
   colorsByLevel?: readonly [string, string, string, string, string];
   formatDayTitle: (cell: HeatmapCell) => string;
@@ -30,7 +30,7 @@ export type HeatmapConfig = {
 
 const WEEKS_TO_SHOW = 52;
 
-export const DAY_LABELS = [
+const DAY_LABELS = [
   { key: "sun", label: "" },
   { key: "mon", label: "Mon" },
   { key: "tue", label: "" },
@@ -40,7 +40,7 @@ export const DAY_LABELS = [
   { key: "sat", label: "" },
 ] as const;
 
-export const COLOR_MIX_BY_LEVEL = [0, 30, 50, 75, 100] as const;
+const COLOR_MIX_BY_LEVEL = [0, 30, 50, 75, 100] as const;
 
 const MONTH_LABEL_MIN_WEEK_GAP = 3;
 const MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", { month: "short" });
@@ -57,17 +57,14 @@ const addDays = (date: Date, days: number): Date => {
 const startOfWeek = (date: Date): Date => addDays(date, -date.getDay());
 const endOfWeek = (date: Date): Date => addDays(date, 6 - date.getDay());
 
-export const toDateKey = (date: Date): string => {
+const toDateKey = (date: Date): string => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
 
-export const getLevel = (
-  value: number,
-  [min, max]: [number, number],
-): number => {
+const getLevel = (value: number, [min, max]: [number, number]): number => {
   if (value <= min || max <= min) {
     return 0;
   }
@@ -79,7 +76,7 @@ export const getLevel = (
   return Math.ceil(((value - min) / (max - min)) * 3);
 };
 
-export const buildMonthLabels = (
+const buildMonthLabels = (
   weeks: HeatmapWeek[],
 ): Array<{ label: string; weekIndex: number }> => {
   const monthLabels: Array<{ label: string; weekIndex: number }> = [];
@@ -109,7 +106,7 @@ export const buildMonthLabels = (
   return monthLabels;
 };
 
-export const buildHeatmapView = (
+const buildHeatmapView = (
   entries: HeatmapEntry[],
   weeksToShow = WEEKS_TO_SHOW,
 ): HeatmapView => {
@@ -148,4 +145,15 @@ export const buildHeatmapView = (
     totalValue: days.reduce((sum, day) => sum + day.value, 0),
     weeks,
   };
+};
+
+export {
+  buildHeatmapView,
+  buildMonthLabels,
+  COLOR_MIX_BY_LEVEL,
+  DAY_LABELS,
+  getLevel,
+  type HeatmapConfig,
+  type HeatmapEntry,
+  toDateKey,
 };

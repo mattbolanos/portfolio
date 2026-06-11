@@ -1,116 +1,122 @@
-import fs from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
 import { cache } from "react";
-import { z } from "zod";
 
-interface ProjectImage {
-  src: string;
-  width: number;
-  height?: number;
-}
-
-interface ProjectSupplementalLink {
+export interface SupplementalLink {
   href: string;
   label: string;
 }
 
 export interface Project {
-  name: string;
-  slug: string;
-  order: number;
-  description: string;
-  tags: string[];
-  githubUrl: string;
-  projectUrl?: string;
-  supplementalLinks?: ProjectSupplementalLink[];
-  imageUrl: string;
-  images?: ProjectImage[];
   content: string;
+  description?: string;
+  githubUrl?: string;
+  imageUrl: string;
+  images: ProjectImage[];
+  name: string;
+  order: number;
+  projectUrl?: string;
+  slug: string;
+  supplementalLinks: SupplementalLink[];
+  tags: string[];
 }
 
-interface TagLabelOverrides {
-  tag: string;
-  label: string;
+export interface ProjectImage {
+  height?: number;
+  src: string;
+  width: number;
 }
 
-const projectFrontmatterSchema = z.object({
-  description: z.string(),
-  githubUrl: z.url(),
-  images: z
-    .array(
-      z.object({
-        height: z.number().int().positive().optional(),
-        src: z.string(),
-        width: z.number().int().positive(),
-      }),
-    )
-    .optional(),
-  imageUrl: z.string(),
-  name: z.string(),
-  order: z.number().int().nonnegative(),
-  projectUrl: z.url().optional(),
-  slug: z.string(),
-  supplementalLinks: z
-    .array(
-      z.object({
-        href: z.url(),
-        label: z.string(),
-      }),
-    )
-    .optional(),
-  tags: z.array(z.string()).min(1),
-});
+const projectsDirectory = path.join(process.cwd(), "src/app/projects/content");
 
-const PROJECTS_DIRECTORY = path.join(process.cwd(), "src/content/projects");
-
-const PROJECT_TAG_LABEL_OVERRIDES: TagLabelOverrides[] = [
-  { label: "Next.js", tag: "next.js" },
-  {
-    label: "TypeScript",
-    tag: "typescript",
-  },
-];
-
-const loadProjects = cache(async (): Promise<Project[]> => {
-  const filenames = (await fs.readdir(PROJECTS_DIRECTORY))
-    .filter((filename) => filename.endsWith(".md"))
-    .sort();
+export const getProjects = cache(async (): Promise<Project[]> => {
+  const entries = await readdir(projectsDirectory, { withFileTypes: true });
+  const markdownFiles = entries.filter(
+    (entry) => entry.isFile() && entry.name.endsWith(".md"),
+  );
 
   const projects = await Promise.all(
-    filenames.map(async (filename) => {
-      const source = await fs.readFile(
-        path.join(PROJECTS_DIRECTORY, filename),
+    markdownFiles.map(async (file) => {
+      const slug = file.name.replace(/\.md$/, "");
+      const source = await readFile(
+        path.join(projectsDirectory, file.name),
         "utf8",
       );
-
       const { content, data } = matter(source);
-      const frontmatter = projectFrontmatterSchema.parse(data);
 
       return {
-        ...frontmatter,
-        content,
+        content: content.trim(),
+        description: optionalString(data.description),
+        githubUrl: optionalString(data.githubUrl),
+        images: projectImages(data.images),
+        imageUrl: optionalString(data.imageUrl) ?? "",
+        name: optionalString(data.name) ?? titleFromSlug(slug),
+        order: optionalNumber(data.order) ?? Number.MAX_SAFE_INTEGER,
+        projectUrl: optionalString(data.projectUrl),
+        slug: optionalString(data.slug) ?? slug,
+        supplementalLinks: supplementalLinks(data.supplementalLinks),
+        tags: stringArray(data.tags),
       };
     }),
   );
 
-  return projects.sort((projectA, projectB) => projectA.order - projectB.order);
+  return projects.sort(
+    (a, b) => a.order - b.order || a.name.localeCompare(b.name),
+  );
 });
 
-export async function getProjects() {
-  return loadProjects();
+function optionalNumber(value: unknown) {
+  return typeof value === "number" ? value : undefined;
 }
 
-export async function getProjectBySlug(slug: string) {
-  const projects = await loadProjects();
-  return projects.find((project) => project.slug === slug);
+function optionalString(value: unknown) {
+  return typeof value === "string" && value.length > 0 ? value : undefined;
 }
 
-export function formatTagLabel(tag: string): string {
-  const overrideLabel = PROJECT_TAG_LABEL_OVERRIDES.find(
-    (labels) => labels.tag === tag,
+function stringArray(value: unknown) {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
+}
+
+function supplementalLinks(value: unknown): SupplementalLink[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.filter(
+    (link): link is SupplementalLink =>
+      typeof link === "object" &&
+      link !== null &&
+      "href" in link &&
+      "label" in link &&
+      typeof link.href === "string" &&
+      typeof link.label === "string",
   );
+}
 
-  if (overrideLabel) return overrideLabel.label;
-  return tag.replace(/[-_]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+function projectImages(value: unknown): ProjectImage[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.filter(
+    (image): image is ProjectImage =>
+      typeof image === "object" &&
+      image !== null &&
+      "src" in image &&
+      "width" in image &&
+      typeof image.src === "string" &&
+      typeof image.width === "number" &&
+      (!("height" in image) || typeof image.height === "number"),
+  );
+}
+
+function titleFromSlug(slug: string) {
+  return slug
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }

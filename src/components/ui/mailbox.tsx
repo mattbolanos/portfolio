@@ -4,43 +4,44 @@ import type { Variants } from "motion/react";
 import { motion, useAnimation } from "motion/react";
 import type { HTMLAttributes } from "react";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
-
 import { cn } from "@/lib/utils";
 
-export interface LinkIconHandle {
+export interface MailboxIconHandle {
   startAnimation: () => void;
   stopAnimation: () => void;
 }
 
-interface LinkIconProps extends HTMLAttributes<HTMLDivElement> {
+interface MailboxIconProps extends HTMLAttributes<HTMLDivElement> {
   size?: number;
 }
 
-const PATH_VARIANTS: Variants = {
-  initial: { pathLength: 1, pathOffset: 0, rotate: 0 },
-  animate: {
-    pathLength: [1, 0.97, 1, 0.97, 1],
-    pathOffset: [0, 0.05, 0, 0.05, 0],
-    rotate: [0, -5, 0],
+const FLAG_VARIANTS: Variants = {
+  normal: {
+    rotate: 0,
     transition: {
-      rotate: {
-        duration: 0.5,
-      },
-      duration: 1,
-      times: [0, 0.2, 0.4, 0.6, 1],
-      ease: "easeInOut",
+      type: "spring",
+      stiffness: 300,
+      damping: 18,
+    },
+  },
+  animate: {
+    rotate: -90,
+    transition: {
+      type: "spring",
+      stiffness: 280,
+      damping: 12,
+      mass: 1,
     },
   },
 };
 
-const LinkIcon = forwardRef<LinkIconHandle, LinkIconProps>(
+const MailboxIcon = forwardRef<MailboxIconHandle, MailboxIconProps>(
   ({ onMouseEnter, onMouseLeave, className, size = 28, ...props }, ref) => {
     const controls = useAnimation();
     const isControlledRef = useRef(false);
 
     useImperativeHandle(ref, () => {
       isControlledRef.current = true;
-
       return {
         startAnimation: () => controls.start("animate"),
         stopAnimation: () => controls.start("normal"),
@@ -55,7 +56,7 @@ const LinkIcon = forwardRef<LinkIconHandle, LinkIconProps>(
           controls.start("animate");
         }
       },
-      [controls, onMouseEnter]
+      [controls, onMouseEnter],
     );
 
     const handleMouseLeave = useCallback(
@@ -66,8 +67,9 @@ const LinkIcon = forwardRef<LinkIconHandle, LinkIconProps>(
           controls.start("normal");
         }
       },
-      [controls, onMouseLeave]
+      [controls, onMouseLeave],
     );
+
     return (
       <div
         className={cn(className)}
@@ -76,6 +78,7 @@ const LinkIcon = forwardRef<LinkIconHandle, LinkIconProps>(
         {...props}
       >
         <svg
+          className="overflow-visible"
           fill="none"
           height={size}
           stroke="currentColor"
@@ -86,22 +89,22 @@ const LinkIcon = forwardRef<LinkIconHandle, LinkIconProps>(
           width={size}
           xmlns="http://www.w3.org/2000/svg"
         >
+          <path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z" />
           <motion.path
             animate={controls}
-            d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
-            variants={PATH_VARIANTS}
+            d="M18 11V9H15"
+            initial="normal"
+            style={{ transformOrigin: "18px 11px" }}
+            variants={FLAG_VARIANTS}
           />
-          <motion.path
-            animate={controls}
-            d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
-            variants={PATH_VARIANTS}
-          />
+          <path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2" />
+          <line x1="6" x2="7" y1="10" y2="10" />
         </svg>
       </div>
     );
-  }
+  },
 );
 
-LinkIcon.displayName = "LinkIcon";
+MailboxIcon.displayName = "MailboxIcon";
 
-export { LinkIcon };
+export { MailboxIcon };

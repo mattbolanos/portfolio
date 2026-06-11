@@ -2,10 +2,10 @@
 
 import { MountainIcon, RunningShoesIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { RoutePreview } from "@/components/strava/route-preview";
+import { RunRoute } from "@/components/strava/run-route";
 import type { GetActivitiesResult } from "@/lib/api/strava";
 
-type RecentRun = GetActivitiesResult["runActivities"][number];
+type RecentRun = GetActivitiesResult["latestRuns"][number];
 
 const ACTIVITY_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
   day: "numeric",
@@ -27,23 +27,19 @@ const FEET_PER_METER = 3.28084;
 const toMiles = (meters: number): number => meters / METERS_PER_MILE;
 const toFeet = (meters: number): number => meters * FEET_PER_METER;
 
-interface ActivityCardProps {
+interface RunCardProps {
   index: number;
   replayNonce: number;
   run: RecentRun;
 }
 
-export const ActivityCard = ({
-  index,
-  replayNonce,
-  run,
-}: ActivityCardProps) => {
+export const RunCard = ({ index, replayNonce, run }: RunCardProps) => {
   return (
     <article
       className="bg-card ring-foreground/6 hover:ring-foreground/10 relative flex items-center gap-1.5 rounded-lg px-2 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3 sm:px-2.5"
       key={run.id}
     >
-      <RoutePreview
+      <RunRoute
         animationDelay={index * 0.1}
         replayNonce={replayNonce}
         runName={run.name}
@@ -64,7 +60,7 @@ export const ActivityCard = ({
       </div>
 
       <div className="text-muted-foreground flex flex-col items-end text-[10px] sm:flex-row sm:items-center sm:gap-2.5 sm:text-xs">
-        <span className="flex items-center gap-[3px] tabular-nums sm:gap-1">
+        <span className="flex items-center gap-0.75 tabular-nums sm:gap-1">
           <HugeiconsIcon
             className="hidden size-5 sm:block"
             icon={RunningShoesIcon}
@@ -74,7 +70,7 @@ export const ActivityCard = ({
           </span>
           <span className="font-mono tracking-tight">mi</span>
         </span>
-        <span className="flex items-center gap-[3px] tabular-nums sm:gap-1">
+        <span className="flex items-center gap-0.75 tabular-nums sm:gap-1">
           <HugeiconsIcon
             className="hidden size-5 sm:block"
             icon={MountainIcon}
