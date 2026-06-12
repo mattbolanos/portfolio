@@ -10,7 +10,7 @@ const REQUEST_TIMEOUT_MS = 10_000;
 const MAX_RETRY_DELAY_MS = 8_000;
 const GITHUB_GRAPHQL_ENDPOINT = "https://api.github.com/graphql";
 const GITHUB_REST_ENDPOINT = "https://api.github.com";
-const GITHUB_CACHE_REVALIDATE_SECONDS = 6 * 60 * 60;
+const GITHUB_CACHE_REVALIDATE_SECONDS = 24 * 60 * 60;
 const GITHUB_LOOKBACK_DAYS = 366;
 const GITHUB_LOGIN = "mattbolanos";
 
@@ -18,6 +18,14 @@ type JsonResponse = {
   payload: unknown | null;
   status: number;
 };
+
+type CacheEntry<T> = {
+  expiresAt: number;
+  inFlight: Promise<T | null> | null;
+  value: T | null;
+};
+
+const githubCache = new Map<string, CacheEntry<unknown>>();
 
 const CONTRIBUTIONS_QUERY = `
   query UserContributions($login: String!, $from: DateTime!, $to: DateTime!) {
@@ -129,6 +137,53 @@ const parseRetryAfterMs = (retryAfterHeader: string | null): number | null => {
 const getBackoffDelayMs = (attempt: number): number =>
   Math.min(250 * 2 ** attempt, MAX_RETRY_DELAY_MS);
 
+const getCachedGithubValue = async <T>(
+  key: string,
+  load: () => Promise<T | null>,
+): Promise<T | null> => {
+  const cached = githubCache.get(key) as CacheEntry<T> | undefined;
+  const now = Date.now();
+
+  if (cached && cached.value !== null && cached.expiresAt > now) {
+    return cached.value;
+  }
+
+  if (cached?.inFlight) {
+    return cached.inFlight;
+  }
+
+  const inFlight = load()
+    .then((value) => {
+      if (value !== null) {
+        githubCache.set(key, {
+          expiresAt: Date.now() + GITHUB_CACHE_REVALIDATE_SECONDS * 1_000,
+          inFlight: null,
+          value,
+        });
+      } else if (!cached?.value) {
+        githubCache.delete(key);
+      }
+
+      return value ?? cached?.value ?? null;
+    })
+    .catch(() => cached?.value ?? null)
+    .finally(() => {
+      const latest = githubCache.get(key);
+
+      if (latest?.inFlight === inFlight) {
+        latest.inFlight = null;
+      }
+    });
+
+  githubCache.set(key, {
+    expiresAt: cached?.expiresAt ?? 0,
+    inFlight,
+    value: cached?.value ?? null,
+  });
+
+  return inFlight;
+};
+
 const fetchJsonResponseWithRetry = async (
   url: string,
   init: RequestInit,
@@ -224,8 +279,9 @@ const getGithubHeaders = (requiresToken = true): HeadersInit | null => {
 
 const getContributionWindow = (): { from: string; to: string } => {
   const to = new Date();
+  to.setUTCHours(0, 0, 0, 0);
+
   const from = new Date(to);
-  from.setUTCHours(0, 0, 0, 0);
   from.setUTCDate(to.getUTCDate() - GITHUB_LOOKBACK_DAYS);
 
   return { from: from.toISOString(), to: to.toISOString() };
@@ -249,6 +305,12 @@ const getRepoPushedAt = async (githubUrl: string): Promise<string | null> => {
     return null;
   }
 
+  return getCachedGithubValue(`repo-pushed-at:${repo.toLowerCase()}`, () =>
+    fetchRepoPushedAt(repo),
+  );
+};
+
+const fetchRepoPushedAt = async (repo: string): Promise<string | null> => {
   const headers = getGithubHeaders(false);
   const response = await fetchJsonResponseWithRetry(
     `${GITHUB_REST_ENDPOINT}/repos/${repo}`,
@@ -420,11 +482,22 @@ const fetchGithubRepoContributions = async (
 };
 
 const getGithubContributions = async (): Promise<HeatmapEntry[]> =>
-  (await fetchGithubContributions()) ?? [];
+  (await getCachedGithubValue("contributions", fetchGithubContributions)) ?? [];
 
 const getGithubRepoContributions = async (
   githubUrl: string,
-): Promise<HeatmapEntry[]> =>
-  (await fetchGithubRepoContributions(githubUrl)) ?? [];
+): Promise<HeatmapEntry[]> => {
+  const repoNameWithOwner = parseGithubRepo(githubUrl)?.toLowerCase();
+
+  if (!repoNameWithOwner) {
+    return [];
+  }
+
+  return (
+    (await getCachedGithubValue(`repo-contributions:${repoNameWithOwner}`, () =>
+      fetchGithubRepoContributions(githubUrl),
+    )) ?? []
+  );
+};
 
 export { getGithubContributions, getGithubRepoContributions, getRepoPushedAt };
