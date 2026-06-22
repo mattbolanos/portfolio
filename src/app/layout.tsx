@@ -53,7 +53,7 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
     >
-      <body className="max-w-2xl m-auto leading-relaxed">
+      <body className="m-auto max-w-2xl leading-relaxed">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

@@ -22,7 +22,7 @@ const experienceEntries: ExperienceEntry[] = [
       "Building internal software to influence front office decisions.",
     endDate: "Present",
     imageUrl: "/gsw.svg",
-    role: "Full Stack Development",
+    role: "Basketball Analytics & Innovation",
     startDate: "Oct 2023",
   },
   {
@@ -88,7 +88,7 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
         <h3 className="text-sm leading-none font-normal sm:text-base">
           {entry.company}
         </h3>
-        <p className="text-muted-foreground inline-flex flex-wrap items-center text-xs tracking-wide">
+        <p className="text-muted-foreground hidden flex-wrap items-center text-xs tracking-wide sm:inline-flex">
           {entry.role} • {entry.startDate}
           <HugeiconsIcon
             className="size-3 w-4.5"
@@ -96,6 +96,18 @@ function ExperienceItem({ entry }: { entry: ExperienceEntry }) {
             strokeWidth={2}
           />
           {entry.endDate}
+        </p>
+        <p className="text-muted-foreground text-xs text-[11px] tracking-wide sm:hidden">
+          <span>{entry.role}</span>
+          <span className="flex items-center">
+            {entry.startDate}{" "}
+            <HugeiconsIcon
+              className="size-3 w-4.5"
+              icon={ArrowRight02Icon}
+              strokeWidth={2}
+            />{" "}
+            {entry.endDate}
+          </span>
         </p>
         <p className="text-xs sm:text-sm">{entry.description}</p>
       </div>
