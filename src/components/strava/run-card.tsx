@@ -28,7 +28,7 @@ const toMiles = (meters: number): number => meters / METERS_PER_MILE;
 const toFeet = (meters: number): number => meters * FEET_PER_METER;
 
 const getRunTitle = (startDateLocal: string): string => {
-  const hour = new Date(startDateLocal).getHours();
+  const hour = Number.parseInt(startDateLocal.slice(11, 13), 10);
 
   if (hour < 12) return "Morning Run";
   if (hour < 17) return "Afternoon Run";
