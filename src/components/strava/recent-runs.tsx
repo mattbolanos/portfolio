@@ -31,7 +31,7 @@ export const RecentRuns = ({ runs }: RecentRunsProps) => {
       {hasAnyRoute && (
         <Button className="mt-1.5 w-full rounded-lg" onClick={handleReplay}>
           <HugeiconsIcon className="size-5" icon={ReplayIcon} />
-          Replay
+          Play
         </Button>
       )}
       {runs.map((run, index) => (
