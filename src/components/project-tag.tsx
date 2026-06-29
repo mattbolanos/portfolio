@@ -46,6 +46,7 @@ export const ProjectTag = ({
         alt={label}
         className={styles.icon}
         height={16}
+        loading="eager"
         src={`/stack/${tag}.svg`}
         width={16}
       />
