@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import {
   PROJECT_TRANSITION_SHARE,
   projectTransitionName,
-} from "@/app/project-transitions";
+} from "@/app/project-transition-names";
 import { ProjectTag } from "@/components/project-tag";
 import { ResponsiveViewTransition } from "@/components/responsive-view-transition";
 import { Skeleton } from "@/components/ui/skeleton";

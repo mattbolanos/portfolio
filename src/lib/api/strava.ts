@@ -526,8 +526,8 @@ const fetchActivities = async ({
       value: metersToMiles(distanceMeters),
     }));
 
-  const latestRuns = [...runActivities]
-    .sort(
+  const latestRuns = runActivities
+    .toSorted(
       (runA, runB) =>
         new Date(runB.start_date_local).getTime() -
         new Date(runA.start_date_local).getTime(),
