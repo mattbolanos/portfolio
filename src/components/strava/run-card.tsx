@@ -27,6 +27,15 @@ const FEET_PER_METER = 3.28084;
 const toMiles = (meters: number): number => meters / METERS_PER_MILE;
 const toFeet = (meters: number): number => meters * FEET_PER_METER;
 
+const getRunTitle = (startDateLocal: string): string => {
+  const hour = new Date(startDateLocal).getHours();
+
+  if (hour < 12) return "Morning Run";
+  if (hour < 17) return "Afternoon Run";
+
+  return "Evening Run";
+};
+
 interface RunCardProps {
   index: number;
   replayNonce: number;
@@ -34,6 +43,8 @@ interface RunCardProps {
 }
 
 export const RunCard = ({ index, replayNonce, run }: RunCardProps) => {
+  const runTitle = getRunTitle(run.start_date_local);
+
   return (
     <article
       className="bg-card ring-foreground/6 hover:ring-foreground/10 relative flex items-center gap-1.5 rounded-lg px-2 py-2 ring-1 transition-shadow duration-200 ease-out sm:gap-3 sm:px-2.5"
@@ -42,13 +53,13 @@ export const RunCard = ({ index, replayNonce, run }: RunCardProps) => {
       <RunRoute
         animationDelay={index * 0.1}
         replayNonce={replayNonce}
-        runName={run.name}
+        runName={runTitle}
         summaryPolyline={run.map?.summary_polyline}
       />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <p className="truncate text-xs leading-snug font-medium sm:text-sm">
-          {run.name}
+          {runTitle}
         </p>
         <time
           className="text-muted-foreground text-[10px] tabular-nums sm:text-xs"

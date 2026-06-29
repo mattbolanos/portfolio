@@ -1,7 +1,7 @@
 "use client";
 
 import type { Variants } from "motion/react";
-import { motion, useAnimation } from "motion/react";
+import { domAnimation, LazyMotion, m, useAnimation } from "motion/react";
 import type { HTMLAttributes } from "react";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 
@@ -75,28 +75,30 @@ const LinkIcon = forwardRef<LinkIconHandle, LinkIconProps>(
         onMouseLeave={handleMouseLeave}
         {...props}
       >
-        <svg
-          fill="none"
-          height={size}
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-          width={size}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <motion.path
-            animate={controls}
-            d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
-            variants={PATH_VARIANTS}
-          />
-          <motion.path
-            animate={controls}
-            d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
-            variants={PATH_VARIANTS}
-          />
-        </svg>
+        <LazyMotion features={domAnimation}>
+          <svg
+            fill="none"
+            height={size}
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            width={size}
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <m.path
+              animate={controls}
+              d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+              variants={PATH_VARIANTS}
+            />
+            <m.path
+              animate={controls}
+              d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+              variants={PATH_VARIANTS}
+            />
+          </svg>
+        </LazyMotion>
       </div>
     );
   }

@@ -16,8 +16,7 @@ const WEEKS_TO_SHOW = 36;
 export async function generateMetadata({
   params,
 }: PageProps<"/projects/[slug]">): Promise<Metadata> {
-  const { slug } = await params;
-  const projects = await getProjects();
+  const [{ slug }, projects] = await Promise.all([params, getProjects()]);
   const project = projects.find((p) => p.slug === slug);
   if (!project) return {};
 
@@ -30,8 +29,7 @@ export async function generateMetadata({
 export default async function ProjectPage({
   params,
 }: PageProps<"/projects/[slug]">) {
-  const { slug } = await params;
-  const projects = await getProjects();
+  const [{ slug }, projects] = await Promise.all([params, getProjects()]);
   const project = projects.find((p) => p.slug === slug);
 
   if (!project) {

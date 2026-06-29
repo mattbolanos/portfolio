@@ -4,7 +4,7 @@ import Link from "next/link";
 import {
   PROJECT_TRANSITION_SHARE,
   projectTransitionName,
-} from "@/app/project-transitions";
+} from "@/app/project-transition-names";
 import { ProjectTag } from "@/components/project-tag";
 import { ResponsiveViewTransition } from "@/components/responsive-view-transition";
 import { getProjects } from "@/lib/projects";
