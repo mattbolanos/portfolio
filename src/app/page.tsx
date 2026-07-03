@@ -22,8 +22,6 @@ export default function Home() {
     <ProjectPageTransition>
       <div className="space-y-10">
         <Intro />
-        <Projects />
-        <Experience />
         <section className="space-y-3">
           <h2>Running</h2>
           <div className="heatmap-container">
@@ -32,6 +30,8 @@ export default function Home() {
             </Suspense>
           </div>
         </section>
+        <Projects />
+        <Experience />
         <section className="space-y-3">
           <h2>Coding</h2>
           <div className="heatmap-container">
@@ -40,7 +40,6 @@ export default function Home() {
             </Suspense>
           </div>
         </section>
-
         <Contact />
       </div>
     </ProjectPageTransition>
