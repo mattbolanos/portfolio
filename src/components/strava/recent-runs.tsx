@@ -27,13 +27,7 @@ export const RecentRuns = ({ runs }: RecentRunsProps) => {
   };
 
   return (
-    <div className="space-y-1.5">
-      {hasAnyRoute && (
-        <Button className="mt-1.5 w-full rounded-lg" onClick={handleReplay}>
-          <HugeiconsIcon className="size-5" icon={ReplayIcon} />
-          Play
-        </Button>
-      )}
+    <div className="mt-1.5 space-y-1.5">
       {runs.map((run, index) => (
         <RunCard
           index={index}
@@ -42,6 +36,12 @@ export const RecentRuns = ({ runs }: RecentRunsProps) => {
           run={run}
         />
       ))}
+      {hasAnyRoute && (
+        <Button className="w-full rounded-lg shadow-2xl" onClick={handleReplay}>
+          <HugeiconsIcon className="size-5" icon={ReplayIcon} />
+          <span>Replay</span>
+        </Button>
+      )}
     </div>
   );
 };
