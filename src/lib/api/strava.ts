@@ -1,3 +1,4 @@
+import { cacheLife, cacheTag } from "next/cache";
 import type { HeatmapEntry } from "@/lib/heatmap";
 import {
   StravaActivitiesSchema,
@@ -544,6 +545,10 @@ export const getActivities = async ({
   maxPages,
   perPage = DEFAULT_ACTIVITIES_PER_PAGE,
 }: GetActivitiesOptions = {}): Promise<GetActivitiesResult> => {
+  "use cache";
+  cacheLife("days");
+  cacheTag("strava-activities");
+
   const normalizedMaxPages = normalizeMaxPages(maxPages);
   const normalizedPerPage = normalizePerPage(perPage);
   const lookbackStart = getLookbackStart();

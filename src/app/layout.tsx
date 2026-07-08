@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist_Mono, Sora } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/app/theme-provider";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { Footer } from "./footer";
 import { Header } from "./header";
@@ -60,13 +59,11 @@ export default function RootLayout({
           disableTransitionOnChange
           enableSystem
         >
-          <TooltipProvider>
-            <main className="min-h-screen overscroll-y-contain px-5 pt-8 pb-8 md:px-6 md:pt-12">
-              <Header />
-              {children}
-            </main>
-            <Footer />
-          </TooltipProvider>
+          <main className="min-h-screen overscroll-y-contain px-5 pt-8 pb-8 md:px-6 md:pt-12">
+            <Header />
+            {children}
+          </main>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
