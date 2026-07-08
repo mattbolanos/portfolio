@@ -1,7 +1,7 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
-import { cache } from "react";
+import { cacheLife, cacheTag } from "next/cache";
 
 export interface SupplementalLink {
   href: string;
@@ -30,7 +30,11 @@ export interface ProjectImage {
 
 const projectsDirectory = path.join(process.cwd(), "src/app/projects/content");
 
-export const getProjects = cache(async (): Promise<Project[]> => {
+export async function getProjects(): Promise<Project[]> {
+  "use cache";
+  cacheLife("max");
+  cacheTag("projects");
+
   const entries = await readdir(projectsDirectory, { withFileTypes: true });
   const markdownFiles = entries.filter(
     (entry) => entry.isFile() && entry.name.endsWith(".md"),
@@ -64,7 +68,7 @@ export const getProjects = cache(async (): Promise<Project[]> => {
   return projects.sort(
     (a, b) => a.order - b.order || a.name.localeCompare(b.name),
   );
-});
+}
 
 function optionalNumber(value: unknown) {
   return typeof value === "number" ? value : undefined;

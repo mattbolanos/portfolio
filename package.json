@@ -33,12 +33,12 @@
     "unrs-resolver"
   ],
   "name": "portfolio",
-  "private": true,
   "prettier": {
     "plugins": [
       "prettier-plugin-tailwindcss"
     ]
   },
+  "private": true,
   "scripts": {
     "build": "next build",
     "dev": "next dev",

@@ -1,3 +1,4 @@
+import { cacheLife, cacheTag } from "next/cache";
 import type { HeatmapEntry } from "@/lib/heatmap";
 import {
   GithubContributionsQuerySchema,
@@ -299,11 +300,16 @@ const incrementContributionCount = (
 };
 
 const getRepoPushedAt = async (githubUrl: string): Promise<string | null> => {
+  "use cache";
+  cacheLife("days");
+
   const repo = parseGithubRepo(githubUrl);
 
   if (!repo) {
     return null;
   }
+
+  cacheTag("github-repo-pushed-at", `github-repo-pushed-at:${repo}`);
 
   return getCachedGithubValue(`repo-pushed-at:${repo.toLowerCase()}`, () =>
     fetchRepoPushedAt(repo),
@@ -481,17 +487,33 @@ const fetchGithubRepoContributions = async (
     .toSorted((dayA, dayB) => dayA.date.localeCompare(dayB.date));
 };
 
-const getGithubContributions = async (): Promise<HeatmapEntry[]> =>
-  (await getCachedGithubValue("contributions", fetchGithubContributions)) ?? [];
+const getGithubContributions = async (): Promise<HeatmapEntry[]> => {
+  "use cache";
+  cacheLife("days");
+  cacheTag("github-contributions");
+
+  return (
+    (await getCachedGithubValue("contributions", fetchGithubContributions)) ??
+    []
+  );
+};
 
 const getGithubRepoContributions = async (
   githubUrl: string,
 ): Promise<HeatmapEntry[]> => {
+  "use cache";
+  cacheLife("days");
+
   const repoNameWithOwner = parseGithubRepo(githubUrl)?.toLowerCase();
 
   if (!repoNameWithOwner) {
     return [];
   }
+
+  cacheTag(
+    "github-repo-contributions",
+    `github-repo-contributions:${repoNameWithOwner}`,
+  );
 
   return (
     (await getCachedGithubValue(`repo-contributions:${repoNameWithOwner}`, () =>

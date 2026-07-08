@@ -3,7 +3,7 @@ type LatLng = readonly [number, number];
 const ROUTE_PREVIEW_SIZE = 52;
 const ROUTE_PREVIEW_PADDING = 5;
 const ROUTE_COORD_PRECISION = 1;
-const ROUTE_MIN_POINT_DISTANCE = 0.35;
+const ROUTE_MIN_POINT_DISTANCE = 0.6;
 const MAX_ROUTE_PATH_CACHE_ENTRIES = 100;
 
 const ROUTE_ANIM = {
@@ -81,6 +81,22 @@ const decodePolyline = (encoded: string): DecodedRoute | null => {
 
 const formatRouteCoord = (value: number) =>
   value.toFixed(ROUTE_COORD_PRECISION);
+
+const getRouteHash = (value: string): string => {
+  let hash = 5381;
+
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 33) ^ value.charCodeAt(index);
+  }
+
+  return (hash >>> 0).toString(36);
+};
+
+const toSvgIdPart = (value: string): string =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "route";
 
 const toRoutePath = ({
   maxLat,
@@ -223,6 +239,7 @@ export const RunRoute = ({
   const uid = runName.replace(/\s+/g, "-");
   const drawDelay =
     replayNonce > 0 ? 0 : animationDelay + ROUTE_ANIM.drawOffset;
+  const routeId = `route-${toSvgIdPart(uid)}-${getRouteHash(summaryPolyline)}`;
   const gradientId = `rg-${uid}`;
   const glowId = `rglow-${uid}`;
   const dotGlowId = `dglow-${uid}`;
@@ -258,6 +275,7 @@ export const RunRoute = ({
           <filter id={dotGlowId}>
             <feGaussianBlur in="SourceGraphic" stdDeviation="2" />
           </filter>
+          <path d={routePath} id={routeId} />
         </defs>
 
         {/* Terrain contours */}
@@ -273,9 +291,9 @@ export const RunRoute = ({
         />
 
         {/* Ghost/shadow path */}
-        <path
-          d={routePath}
+        <use
           fill="none"
+          href={`#${routeId}`}
           opacity="0.1"
           stroke="oklch(0.3 0.05 145)"
           strokeLinecap="round"
@@ -284,10 +302,10 @@ export const RunRoute = ({
         />
 
         {/* Glow trail */}
-        <path
-          d={routePath}
+        <use
           fill="none"
           filter={`url(#${glowId})`}
+          href={`#${routeId}`}
           opacity={0.5}
           pathLength={1}
           stroke={`url(#${gradientId})`}
@@ -315,12 +333,12 @@ export const RunRoute = ({
             keyTimes="0;0.8;1"
             values="0.5;0.45;0.2"
           />
-        </path>
+        </use>
 
         {/* Main path stroke */}
-        <path
-          d={routePath}
+        <use
           fill="none"
+          href={`#${routeId}`}
           pathLength={1}
           stroke={`url(#${gradientId})`}
           strokeDasharray={1}
@@ -339,7 +357,7 @@ export const RunRoute = ({
             keyTimes="0;1"
             values="1;0"
           />
-        </path>
+        </use>
 
         {/* Runner dot glow */}
         <circle
@@ -355,8 +373,9 @@ export const RunRoute = ({
             fill="freeze"
             keySplines={ROUTE_ANIM.spline}
             keyTimes="0;1"
-            path={routePath}
-          />
+          >
+            <mpath href={`#${routeId}`} />
+          </animateMotion>
           <animate
             attributeName="opacity"
             begin={`${drawDelay}s`}
@@ -376,8 +395,9 @@ export const RunRoute = ({
             fill="freeze"
             keySplines={ROUTE_ANIM.spline}
             keyTimes="0;1"
-            path={routePath}
-          />
+          >
+            <mpath href={`#${routeId}`} />
+          </animateMotion>
           <animate
             attributeName="opacity"
             begin={`${drawDelay}s`}
@@ -405,8 +425,9 @@ export const RunRoute = ({
             fill="freeze"
             keySplines={ROUTE_ANIM.spline}
             keyTimes="0;1"
-            path={routePath}
-          />
+          >
+            <mpath href={`#${routeId}`} />
+          </animateMotion>
           <animate
             attributeName="opacity"
             begin={`${drawDelay}s`}

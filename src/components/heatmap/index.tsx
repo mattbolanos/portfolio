@@ -1,11 +1,4 @@
-"use client";
-
-import * as React from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { cacheLife } from "next/cache";
 import {
   buildHeatmapView,
   buildMonthLabels,
@@ -31,46 +24,25 @@ const tileColor = (config: HeatmapConfig, level: number): string =>
     ? `var(${config.colorsByLevel[level]})`
     : `color-mix(in oklch, var(${config.colorVar}) ${COLOR_MIX_BY_LEVEL[level]}%, var(--empty))`;
 
-export const Heatmap = ({
+export const Heatmap = async ({
   configId,
   data,
   summaryRangeLabel,
   weeksToShow,
 }: HeatmapProps) => {
+  "use cache";
+  cacheLife("days");
+
   const config = getHeatmapConfig(configId);
-  const view = React.useMemo(
-    () => buildHeatmapView(data, weeksToShow),
-    [data, weeksToShow],
+  const view = buildHeatmapView(data, weeksToShow);
+  const monthLabels = buildMonthLabels(view.weeks);
+  const labels = new Map(
+    monthLabels.map((monthLabel) => [monthLabel.weekIndex, monthLabel.label]),
   );
-  const monthLabels = React.useMemo(
-    () => buildMonthLabels(view.weeks),
-    [view.weeks],
-  );
-  const monthLabelsByWeek = React.useMemo(() => {
-    const labels = new Map(
-      monthLabels.map((monthLabel) => [monthLabel.weekIndex, monthLabel.label]),
-    );
-
-    return view.weeks.map((week, weekIndex) => ({
-      label: labels.get(weekIndex) ?? "",
-      weekKey: toDateKey(week.start),
-    }));
-  }, [monthLabels, view.weeks]);
-  const [isScrolling, setIsScrolling] = React.useState(false);
-  const scrollTimeoutRef = React.useRef<number | null>(null);
-
-  const handleHeatmapScroll = React.useCallback(() => {
-    setIsScrolling(true);
-
-    if (scrollTimeoutRef.current !== null) {
-      window.clearTimeout(scrollTimeoutRef.current);
-    }
-
-    scrollTimeoutRef.current = window.setTimeout(() => {
-      setIsScrolling(false);
-      scrollTimeoutRef.current = null;
-    }, 100);
-  }, []);
+  const monthLabelsByWeek = view.weeks.map((week, weekIndex) => ({
+    label: labels.get(weekIndex) ?? "",
+    weekKey: toDateKey(week.start),
+  }));
 
   return (
     <article className="bg-card rounded-lg p-3 sm:p-4">
@@ -83,10 +55,7 @@ export const Heatmap = ({
           ))}
         </div>
 
-        <div
-          className="overflow-x-auto overflow-y-visible"
-          onScroll={handleHeatmapScroll}
-        >
+        <div className="overflow-x-auto overflow-y-visible">
           <div className="inline-block min-w-max pr-6 pb-1">
             <div className="text-muted-foreground mb-2 grid h-4 auto-cols-(--heatmap-tile-step) grid-flow-col text-xs">
               {monthLabelsByWeek.map((monthLabelByWeek) => (
@@ -105,38 +74,20 @@ export const Heatmap = ({
                   const isFuture = day.date > view.today;
                   const level = getLevel(day.value, config.range);
                   const bg = tileColor(config, level);
+                  const dayTitle = config.formatDayTitle(day);
 
                   return (
-                    <React.Fragment key={toDateKey(day.date)}>
-                      {isFuture ? (
-                        <div className="bg-muted rounded-tile size-tile hidden cursor-not-allowed opacity-50 sm:block dark:opacity-20" />
-                      ) : (
-                        <Tooltip disableHoverablePopup>
-                          <TooltipTrigger
-                            className={cn(
-                              "size-tile hidden sm:inline-flex",
-                              isScrolling ? "pointer-events-none" : "",
-                            )}
-                          >
-                            <div
-                              className="rounded-tile size-tile transition-opacity duration-150 hover:opacity-85"
-                              style={{ backgroundColor: bg }}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            {config.formatDayTitle(day)}
-                          </TooltipContent>
-                        </Tooltip>
+                    <div
+                      className={cn(
+                        "rounded-tile size-tile",
+                        isFuture
+                          ? "bg-muted cursor-not-allowed opacity-50 dark:opacity-20"
+                          : "transition-opacity duration-150 hover:opacity-85",
                       )}
-                      <div
-                        className={
-                          isFuture
-                            ? "bg-muted rounded-tile size-tile cursor-not-allowed opacity-50 sm:hidden dark:opacity-20"
-                            : "rounded-tile size-tile transition-opacity duration-150 hover:opacity-85 sm:hidden"
-                        }
-                        style={isFuture ? undefined : { backgroundColor: bg }}
-                      />
-                    </React.Fragment>
+                      key={toDateKey(day.date)}
+                      style={isFuture ? undefined : { backgroundColor: bg }}
+                      title={isFuture ? undefined : dayTitle}
+                    />
                   );
                 }),
               )}
