@@ -55,9 +55,8 @@ export default function RootLayout({
       <body className="m-auto max-w-2xl leading-relaxed">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           disableTransitionOnChange
-          enableSystem
         >
           <main className="min-h-screen overscroll-y-contain px-5 pt-8 pb-8 md:px-6 md:pt-12">
             <Header />
