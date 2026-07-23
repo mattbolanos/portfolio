@@ -53,11 +53,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="m-auto max-w-2xl leading-relaxed">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          disableTransitionOnChange
-        >
+        <ThemeProvider>
           <main className="min-h-screen overscroll-y-contain px-5 pt-8 pb-8 md:px-6 md:pt-12">
             <Header />
             {children}

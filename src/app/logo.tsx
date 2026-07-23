@@ -11,7 +11,7 @@ export function Logo() {
       {pathname === "/" ? (
         <h1 className="cursor-default">Matt Bolaños</h1>
       ) : (
-        <Link href="/" prefetch transitionTypes={["nav-back"]}>
+        <Link href="/" transitionTypes={["nav-back"]}>
           <h1>Matt Bolaños</h1>
         </Link>
       )}

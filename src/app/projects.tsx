@@ -50,7 +50,6 @@ export async function Projects() {
                   <Link
                     className="text-link"
                     href={`/projects/${project.slug}` as Route}
-                    prefetch
                     transitionTypes={["nav-forward"]}
                   >
                     {project.name}
