@@ -366,7 +366,6 @@ p {
 ::view-transition-old(root) {
   animation: none;
   mix-blend-mode: normal;
-  opacity: 0;
 }
 
 /* biome-ignore lint/correctness/noUnknownTypeSelector: root is the native View Transition snapshot name. */
