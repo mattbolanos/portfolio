@@ -16,6 +16,31 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
 });
 
+const themeBootstrapScript = `
+(() => {
+  try {
+    const root = document.documentElement;
+    const storedTheme = localStorage.getItem("theme");
+    const theme =
+      storedTheme === "light" ||
+      storedTheme === "dark" ||
+      storedTheme === "system"
+        ? storedTheme
+        : "dark";
+    const resolvedTheme =
+      theme === "system"
+        ? window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light"
+        : theme;
+
+    root.classList.remove("light", "dark");
+    root.classList.add(resolvedTheme);
+    root.style.colorScheme = resolvedTheme;
+  } catch {}
+})();
+`;
+
 export const metadata: Metadata = {
   description: "Matt Bolaños' personal website",
   metadataBase: new URL("https://mattbolanos.com"),
@@ -52,6 +77,12 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
     >
+      <head>
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: The theme must be resolved before the streamed body can paint.
+          dangerouslySetInnerHTML={{ __html: themeBootstrapScript }}
+        />
+      </head>
       <body className="m-auto max-w-2xl leading-relaxed">
         <ThemeProvider>
           <main className="min-h-screen overscroll-y-contain px-5 pt-8 pb-8 md:px-6 md:pt-12">
