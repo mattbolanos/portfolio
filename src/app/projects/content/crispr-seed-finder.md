@@ -10,6 +10,13 @@ tags:
 githubUrl: "https://github.com/mattbolanos/crispr-seed-finder"
 projectUrl: "https://crispr-seed-finder.vercel.app"
 imageUrl: "crispr-seed-finder/crispr-seed.png"
+images:
+  - src: "/projects/crispr-seed-finder/app-1.png"
+    width: 1200
+    height: 1153
+  - src: "/projects/crispr-seed-finder/app-2.png"
+    width: 1200
+    height: 1153
 supplementalLinks:
   - label: "Preprint"
     href: "https://www.biorxiv.org/content/10.64898/2026.03.27.714658v2"
