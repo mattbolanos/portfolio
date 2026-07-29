@@ -16,30 +16,8 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
 });
 
-const themeBootstrapScript = `
-(() => {
-  try {
-    const root = document.documentElement;
-    const storedTheme = localStorage.getItem("theme");
-    const theme =
-      storedTheme === "light" ||
-      storedTheme === "dark" ||
-      storedTheme === "system"
-        ? storedTheme
-        : "dark";
-    const resolvedTheme =
-      theme === "system"
-        ? window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light"
-        : theme;
-
-    root.classList.remove("light", "dark");
-    root.classList.add(resolvedTheme);
-    root.style.colorScheme = resolvedTheme;
-  } catch {}
-})();
-`;
+const themeBootstrapScript =
+  'try{let d=document.documentElement,s=localStorage.getItem("theme"),t=s==="light"?"light":"dark";s==="system"&&localStorage.setItem("theme","dark");d.classList.remove("light","dark");d.classList.add(t);d.style.colorScheme=t}catch{}';
 
 export const metadata: Metadata = {
   description: "Matt Bolaños' personal website",

@@ -189,7 +189,7 @@
     cursor: pointer;
   }
   html {
-    @apply font-sans;
+    @apply bg-background text-foreground font-sans;
     --scrollbar-thumb: color-mix(
       in oklch,
       var(--primary) 25%,
