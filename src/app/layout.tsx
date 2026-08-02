@@ -1,7 +1,7 @@
+import { ThemeProvider } from "@wrksz/themes/next";
 import type { Metadata } from "next";
 import { Geist_Mono, Sora } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/app/theme-provider";
 import { cn } from "@/lib/utils";
 import { Footer } from "./footer";
 import { Header } from "./header";
@@ -15,9 +15,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-geist-mono",
 });
-
-const themeBootstrapScript =
-  'try{let d=document.documentElement,s=localStorage.getItem("theme"),t=s==="light"?"light":"dark";s==="system"&&localStorage.setItem("theme","dark");d.classList.remove("light","dark");d.classList.add(t);d.style.colorScheme=t}catch{}';
 
 export const metadata: Metadata = {
   description: "Matt Bolaños' personal website",
@@ -47,22 +44,24 @@ export default function RootLayout({
   return (
     <html
       className={cn(
+        "dark",
         "antialiased",
         soraSans.variable,
         geistMono.variable,
         "font-sans",
       )}
       lang="en"
+      style={{ colorScheme: "dark" }}
       suppressHydrationWarning
     >
-      <head>
-        <script
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: The theme must be resolved before the streamed body can paint.
-          dangerouslySetInnerHTML={{ __html: themeBootstrapScript }}
-        />
-      </head>
       <body className="m-auto max-w-2xl leading-relaxed">
-        <ThemeProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          disableTransitionOnChange
+          enableSystem={false}
+          storage="localStorage"
+        >
           <main className="min-h-screen overscroll-y-contain px-5 pt-8 pb-8 md:px-6 md:pt-12">
             <Header />
             {children}

@@ -1,7 +1,7 @@
 "use client";
 
+import { useTheme } from "@wrksz/themes/client";
 import { domAnimation, LazyMotion, m, useReducedMotion } from "motion/react";
-import { useTheme } from "next-themes";
 
 const springBody = {
   bounce: 0.12,
