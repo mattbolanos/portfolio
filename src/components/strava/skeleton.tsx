@@ -7,8 +7,7 @@ export const StravaSkeleton = () => {
       <HeatmapSkeleton />
 
       {/* Recent runs — matches <RecentRuns> */}
-      <div className="space-y-1.5">
-        <Skeleton className="mt-1.5 h-9 w-full rounded-xl" />
+      <div className="mt-1.5 space-y-1.5">
         {["run-card-1", "run-card-2", "run-card-3", "run-card-4"].map(
           (runCardKey) => (
             <article
@@ -29,6 +28,7 @@ export const StravaSkeleton = () => {
             </article>
           ),
         )}
+        <Skeleton className="bg-card mt-1.5 h-9 w-full rounded-4xl" />
       </div>
     </>
   );

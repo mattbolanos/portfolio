@@ -37,7 +37,7 @@ export const RecentRuns = ({ runs }: RecentRunsProps) => {
         />
       ))}
       {hasAnyRoute && (
-        <Button className="w-full rounded-lg shadow-2xl" onClick={handleReplay}>
+        <Button className="w-full shadow-2xl" onClick={handleReplay}>
           <HugeiconsIcon className="size-5" icon={ReplayIcon} />
           <span>Replay</span>
         </Button>
